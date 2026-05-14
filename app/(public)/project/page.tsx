@@ -8,22 +8,15 @@ const processSteps = [
   "문자 안내 및 운영 기록",
 ];
 
-const donationUsage = [
-  { label: "생활관 운영비", value: 45 },
-  { label: "학습 지원비", value: 25 },
-  { label: "식비/생활 지원", value: 20 },
-  { label: "긴급 지원 및 운영 예비비", value: 10 },
-];
-
 export const metadata: Metadata = {
   title: "프로젝트 안내",
   description:
-    "해밀학교 생활관비 1:1 결연 구조, 후원 절차, 후원금 사용처를 확인할 수 있는 프로젝트 안내 페이지입니다.",
+    "해밀학교 생활관비 1:1 결연 구조와 후원 절차를 확인할 수 있는 프로젝트 안내 페이지입니다.",
   keywords: [
     "해밀학교 프로젝트",
     "생활관비 후원 절차",
     "1:1 결연 운영",
-    "교육 후원 사용처",
+    "교육 후원",
   ],
   openGraph: {
     title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
@@ -36,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
     description:
-      "후원 절차, 결연 원칙, 후원금 사용처를 한눈에 확인할 수 있습니다.",
+      "생활관비 후원 절차와 결연 원칙을 한눈에 확인할 수 있습니다.",
   },
 };
 
@@ -81,28 +74,6 @@ export default function ProjectPage() {
               </li>
             ))}
           </ol>
-        </article>
-      </section>
-
-      <section className="mt-8">
-        <article className="surface-card p-6">
-          <h2 className="text-xl font-bold text-[#2f231b]">후원금 사용처</h2>
-          <div className="mt-4 space-y-4">
-            {donationUsage.map((item) => (
-              <div key={item.label}>
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-semibold text-[#5a473a]">{item.label}</span>
-                  <span className="text-[#7a6557]">{item.value}%</span>
-                </div>
-                <div className="h-2 rounded-full bg-[#f2e3d5]">
-                  <div
-                    className="h-full rounded-full bg-[#d67f45]"
-                    style={{ width: `${item.value}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
         </article>
       </section>
     </div>

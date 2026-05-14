@@ -103,6 +103,39 @@ export async function updateStudentStatus(
   }
 }
 
+export async function resetAllStudentStatusesToAvailable(): Promise<number> {
+  const db = await getDbClient();
+  const result = await db.execute(
+    `
+      UPDATE students
+      SET sponsorship_status = 'available', updated_at = CURRENT_TIMESTAMP
+      WHERE sponsorship_status <> 'available'
+    `,
+  );
+
+  return result.rowsAffected;
+}
+
+export async function updateStudentLetterImageUrl(
+  id: string,
+  letterImageUrl: string | null,
+): Promise<void> {
+  const db = await getDbClient();
+  const normalizedLetterImageUrl = letterImageUrl?.trim() || null;
+  const result = await db.execute(
+    `
+      UPDATE students
+      SET letter_image_url = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `,
+    [normalizedLetterImageUrl, id],
+  );
+
+  if (result.rowsAffected === 0) {
+    throw new Error(`${STUDENT_NOT_FOUND_ERROR_PREFIX}${id}`);
+  }
+}
+
 export async function updateStudentStatusByInput(
   input: UpdateStudentStatusInput,
 ): Promise<void> {

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   getSponsorshipById,
   isInvalidSponsorshipStatusError,
+  resetSponsorshipsAndStudentStatuses,
   updateSponsorshipStatus,
 } from "@/lib/repositories/sponsorships";
 import { sendSponsorshipConfirmedSms } from "@/lib/sms/service";
@@ -24,6 +25,13 @@ export interface UpdateSponsorshipStatusActionResult {
   ok: boolean;
   message: string;
   status?: SponsorshipProgressStatus;
+}
+
+export interface ResetSponsorshipsActionResult {
+  ok: boolean;
+  message: string;
+  deletedSponsorshipCount?: number;
+  resetStudentCount?: number;
 }
 
 function isValidStatus(value: string): value is SponsorshipProgressStatus {
@@ -101,6 +109,31 @@ export async function updateSponsorshipStatusAction(
     return {
       ok: false,
       message: "상태 변경에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    };
+  }
+}
+
+export async function resetSponsorshipsAction(): Promise<ResetSponsorshipsActionResult> {
+  try {
+    const result = await resetSponsorshipsAndStudentStatuses();
+
+    revalidatePath("/admin/sponsorships");
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/students");
+    revalidatePath("/students");
+    revalidatePath("/");
+
+    return {
+      ok: true,
+      message: "결연 신청 목록을 초기화하고 학생 상태를 신청 가능으로 되돌렸습니다.",
+      deletedSponsorshipCount: result.deletedSponsorshipCount,
+      resetStudentCount: result.resetStudentCount,
+    };
+  } catch (error) {
+    console.error("[admin sponsorships action] failed to reset sponsorship list", error);
+    return {
+      ok: false,
+      message: "결연 신청 목록 초기화에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 }

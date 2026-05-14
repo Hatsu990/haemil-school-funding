@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { updateSponsorshipStatusAction } from "@/app/admin/(panel)/sponsorships/actions";
+import {
+  resetSponsorshipsAction,
+  updateSponsorshipStatusAction,
+} from "@/app/admin/(panel)/sponsorships/actions";
 import { CopyButton } from "@/components/ui/copy-button";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
 import { FeedbackToast } from "@/components/ui/feedback-toast";
@@ -77,6 +80,7 @@ export function AdminSponsorshipsManager({
   const [items, setItems] = useState<SponsorshipRecord[]>(initialSponsorships);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("전체");
   const [openedMessageId, setOpenedMessageId] = useState<string | null>(null);
@@ -144,9 +148,10 @@ export function AdminSponsorshipsManager({
     : null;
 
   const isUpdating = updatingId !== null;
+  const isMutating = isUpdating || isResetting;
 
   const handleApplyStatus = async (id: string) => {
-    if (isUpdating) {
+    if (isMutating) {
       return;
     }
 
@@ -218,10 +223,65 @@ export function AdminSponsorshipsManager({
     }
   };
 
+  const handleResetSponsorships = async () => {
+    if (isMutating) {
+      return;
+    }
+
+    const shouldReset = window.confirm(
+      "결연 신청 목록을 초기화하시겠습니까?\n기존 신청 데이터는 삭제되고, 모든 학생 상태가 신청 가능으로 변경됩니다.",
+    );
+    if (!shouldReset) {
+      return;
+    }
+
+    setFeedback(null);
+    setIsResetting(true);
+
+    try {
+      const result = await resetSponsorshipsAction();
+      if (!result.ok) {
+        setFeedback({
+          type: "error",
+          message: result.message,
+        });
+        return;
+      }
+
+      setItems([]);
+      setDraftStatusById({});
+      setOpenedMessageId(null);
+      const deletedCount = result.deletedSponsorshipCount ?? 0;
+      const resetStudentCount = result.resetStudentCount ?? 0;
+      setFeedback({
+        type: "success",
+        message: `${result.message} (신청 ${deletedCount}건 삭제, 학생 ${resetStudentCount}명 초기화)`,
+      });
+    } catch (error) {
+      console.error("[admin sponsorships manager] failed to reset sponsorship list", error);
+      setFeedback({
+        type: "error",
+        message: "결연 신청 목록 초기화 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <div className="space-y-5 pb-8">
       <section className="surface-card p-5">
-        <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 검색/필터</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 검색/필터</h2>
+          <button
+            type="button"
+            onClick={handleResetSponsorships}
+            disabled={isMutating}
+            className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isResetting ? "초기화 중..." : "결연 신청 목록 초기화"}
+          </button>
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-[1.6fr_1fr_auto_auto]">
           <input
             value={keyword}
@@ -298,7 +358,7 @@ export function AdminSponsorshipsManager({
                   const studentStatus = toStudentStatus(item.status);
                   const message = item.sponsorMessage?.trim() || "응원 메시지 없음";
                   const draftStatus = draftStatusById[item.id] ?? item.status;
-                  const canApply = !isUpdating && draftStatus !== item.status;
+                  const canApply = !isMutating && draftStatus !== item.status;
 
                   return (
                     <tr key={item.id}>
@@ -369,7 +429,7 @@ export function AdminSponsorshipsManager({
                                   .value as SponsorshipProgressStatus,
                               }))
                             }
-                            disabled={isUpdating}
+                            disabled={isMutating}
                             aria-label={`${item.sponsorName} 상태 변경 선택`}
                             className="w-full rounded-lg border border-[var(--border)] bg-white px-2 py-2 text-xs"
                           >

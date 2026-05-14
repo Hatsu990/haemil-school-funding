@@ -34,6 +34,30 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
   return result.rows.map((row) => mapGalleryRow(row));
 }
 
+export async function getGalleryItemById(id: string): Promise<GalleryItem | null> {
+  const db = await getDbClient();
+  const result = await db.execute<GalleryItemRow>(
+    `
+      SELECT
+        id,
+        title,
+        type,
+        file_url,
+        created_at
+      FROM gallery_items
+      WHERE id = ?
+      LIMIT 1
+    `,
+    [id],
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return mapGalleryRow(result.rows[0]);
+}
+
 export async function createGalleryItem(
   data: CreateGalleryItemInput,
 ): Promise<GalleryItem> {
@@ -90,4 +114,44 @@ export async function createGalleryItems(
   });
 
   return createdRows.map((row) => mapGalleryRow(row));
+}
+
+export async function deleteGalleryItem(id: string): Promise<GalleryItem | null> {
+  const db = await getDbClient();
+  const galleryId = id.trim();
+
+  if (!galleryId) {
+    return null;
+  }
+
+  return db.transaction(async (tx) => {
+    const rowResult = await tx.execute<GalleryItemRow>(
+      `
+        SELECT
+          id,
+          title,
+          type,
+          file_url,
+          created_at
+        FROM gallery_items
+        WHERE id = ?
+        LIMIT 1
+      `,
+      [galleryId],
+    );
+
+    if (rowResult.rows.length === 0) {
+      return null;
+    }
+
+    await tx.execute(
+      `
+        DELETE FROM gallery_items
+        WHERE id = ?
+      `,
+      [galleryId],
+    );
+
+    return mapGalleryRow(rowResult.rows[0]);
+  });
 }

@@ -138,7 +138,7 @@ export async function runWithClient(
 }
 
 export async function printDbVerification(client: Client): Promise<void> {
-  const tableResult = await client.execute<RawRow>(
+  const tableResult = (await client.execute(
     `
       SELECT name
       FROM sqlite_master
@@ -146,7 +146,7 @@ export async function printDbVerification(client: Client): Promise<void> {
         AND name NOT LIKE 'sqlite_%'
       ORDER BY name ASC
     `,
-  );
+  )) as { rows: RawRow[] };
 
   const tableNames = tableResult.rows
     .map((row) => {
@@ -157,9 +157,9 @@ export async function printDbVerification(client: Client): Promise<void> {
 
   console.log(`[DB] tables: ${tableNames.join(", ") || "(none)"}`);
 
-  const studentsCountResult = await client.execute<RawRow>(
+  const studentsCountResult = (await client.execute(
     "SELECT COUNT(*) AS count FROM students",
-  );
+  )) as { rows: RawRow[] };
   const studentsCount = toSafeInteger(studentsCountResult.rows[0]?.count);
   console.log(`[DB] students count: ${studentsCount}`);
 }

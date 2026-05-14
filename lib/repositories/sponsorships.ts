@@ -331,3 +331,33 @@ export async function updateSponsorshipStatusByInput(
 ): Promise<void> {
   return updateSponsorshipStatus(input.id, input.status);
 }
+
+export interface ResetSponsorshipsResult {
+  deletedSponsorshipCount: number;
+  resetStudentCount: number;
+}
+
+export async function resetSponsorshipsAndStudentStatuses(): Promise<ResetSponsorshipsResult> {
+  const db = await getDbClient();
+
+  return db.transaction(async (tx) => {
+    const deleteSponsorshipResult = await tx.execute(
+      `
+        DELETE FROM sponsorships
+      `,
+    );
+
+    const resetStudentsResult = await tx.execute(
+      `
+        UPDATE students
+        SET sponsorship_status = 'available', updated_at = CURRENT_TIMESTAMP
+        WHERE sponsorship_status <> 'available'
+      `,
+    );
+
+    return {
+      deletedSponsorshipCount: deleteSponsorshipResult.rowsAffected,
+      resetStudentCount: resetStudentsResult.rowsAffected,
+    };
+  });
+}

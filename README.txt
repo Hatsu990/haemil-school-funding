@@ -28,6 +28,28 @@ Turso DB 초기화 방법
 실행 중 필수 환경변수가 없으면 누락된 변수명이 에러로 출력되고 즉시 중단됩니다.
 
 --------------------------------------------------
+Production DB 디버깅 (/students)
+--------------------------------------------------
+
+- 디버깅 로그 위치: `lib/repositories/students.ts`의 `getStudents()`
+- 출력 항목:
+  - `TURSO_DATABASE_URL` 존재 여부 (`set`/`missing`)
+  - `TURSO_AUTH_TOKEN` 존재 여부 (`set`/`missing`)
+  - 조회 성공 시 `students count`
+  - 조회 실패 시 실제 에러(`console.error`)
+- 민감정보 보호:
+  - 토큰 값(`TURSO_AUTH_TOKEN`) 자체는 절대 로그로 출력하지 않음
+
+`/students` 페이지는 production에서도 로그 확인이 가능하도록
+`dynamic = "force-dynamic"`으로 동적 렌더링을 강제합니다.
+
+Vercel 확인 경로:
+1) Vercel Dashboard
+2) Project 선택
+3) `Logs` (또는 Runtime Logs)
+4) `/students` 요청 시점 로그 확인
+
+--------------------------------------------------
 작업 로그 (2026-05-12)
 --------------------------------------------------
 
@@ -702,3 +724,41 @@ Vercel Blob:
   - 기존 `mock-flow` 의존 제거 및 관련 import 전환
 - 미사용 mock 데이터 파일 정리
   - `lib/mock-data.ts` 삭제
+
+--------------------------------------------------
+작업 로그 (2026-05-15 - 운영 전 버그 수정/기능 보강)
+--------------------------------------------------
+- 관리자 갤러리 삭제 기능 추가
+  - `/admin/gallery` 항목별 삭제 버튼 + confirm dialog 추가
+  - DB(`gallery_items`) 삭제 구현
+  - Vercel Blob 파일 삭제 시도 및 실패 시 DB 삭제 성공과 분리 안내
+  - 삭제 후 `/gallery` 공개 목록 즉시 반영
+- 관리자 학생 상태 초기화 기능 추가
+  - `/admin/students`에 "전체 학생 신청 가능 상태로 초기화" 버튼 추가
+  - confirm 후 `students.sponsorship_status`를 일괄 `available`로 변경
+  - 운영 초기화 목적 안내 문구 반영
+- 관리자 문자 템플릿 수동 발송 구현
+  - `/admin/messages`에 템플릿별 수동 발송 폼 추가
+  - 전화번호 + 템플릿 변수(name/studentNickname/amount 포함) 입력 지원
+  - 서버 액션에서 템플릿 렌더 후 `sendSms()` 호출
+  - 발송 결과 `sms_logs` 기록 유지
+  - Solapi 환경변수 누락 시 개발 모드 fallback 안내 문구 강화
+- 결연 신청 목록 초기화 기능 추가
+  - `/admin/sponsorships`에 "결연 신청 목록 초기화" 버튼 추가
+  - confirm 후 `sponsorships` 전체 삭제 + 학생 상태 전체 `available` 초기화
+  - `sms_logs`, `gallery_items`, `settings`는 유지
+- 손편지 없는 학생 UI 처리
+  - `letter_image_url`이 비어 있으면 "손편지 없음" 표시
+  - 손편지 버튼을 disabled 처리하고 빈 모달이 열리지 않도록 수정
+  - 홈 대표 학생 카드와 `/students` 목록 카드에 동일 정책 적용
+- 관리자 학생 손편지 업로드/관리 추가
+  - `/admin/students`에서 학생별 손편지 이미지 업로드/교체/삭제 지원
+  - 업로드 파일은 Vercel Blob 저장 후 `students.letter_image_url` 갱신
+  - 기존 손편지 미리보기/원본 보기/삭제 동작 추가
+- 학생 만나기 필터/정렬 실제 동작 수정
+  - 성별/학년/결연상태 필터 실제 적용
+  - 정렬(기본순, 학년 낮은/높은 순, 신청 가능 우선, 결연 완료 우선) 적용
+  - 필터/정렬 변경 시 목록 즉시 갱신
+- 프로젝트 안내 페이지 정리
+  - `/project`의 "후원금 사용처" 섹션 삭제
+  - 생활관비 후원 필요성과 결연 절차 설명은 유지
