@@ -1,17 +1,119 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { StudentCard } from "@/components/public/student-card";
-import {
-  publicSponsorMessages,
-  sponsorships,
-  students,
-  totalStudentCount,
-} from "@/lib/mock-data";
+import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { getSettings } from "@/lib/repositories/settings";
+import { getSponsorships } from "@/lib/repositories/sponsorships";
+import { getStudents } from "@/lib/repositories/students";
+import { ADMIN_SETTINGS_KEYS } from "@/lib/settings/admin-settings";
+import { withStudentUiFallbackList } from "@/lib/students/ui";
+import { SponsorshipRecord, StudentProfile } from "@/types";
 
-const matchedCount = 24;
-const pendingCount = 6;
-const progressRate = Math.round((matchedCount / totalStudentCount) * 100);
+const DEFAULT_TARGET_STUDENT_COUNT = 60;
 
-export default function HomePage() {
+const FALLBACK_PUBLIC_MESSAGES = [
+  {
+    id: "fallback-msg-1",
+    sponsorName: "익명 후원자",
+    message: "학생들이 안정적으로 배우고 성장할 수 있도록 꾸준히 응원하겠습니다.",
+  },
+];
+
+export const metadata: Metadata = {
+  title: "해밀학교 생활관비 1:1 결연 후원",
+  description:
+    "해밀학교 다문화학교 학생들의 생활관비를 위한 1:1 결연 교육 후원. 결연 현황과 후원 절차를 확인하고 참여할 수 있습니다.",
+  keywords: [
+    "해밀학교",
+    "다문화학교",
+    "생활관비 후원",
+    "1:1 결연",
+    "교육 후원",
+  ],
+  openGraph: {
+    title: "해밀학교 생활관비 1:1 결연 후원",
+    description:
+      "다문화학교 학생들의 생활관비를 함께 지원하는 해밀학교 교육 후원 프로젝트",
+    url: "/",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "해밀학교 생활관비 1:1 결연 후원",
+    description:
+      "학생 1명당 후원자 1명 결연 원칙으로 운영되는 해밀학교 생활관비 후원 서비스",
+  },
+};
+
+function resolveTargetStudentCount(settings: Array<{ settingKey: string; settingValue: string }>): number {
+  const value = settings.find(
+    (setting) => setting.settingKey === ADMIN_SETTINGS_KEYS.targetStudentCount,
+  )?.settingValue;
+
+  if (!value) {
+    return DEFAULT_TARGET_STUDENT_COUNT;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_TARGET_STUDENT_COUNT;
+  }
+
+  return parsed;
+}
+
+function getPublicSponsorMessages(sponsorships: SponsorshipRecord[]) {
+  const publicMessages = sponsorships
+    .filter((item) => item.sponsorPublic && item.sponsorMessage?.trim())
+    .map((item) => ({
+      id: item.id,
+      sponsorName: item.sponsorName,
+      message: item.sponsorMessage?.trim() ?? "",
+    }));
+
+  if (publicMessages.length > 0) {
+    return publicMessages;
+  }
+
+  return FALLBACK_PUBLIC_MESSAGES;
+}
+
+export default async function HomePage() {
+  let students: StudentProfile[] = [];
+  let sponsorships: SponsorshipRecord[] = [];
+  let targetStudentCount = DEFAULT_TARGET_STUDENT_COUNT;
+  let dbErrorMessage: string | null = null;
+
+  try {
+    const [loadedStudents, loadedSponsorships, loadedSettings] = await Promise.all([
+      getStudents(),
+      getSponsorships(),
+      getSettings(),
+    ]);
+
+    students = withStudentUiFallbackList(loadedStudents);
+    sponsorships = loadedSponsorships;
+    targetStudentCount = resolveTargetStudentCount(loadedSettings);
+  } catch (error) {
+    console.error("[home page] failed to load home data from repositories", error);
+    dbErrorMessage =
+      "일부 운영 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+  }
+
+  const matchedCount = students.filter(
+    (student) => student.sponsorshipStatus === "matched",
+  ).length;
+  const pendingCount = sponsorships.filter(
+    (item) => item.status === "입금대기",
+  ).length;
+  const progressBase =
+    targetStudentCount > 0 ? targetStudentCount : students.length;
+  const progressRate =
+    progressBase > 0 ? Math.round((matchedCount / progressBase) * 100) : 0;
+
+  const representativeStudents = students.slice(0, 3);
+  const publicSponsorMessages = getPublicSponsorMessages(sponsorships).slice(0, 3);
+
   return (
     <div className="pb-16">
       <section className="container-base grid gap-8 pt-12 md:grid-cols-[1.15fr_0.85fr] md:items-center">
@@ -49,12 +151,12 @@ export default function HomePage() {
             </div>
             <div className="rounded-xl bg-[#fff8df] p-4">
               <p className="text-xs font-medium text-[#7b5a46]">입금 대기</p>
-              <p className="mt-1 text-2xl font-bold">{pendingCount}명</p>
+              <p className="mt-1 text-2xl font-bold">{pendingCount}건</p>
             </div>
             <div className="rounded-xl bg-[#ebf3ff] p-4 sm:col-span-2">
               <p className="text-xs font-medium text-[#4c5b73]">목표 대비 진행률</p>
               <p className="mt-1 text-2xl font-bold text-[#2e3b57]">
-                {progressRate}% ({matchedCount}/{totalStudentCount})
+                {progressRate}% ({matchedCount}/{progressBase})
               </p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#d9e5f8]">
                 <div
@@ -64,6 +166,11 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          {dbErrorMessage ? (
+            <p className="mt-4 rounded-xl border border-[#f0dfca] bg-[#fff8ef] px-3 py-2 text-xs text-[#7a563f]">
+              {dbErrorMessage}
+            </p>
+          ) : null}
         </aside>
       </section>
 
@@ -77,18 +184,25 @@ export default function HomePage() {
             전체 학생 보기
           </Link>
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
-          {students.slice(0, 3).map((student) => (
-            <StudentCard key={student.id} student={student} />
-          ))}
-        </div>
+        {representativeStudents.length === 0 ? (
+          <EmptyStateCard
+            title="표시할 학생 정보가 없습니다."
+            description="학생 정보가 등록되면 대표 학생 카드가 표시됩니다."
+          />
+        ) : (
+          <div className="grid gap-5 md:grid-cols-3">
+            {representativeStudents.map((student) => (
+              <StudentCard key={student.id} student={student} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="container-base mt-14 grid gap-6 md:grid-cols-2">
         <article className="surface-card p-6">
           <h2 className="text-xl font-bold text-[#2f231b]">후원자 응원 메시지</h2>
           <div className="mt-4 space-y-3">
-            {publicSponsorMessages.slice(0, 3).map((item) => (
+            {publicSponsorMessages.map((item) => (
               <blockquote
                 key={item.id}
                 className="rounded-xl border border-[var(--border)] bg-[#fff8f1] p-4"

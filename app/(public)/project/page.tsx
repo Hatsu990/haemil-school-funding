@@ -1,4 +1,4 @@
-import { donationUsage } from "@/lib/mock-data";
+import type { Metadata } from "next";
 
 const processSteps = [
   "학생 선택 및 결연 신청",
@@ -8,9 +8,41 @@ const processSteps = [
   "문자 안내 및 운영 기록",
 ];
 
+const donationUsage = [
+  { label: "생활관 운영비", value: 45 },
+  { label: "학습 지원비", value: 25 },
+  { label: "식비/생활 지원", value: 20 },
+  { label: "긴급 지원 및 운영 예비비", value: 10 },
+];
+
+export const metadata: Metadata = {
+  title: "프로젝트 안내",
+  description:
+    "해밀학교 생활관비 1:1 결연 구조, 후원 절차, 후원금 사용처를 확인할 수 있는 프로젝트 안내 페이지입니다.",
+  keywords: [
+    "해밀학교 프로젝트",
+    "생활관비 후원 절차",
+    "1:1 결연 운영",
+    "교육 후원 사용처",
+  ],
+  openGraph: {
+    title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
+    description:
+      "생활관비 교육 후원이 어떻게 운영되는지 단계별로 확인해 보세요.",
+    url: "/project",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
+    description:
+      "후원 절차, 결연 원칙, 후원금 사용처를 한눈에 확인할 수 있습니다.",
+  },
+};
+
 export default function ProjectPage() {
   return (
-    <div className="container-base py-12">
+    <div className="container-base pb-16 pt-10 sm:pt-12">
       <header className="mb-8">
         <p className="text-sm font-semibold text-[#8d694f]">프로젝트 안내</p>
         <h1 className="section-title mt-2">
@@ -18,8 +50,8 @@ export default function ProjectPage() {
         </h1>
       </header>
 
-      <section className="grid gap-5 md:grid-cols-2">
-        <article className="surface-card p-6">
+      <section className="grid gap-4 md:grid-cols-2">
+        <article className="surface-card hover-lift p-6">
           <h2 className="text-xl font-bold text-[#2f231b]">후원 필요성</h2>
           <p className="mt-3 text-sm leading-7 text-[#5a473a]">
             학생 대부분이 기숙사 생활을 하며, 월 약 10만 원의 생활관비가
@@ -27,7 +59,7 @@ export default function ProjectPage() {
             수 있도록 지원합니다.
           </p>
         </article>
-        <article className="surface-card p-6">
+        <article className="surface-card hover-lift p-6">
           <h2 className="text-xl font-bold text-[#2f231b]">핵심 운영 원칙</h2>
           <ul className="mt-3 space-y-2 text-sm leading-7 text-[#5a473a]">
             <li>학생 1명당 후원자 1명</li>
@@ -41,7 +73,7 @@ export default function ProjectPage() {
       <section className="mt-8">
         <article className="surface-card p-6">
           <h2 className="text-xl font-bold text-[#2f231b]">후원 절차</h2>
-          <ol className="mt-4 grid gap-3 md:grid-cols-5">
+          <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {processSteps.map((step, index) => (
               <li key={step} className="rounded-xl bg-[#fff4e8] p-4">
                 <p className="text-xs font-bold text-[#9f5f34]">STEP {index + 1}</p>

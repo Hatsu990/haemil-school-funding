@@ -1,6 +1,7 @@
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 const mobileLinks = [
   { href: "/admin/dashboard", label: "대시보드" },
@@ -10,6 +11,13 @@ const mobileLinks = [
   { href: "/admin/gallery", label: "갤러리" },
   { href: "/admin/settings", label: "설정" },
 ];
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AdminPanelLayout({
   children,

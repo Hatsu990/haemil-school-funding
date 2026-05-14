@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { logoutAdmin } from "@/app/admin/actions";
 
 export function AdminTopbar() {
   return (
@@ -11,12 +12,18 @@ export function AdminTopbar() {
       </div>
       <div className="flex items-center gap-2">
         <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-medium text-[#34507a]">
-          Mock 모드
+          Admin Session
         </span>
         <Link href="/" className="btn-secondary py-2">
           공개 페이지 보기
         </Link>
+        <form action={logoutAdmin}>
+          <button type="submit" className="btn-secondary py-2">
+            로그아웃
+          </button>
+        </form>
       </div>
     </header>
   );
 }
+

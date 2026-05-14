@@ -4,12 +4,16 @@
   --background: #fef9f4;
   --foreground: #2a1f18;
   --brand: #e1783d;
+  --brand-strong: #ce642a;
   --brand-soft: #f6e2d0;
   --card: #fffdfb;
   --muted: #7b6456;
   --border: #e8d9cd;
   --success: #2f8f56;
   --warning: #d19529;
+  --danger: #b64c3d;
+  --shadow-soft: 0 8px 24px rgba(137, 93, 58, 0.08);
+  --shadow-strong: 0 14px 30px rgba(137, 93, 58, 0.16);
 }
 
 @theme inline {
@@ -26,10 +30,22 @@ body {
     var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-sans-kr), sans-serif;
+  line-height: 1.55;
 }
 
 a {
   color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  @apply transition;
+}
+
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-[var(--brand)];
 }
 
 ::selection {
@@ -41,7 +57,7 @@ a {
 }
 
 .surface-card {
-  @apply rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[0_8px_24px_rgba(137,93,58,0.08)];
+  @apply rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-soft)];
 }
 
 .section-title {
@@ -53,13 +69,45 @@ a {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
+  @apply inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px] hover:bg-[var(--brand-strong)] hover:shadow-[var(--shadow-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[#5b4739] transition hover:bg-[#fff6ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
+  @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[#5b4739] transition hover:translate-y-[-1px] hover:bg-[#fff6ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
 }
 
 .status-dot {
   @apply inline-block h-2.5 w-2.5 rounded-full;
+}
+
+.hover-lift {
+  @apply transition hover:translate-y-[-2px] hover:shadow-[var(--shadow-strong)];
+}
+
+.data-table {
+  @apply w-full text-sm;
+}
+
+.data-table th {
+  @apply whitespace-nowrap px-4 py-3 text-left text-xs font-semibold tracking-[0.02em] text-[#6d5545];
+}
+
+.data-table td {
+  @apply px-4 py-3 align-top text-[#4e3b2f];
+}
+
+.data-table tbody tr {
+  @apply border-t border-[var(--border)] transition hover:bg-[#fffaf4];
+}
+
+.skeleton {
+  @apply animate-pulse rounded-lg bg-[#f0e3d7];
+}
+
+.toast-success {
+  @apply rounded-xl border border-[#cde7d8] bg-[#f4fbf7] px-4 py-3 text-sm text-[#2e6b45];
+}
+
+.toast-error {
+  @apply rounded-xl border border-[#f0d4d4] bg-[#fff5f5] px-4 py-3 text-sm text-[#9d3f3f];
 }

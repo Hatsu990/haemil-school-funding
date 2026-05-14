@@ -54,7 +54,10 @@ export function PublicHeader() {
         </nav>
 
         <details className="relative md:hidden">
-          <summary className="list-none rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[#614d3e]">
+          <summary
+            aria-label="모바일 메뉴 열기"
+            className="list-none rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[#614d3e]"
+          >
             메뉴
           </summary>
           <div className="absolute right-0 mt-2 w-52 rounded-xl border border-[var(--border)] bg-white p-2 shadow-lg">

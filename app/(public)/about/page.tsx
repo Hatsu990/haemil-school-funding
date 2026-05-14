@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 const values = [
   {
     title: "다문화 포용 교육",
@@ -13,13 +15,38 @@ const values = [
   },
 ];
 
+export const metadata: Metadata = {
+  title: "학교 소개",
+  description:
+    "강원특별자치도 홍천군 해밀학교의 다문화 포용 교육, 기숙사 생활 교육, 진로 연계 지원 방향을 소개합니다.",
+  keywords: [
+    "해밀학교 소개",
+    "다문화학교",
+    "대안학교 교육",
+    "기숙사 생활 교육",
+  ],
+  openGraph: {
+    title: "학교 소개 | 해밀학교 후원 프로젝트",
+    description:
+      "해밀학교의 교육 철학과 다문화 학생 지원 방향을 확인해 보세요.",
+    url: "/about",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "학교 소개 | 해밀학교 후원 프로젝트",
+    description:
+      "해밀학교의 교육 철학과 학생 성장 지원 방향을 소개합니다.",
+  },
+};
+
 export default function AboutPage() {
   return (
-    <div className="container-base py-12">
+    <div className="container-base pb-16 pt-10 sm:pt-12">
       <header className="surface-card overflow-hidden">
-        <div className="bg-gradient-to-r from-[#f7d9bd] to-[#fcebd9] p-8">
+        <div className="bg-gradient-to-r from-[#f7d9bd] to-[#fcebd9] p-7 sm:p-8">
           <p className="text-sm font-semibold text-[#8f5a33]">학교 소개</p>
-          <h1 className="mt-2 font-serif text-4xl font-bold text-[#2f2119]">
+          <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-[#2f2119] sm:text-4xl">
             해밀학교는 함께 살아가는 힘을 가르칩니다
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-[#624d3f]">
@@ -30,9 +57,9 @@ export default function AboutPage() {
         </div>
       </header>
 
-      <section className="mt-10 grid gap-5 md:grid-cols-3">
+      <section className="mt-8 grid gap-4 md:grid-cols-3">
         {values.map((value) => (
-          <article key={value.title} className="surface-card p-6">
+          <article key={value.title} className="surface-card hover-lift p-6">
             <h2 className="font-serif text-xl font-bold text-[#2c211a]">
               {value.title}
             </h2>
@@ -41,8 +68,8 @@ export default function AboutPage() {
         ))}
       </section>
 
-      <section className="mt-10 grid gap-5 md:grid-cols-2">
-        <article className="surface-card p-6">
+      <section className="mt-8 grid gap-4 md:grid-cols-2">
+        <article className="surface-card hover-lift p-6">
           <h2 className="text-lg font-bold text-[#2f231b]">학교 생활</h2>
           <p className="mt-3 text-sm leading-7 text-[#5a473a]">
             학생들은 공동 생활을 통해 기본 생활 습관을 배우고, 방과 후에는
@@ -50,7 +77,7 @@ export default function AboutPage() {
             지속성을 지키는 핵심 기반입니다.
           </p>
         </article>
-        <article className="surface-card p-6">
+        <article className="surface-card hover-lift p-6">
           <h2 className="text-lg font-bold text-[#2f231b]">후원의 의미</h2>
           <p className="mt-3 text-sm leading-7 text-[#5a473a]">
             후원은 단순한 비용 지원을 넘어 학생이 학업을 포기하지 않도록

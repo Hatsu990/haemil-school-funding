@@ -340,3 +340,344 @@ Vercel Blob:
 - AI(Codex/Claude/ChatGPT)를 활용한 제작 연습
 - 관리자 페이지와 프론트 페이지 모두 구현
 - 실제 후원 운영 가능 구조 목표
+
+--------------------------------------------------
+작업 로그 (2026-05-13)
+--------------------------------------------------
+- DB 스키마 초안 생성
+- Turso 연결 준비
+- Repository 계층 준비
+- 아직 실제 DB 연동은 미완료
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 관리자 인증)
+--------------------------------------------------
+- 관리자 로그인 기능 구현 (/admin/login)
+- ADMIN_ID / ADMIN_PASSWORD 환경변수 검증 로직 추가
+- admin-auth httpOnly 쿠키 기반 세션 처리 추가
+- 관리자 보호 라우트 미들웨어 추가
+- 로그아웃 기능 추가
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 후원 신청 mock 플로우)
+--------------------------------------------------
+- /students 카드의 결연 신청 버튼을 실제 신청 라우트와 연결
+- available 상태 학생만 신청 가능하도록 처리
+- pending/matched 상태 학생은 신청 버튼 비활성화 및 정책 사유 안내
+- /students/[studentId]/sponsorship 페이지 추가 (학생별 후원 신청 폼)
+- 후원 신청 필수 항목 구현
+  - 후원자 이름 / 휴대폰 번호 / 이메일
+  - 후원 방식(일시후원/정기후원)
+  - 후원 기간(1/3/6/12개월/직접 입력)
+  - 후원자 공개 여부(기본 공개)
+  - 응원 메시지
+  - 기부금 영수증 발급 희망 여부
+  - 개인정보 수집 동의
+  - 선택 학생 ID(hidden)
+- 서버 액션 입력 검증 구현
+  - 이름 필수
+  - 휴대폰 번호 필수(형식 검증 포함)
+  - 이메일 형식 검증
+  - 후원 방식 필수
+  - 개인정보 수집 동의 필수
+  - 정기후원 선택 시 후원 기간 필수
+- mock 제출 처리 구현 (DB 저장 없음)
+  - 제출 성공 시 완료 메시지 노출
+  - "관리자가 확인 후 전화드릴 예정" 안내 문구 노출
+  - 쿠키 기반 mock 상태 반영으로 선택 학생을 pending처럼 표시
+- 결연 정책 안내 반영
+  - 학생 1명당 후원자 1명
+  - 입금 대기 상태 신청 불가
+  - 입금 완료 상태 신청 불가
+  - 결연 완료 기준은 입금 완료
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 관리자 결연 신청 관리 mock)
+--------------------------------------------------
+- /admin/sponsorships 페이지를 클라이언트 상태 기반 관리 화면으로 보강
+- mock 후원 신청 목록 테이블에 필수 표시 항목 반영
+  - 신청일 / 후원자 이름 / 전화번호 / 이메일 / 학생 닉네임
+  - 후원 방식 / 후원 기간 / 후원자 공개 여부
+  - 기부금 영수증 희망 여부 / 응원 메시지 / 상태
+- 검색 기능 구현
+  - 이름 / 전화번호 / 이메일 / 학생 닉네임 기준 통합 검색
+- 상태 필터 구현
+  - 전체 / 입금대기 / 입금완료 / 취소
+- 상태 변경 UI 구현
+  - 각 행에서 입금대기 / 입금완료 / 취소로 변경 후 즉시 반영
+- 상태 변경 정책 mock 반영
+  - 입금완료 => 학생 결연완료 상태로 간주
+  - 취소 => 학생 신청가능 상태로 간주
+  - 입금대기 => 학생 입금대기 상태로 간주
+- 긴 응원 메시지 처리
+  - 목록에서는 미리보기 + "상세 보기"
+  - 상세 모달에서 전체 메시지 확인 가능
+- DB 저장/문자 발송 없이 mock 상태로만 동작
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - Turso DB 연결/seed 준비)
+--------------------------------------------------
+- Turso 클라이언트 정리 (@libsql/client 기반, 환경변수 누락 에러 메시지 강화)
+- schema.sql 정리 (테이블/인덱스/CHECK 제약/updated_at 트리거 점검)
+- seed.sql 생성 (개발용 학생 60명 + 후원/갤러리/설정/SMS 샘플)
+- DB 실행 스크립트 추가
+  - db:schema
+  - db:seed
+- repository 실제 쿼리화 준비
+  - getStudents / getStudentById / updateStudentStatus
+  - getSponsorships / getSponsorshipById / createSponsorship / updateSponsorshipStatus
+  - getGalleryItems / createGalleryItem
+  - createSmsLog
+  - getSettings
+- 기존 mock UI는 유지 (이번 단계에서 전면 DB 연결은 미진행)
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 학생 화면 repository 전환)
+--------------------------------------------------
+- /students 페이지를 getStudents() 기반 데이터 흐름으로 전환
+- /admin/students 페이지를 getStudents() 기반 데이터 흐름으로 전환
+- 학생 관련 화면의 mock-data 직접 import 제거
+  - /students
+  - /students/[studentId]/sponsorship (page/actions)
+  - /admin/students
+- 학생 UI 보정 유틸 추가 (profileTheme/letterSummary 기본값 보정)
+- DB 연결 실패 시 사용자 안내 메시지 표시 + console error 로깅 추가
+- 기존 mock UI 구조는 유지하고, 학생 상태(available/pending/matched) 반영은 유지
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 후원 신청 DB 저장 연결)
+--------------------------------------------------
+- /students/[studentId]/sponsorship 서버 액션을 mock 쿠키 처리에서 Turso repository 저장 흐름으로 전환
+- 제출 시 createSponsorship(data)로 sponsorships 테이블에 신청 저장
+- 저장 성공 후 updateStudentStatus(studentId, "pending")로 학생 상태를 입금대기 상태와 일치하도록 갱신
+- 신청 저장 직전 학생 상태를 재확인하여 available 상태가 아니면 저장 차단
+- DB의 active sponsorship 유니크 제약(학생 1명당 1명) 충돌 시 사용자 안내 메시지 반환
+- 신청 완료 안내 문구를 "신청이 접수되었습니다. 관리자가 확인 후 전화드릴 예정입니다."로 표시
+- /admin/sponsorships 페이지를 getSponsorships() + getStudents() 기반 DB 데이터 로딩으로 연결
+- DB 연결 실패 시 사용자 안내 메시지와 console error를 함께 출력하도록 처리
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 관리자 상태 변경 트랜잭션/원자성 강화)
+--------------------------------------------------
+- /admin/sponsorships 상태 변경 UI를 서버 액션 + repository DB 업데이트로 연결
+- 상태 변경 시 updateSponsorshipStatus(id, status)로 실제 Turso DB에 저장되도록 반영
+- 관리자 상태 변경 트랜잭션 강화
+  - sponsorships.status 변경 + students.sponsorship_status 동기화를 단일 트랜잭션으로 처리
+  - 정책 매핑 강제
+    - 입금대기 -> pending
+    - 입금완료 -> matched
+    - 취소 -> available
+  - 잘못된 status 값은 repository 계층에서 거부
+- 후원 신청 트랜잭션 강화
+  - createSponsorship(data)에서 신청 저장 + 학생 pending 변경을 단일 트랜잭션으로 처리
+  - 저장 직전 DB에서 학생 상태를 재확인하고 available이 아니면 저장 차단
+- 관리자 상태 변경 감사 로그 준비
+  - 기존 sms_logs 구조를 활용하는 createStatusChangeLog() repository 함수 추가
+  - Solapi 실제 문자 발송 없이 상태 변경 이력 저장 준비
+- 관리자 UI 피드백 보강
+  - 상태 변경 성공/실패 메시지 표시
+  - 저장 중 중복 클릭 방지를 위해 select/button 비활성화 처리
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 관리자 학생 추가/삭제 기능)
+--------------------------------------------------
+- /admin/students 페이지에 학생 추가 폼 구현 (닉네임/성별/학년/소개/초기 상태)
+- 학생 추가 시 createStudentAction -> createStudent(repository) -> Turso DB INSERT 연결
+- /admin/students 카드에 학생 삭제 버튼 구현
+- 학생 삭제 시 deleteStudentAction -> deleteStudent(repository) -> Turso DB DELETE 연결
+- 후원 신청 이력이 있는 학생은 삭제 차단 (무결성/운영 안정성 안내 메시지 제공)
+- 추가/삭제 성공/실패 메시지 및 처리 중 중복 클릭 방지 UI 반영
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - 갤러리 Vercel Blob 업로드 + Turso 저장)
+--------------------------------------------------
+- @vercel/blob 기반 관리자 갤러리 업로드 서버 액션 추가
+  - BLOB_READ_WRITE_TOKEN 환경변수 필수 검사
+  - image/*, video/* 파일만 허용
+  - 파일 크기 초과(100MB) 안내 메시지 처리
+- /admin/gallery 페이지를 mock에서 DB 기반으로 전환
+  - 제목 + 다중 파일 업로드 UI 구현
+  - 업로드 중 로딩, 성공/실패 메시지 처리
+  - 업로드된 갤러리 목록(제목/타입/미리보기/업로드일) 표시
+- 업로드 성공 시 gallery_items 테이블에 title/type/file_url/created_at 저장
+- /gallery 공개 페이지를 getGalleryItems() 기반으로 전환
+  - image 타입: 이미지 카드 렌더링
+  - video 타입: 재생 가능한 video 카드 렌더링
+- .env.example에 BLOB_READ_WRITE_TOKEN 항목 추가
+
+--------------------------------------------------
+작업 로그 (2026-05-13 - Solapi 문자 발송 구조 준비)
+--------------------------------------------------
+- Solapi SDK 기반 문자 발송 클라이언트 추가 (lib/sms/client.ts)
+  - 환경변수(SOLAPI_API_KEY, SOLAPI_API_SECRET, SOLAPI_SENDER_PHONE) 기반 구성
+  - sendSms(to, text) 함수 구현
+  - 발송 시 sms_logs 테이블에 성공/실패 로그 저장
+  - 환경변수 누락 시 실제 발송 스킵 + 개발 모드 콘솔 fallback 출력
+- 문자 템플릿 모듈 추가 (lib/sms/templates.ts)
+  - getSmsTemplate(templateName, variables)
+  - 템플릿 목록: sponsorship_received, admin_new_sponsorship, sponsorship_confirmed, recurring_reminder, admin_daily_call_list
+- 문자 발송 서비스 함수 추가 (lib/sms/service.ts)
+  - sendSponsorshipReceivedSms(sponsorshipId)
+  - sendAdminNewSponsorshipSms(sponsorshipId)
+  - sendSponsorshipConfirmedSms(sponsorshipId)
+  - sendRecurringReminderSms(sponsorshipId)
+  - sendAdminDailyCallListSms()
+- 기존 기능 연결
+  - 후원 신청 접수 성공 시 관리자 알림 문자 발송 시도
+  - 입금완료 처리 시 후원자 완료 문자 발송 시도
+  - 문자 발송 실패가 핵심 후원 플로우를 깨뜨리지 않도록 예외 분리 처리
+- /admin/messages 페이지 보강
+  - 문자 템플릿 목록 표시
+  - sms_logs 기반 발송 이력 표시
+  - 최근 성공/실패/대기 현황 표시
+  - 수동 발송 기능은 준비중 placeholder 유지
+- .env.example에 Solapi 관련 환경변수 추가
+  - SOLAPI_API_KEY
+  - SOLAPI_API_SECRET
+  - SOLAPI_SENDER_PHONE
+  - ADMIN_NOTIFICATION_PHONE
+
+--------------------------------------------------
+작업 로그 (2026-05-14 - 관리자 대시보드 DB 운영 현황 연결)
+--------------------------------------------------
+- /admin/dashboard mock import 제거 및 repository 기반 데이터 로딩으로 전환
+  - getStudents()
+  - getSponsorships()
+  - getSmsLogs()
+  - getGalleryItems()
+- 운영 통계 11개 항목 구현
+  - 전체 학생 수
+  - 결연 완료 학생 수
+  - 결연 대기 학생 수
+  - 입금 대기 신청 수
+  - 입금 완료 신청 수
+  - 취소 신청 수
+  - 일시후원 수
+  - 정기후원 수
+  - 최근 30일 문자 발송 수
+  - 최근 30일 문자 실패 수
+  - 갤러리 등록 수
+- 결연 진행률 섹션 추가
+  - matched 학생 수 / 전체 학생 수 기준 퍼센트 계산 및 표시
+- 최근 후원 신청 목록(최대 10건) 구현
+  - 후원자 이름, 학생 닉네임, 상태, 신청일 표시
+- 오늘 연락할 후원자 목록 구현
+  - 입금대기 신청 기준
+  - 후원자 이름, 전화번호, 학생 닉네임, 신청일 표시
+- 빈 상태/DB 오류 안내 처리
+  - DB 로딩 실패 시 안내 메시지 노출
+  - 최근 신청/연락 대상이 없을 때 빈 상태 문구 노출
+
+--------------------------------------------------
+작업 로그 (2026-05-14 - 학생 프로필 이미지 연결/적용)
+--------------------------------------------------
+- Profile1(남학생), Profile2(여학생) 이미지를 public 정적 경로로 정리
+  - public/students/profiles/male
+  - public/students/profiles/female
+- 학생 프로필 이미지 매핑 유틸 추가
+  - lib/students/profile-images.ts
+  - gender + studentId 기반으로 성별별 이미지 경로를 안정적으로 계산
+- UI fallback 보강
+  - 이미지 로딩 실패 시 fallback.svg로 대체
+  - profile_image_url 값이 비어 있으면 자동 매핑 경로로 보정
+- 학생 카드 UI 반영
+  - 홈 대표 학생 카드
+  - /students 학생 카드
+  - /admin/students 학생 썸네일 카드
+  - /students/[studentId]/sponsorship 신청 페이지 요약 카드
+- seed 데이터 반영
+  - lib/db/seed.sql에 gender 기준 profile_image_url UPDATE 구문 추가
+  - 남학생은 male 경로, 여학생은 female 경로로만 연결
+- 신규 학생 생성 반영
+  - createStudent(repository) 시 profile_image_url 자동 할당
+- mock 데이터 반영
+  - lib/mock-data.ts students 배열에 profileImageUrl 자동 매핑 적용
+
+--------------------------------------------------
+작업 로그 (2026-05-14 - 관리자 설정 페이지 DB CRUD 연결)
+--------------------------------------------------
+- /admin/settings 페이지의 mock(adminContacts) 의존 제거
+- settings repository 기반 조회 연결
+  - getSettings()로 설정값 로드
+- settings 저장 서버 액션 추가
+  - app/admin/(panel)/settings/actions.ts
+  - upsertSetting(setting_key, setting_value) 기반 저장
+- 설정 키 매핑 유틸 추가
+  - lib/settings/admin-settings.ts
+  - 기본값 + DB값 병합 로직
+- 관리자 설정 UI를 클라이언트 매니저 컴포넌트로 전환
+  - components/admin/admin-settings-manager.tsx
+  - 저장 성공/실패 피드백 메시지 표시
+  - 저장 중 버튼/입력 비활성화 처리
+- 저장 버튼 문구를 Mock에서 실제 저장 문구로 변경
+  - "설정 저장 (Mock)" -> "설정 저장"
+- 관리 항목 반영
+  - 관리자 알림 전화번호
+  - 문자 발신 번호 표시
+  - 일일 연락 알림 발송 시간
+  - 사이트 공개 여부
+  - 후원 신청 가능 여부
+  - 기본 후원 금액
+  - 전체 목표 학생 수
+- seed 기본 설정값 확장
+  - sms_sender_phone_display
+  - site_public_enabled
+  - sponsorship_request_enabled
+  - default_sponsorship_amount
+  - target_student_count
+
+--------------------------------------------------
+작업 로그 (2026-05-14 - 운영 폴리시/UI·SEO·예외처리 개선)
+--------------------------------------------------
+- UI polish
+  - 공통 디자인 토큰/테이블/버튼/hover 스타일 정리 (`app/globals.css`)
+  - 공개 페이지(홈/학생/학교소개/프로젝트/갤러리) 메타/카드/여백/문구 톤 정리
+  - 관리자 페이지 테이블 가독성 개선(`data-table`) 및 빈 상태 카드/토스트 스타일 통일
+  - 상태 뱃지 시각 개선(점 아이콘 + 경계 + 대비 강화)
+- SEO 적용
+  - 루트 metadata 강화 (title template, keywords, openGraph, twitter, favicon)
+  - 페이지별 metadata 보강 (홈/학생/학교 소개/프로젝트/갤러리)
+  - `app/sitemap.ts`, `app/robots.ts` 추가
+  - 관리자 영역 noindex 처리 (`/admin`, `/admin/login`, `/admin/(panel)`)
+- 운영 예외 처리
+  - 전역 `not-found.tsx`, `error.tsx`, `loading.tsx` 추가
+  - 공개/관리자 세그먼트 로딩(`(public)/loading.tsx`, `admin/(panel)/loading.tsx`) 추가
+  - 관리자 패널 전용 에러 바운더리(`admin/(panel)/error.tsx`) 추가
+  - 미인증 관리자 접근 시 로그인 안내 문구 강화 (middleware query 전달)
+  - 후원 상태 변경 후 문자 발송 실패 시 성공/실패 분리 메시지 처리
+- 성능 개선
+  - 갤러리/관리자 갤러리 이미지 렌더링을 Next/Image로 통일
+  - route-level loading UI로 체감 로딩 개선
+  - 관리자 목록 화면의 검색/필터 계산은 memoization 기반으로 유지
+- 운영 UX 개선
+  - 공통 `FeedbackToast` 적용(학생/결연/갤러리/설정/후원 신청 오류)
+  - 결연 관리 상태 변경 confirm + 저장 중 disabled + 동일 상태 변경 방지
+  - 결연/문자/대시보드에서 전화/이메일 복사 버튼 추가
+  - 관리자 날짜 표기 `formatDateTimeKorean`으로 통일
+  - 학생/결연 관리에 검색 초기화 UX 추가
+- 접근성 개선
+  - 버튼/요소 aria-label 보강(모바일 메뉴, 복사 버튼, 상태 저장, 메시지 상세)
+  - 모달 ESC 닫기 및 배경 클릭 닫기 지원
+  - 입력 라벨 연결 점검 및 최소 터치 영역 유지
+
+--------------------------------------------------
+작업 로그 (2026-05-14 - 배포 준비 최종 점검)
+--------------------------------------------------
+- 배포 전 체크리스트 문서 추가
+  - `DEPLOY_CHECKLIST.md` 생성
+  - 환경변수/Turso/Vercel Blob/Solapi/관리자 인증/SEO/스모크 테스트 항목 정리
+- Next.js 16 권장 컨벤션 반영
+  - `middleware.ts` -> `proxy.ts`로 마이그레이션
+  - 관리자 보호 라우트 인증 로직은 유지
+- 공개 홈 페이지 DB 기반 운영 데이터로 전환
+  - 학생/후원/설정 정보를 repository로 조회
+  - 목표 학생 수(`target_student_count`) 설정값 반영
+  - 결연 통계/대표 학생/공개 응원 메시지를 실제 데이터 기반으로 표시
+  - DB 조회 실패 시 안내 메시지 표시
+- 공개 프로젝트 페이지에서 불필요한 mock import 제거
+  - 후원금 사용처 데이터는 페이지 내부 상수로 유지
+- 후원 정책 유틸 정리
+  - `lib/sponsorship/policy.ts` 신설
+  - 기존 `mock-flow` 의존 제거 및 관련 import 전환
+- 미사용 mock 데이터 파일 정리
+  - `lib/mock-data.ts` 삭제
