@@ -6,68 +6,11 @@ import { createClient, type Client } from "@libsql/client";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = resolve(__dirname, "..");
-const envFilePath = resolve(projectRoot, ".env.local");
 
 const REQUIRED_ENV_KEYS = ["TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN"] as const;
 
 type RequiredEnvKey = (typeof REQUIRED_ENV_KEYS)[number];
-
-function parseEnvLine(rawLine: string): [string, string] | null {
-  const line = rawLine.trim();
-  if (!line || line.startsWith("#")) {
-    return null;
-  }
-
-  const separatorIndex = line.indexOf("=");
-  if (separatorIndex <= 0) {
-    return null;
-  }
-
-  const key = line.slice(0, separatorIndex).trim();
-  let value = line.slice(separatorIndex + 1).trim();
-
-  if (
-    (value.startsWith('"') && value.endsWith('"')) ||
-    (value.startsWith("'") && value.endsWith("'"))
-  ) {
-    value = value.slice(1, -1);
-  }
-
-  return [key, value];
-}
-
-async function loadProjectEnvFile(): Promise<void> {
-  let rawEnv = "";
-  try {
-    rawEnv = await readFile(envFilePath, "utf8");
-  } catch (error) {
-    const code =
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      typeof (error as { code?: unknown }).code === "string"
-        ? (error as { code: string }).code
-        : null;
-
-    if (code === "ENOENT") {
-      return;
-    }
-
-    throw new Error(`[DB] .env.local 파일을 읽지 못했습니다: ${envFilePath}`);
-  }
-
-  for (const line of rawEnv.split(/\r?\n/)) {
-    const parsed = parseEnvLine(line);
-    if (!parsed) {
-      continue;
-    }
-
-    const [key, value] = parsed;
-    if (!process.env[key]) {
-      process.env[key] = value;
-    }
-  }
-}
+type RawRow = Record<string, unknown>;
 
 function getMissingRequiredEnvKeys(): RequiredEnvKey[] {
   return REQUIRED_ENV_KEYS.filter((key) => {
@@ -85,9 +28,26 @@ function getRequiredEnvValue(key: RequiredEnvKey): string {
   return value;
 }
 
-export async function createTursoClient(): Promise<Client> {
-  await loadProjectEnvFile();
+function toSafeInteger(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.trunc(value);
+  }
 
+  if (typeof value === "bigint") {
+    return Number(value);
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isNaN(parsed)) {
+      return parsed;
+    }
+  }
+
+  return 0;
+}
+
+export function validateDbEnv(envFilePath: string): void {
   const missingKeys = getMissingRequiredEnvKeys();
   if (missingKeys.length > 0) {
     throw new Error(
@@ -98,7 +58,34 @@ export async function createTursoClient(): Promise<Client> {
         "TURSO_AUTH_TOKEN=your-token",
     );
   }
+}
 
+export function getDbTargetUrl(): string {
+  return getRequiredEnvValue("TURSO_DATABASE_URL");
+}
+
+export function maskDbTargetUrl(url: string): string {
+  const trimmed = url.trim();
+  const separator = "://";
+  const protocolIndex = trimmed.indexOf(separator);
+
+  if (protocolIndex >= 0) {
+    const protocol = trimmed.slice(0, protocolIndex + separator.length);
+    const rest = trimmed.slice(protocolIndex + separator.length);
+    if (rest.length <= 14) {
+      return `${protocol}${rest}`;
+    }
+    return `${protocol}${rest.slice(0, 14)}...`;
+  }
+
+  if (trimmed.length <= 24) {
+    return trimmed;
+  }
+
+  return `${trimmed.slice(0, 24)}...`;
+}
+
+export function createTursoClient(): Client {
   return createClient({
     url: getRequiredEnvValue("TURSO_DATABASE_URL"),
     authToken: getRequiredEnvValue("TURSO_AUTH_TOKEN"),
@@ -115,14 +102,15 @@ export async function executeSqlScript(
   sql: string,
   label: string,
 ): Promise<void> {
-  if (typeof client.executeMultiple !== "function") {
-    throw new Error(
-      "[DB] @libsql/client does not expose executeMultiple. Update the package version.",
-    );
-  }
+  const statements = splitSqlStatements(sql).filter((statement) => {
+    const normalized = statement.trim().toUpperCase();
+    return normalized !== "BEGIN TRANSACTION;" && normalized !== "COMMIT;";
+  });
 
   try {
-    await client.executeMultiple(sql);
+    for (const statement of statements) {
+      await client.execute(statement);
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes("SQLITE_BUSY")) {
@@ -130,17 +118,16 @@ export async function executeSqlScript(
         "[DB] 데이터베이스가 잠겨 있습니다(SQLITE_BUSY). 실행 중인 개발 서버를 종료한 뒤 다시 시도해 주세요.",
       );
     }
-
     throw error;
   }
 
-  console.log(`[DB] ${label} 적용 완료`);
+  console.log(`[DB] ${label} 적용 완료 (${statements.length} statements)`);
 }
 
 export async function runWithClient(
   task: (client: Client) => Promise<void>,
 ): Promise<void> {
-  const client = await createTursoClient();
+  const client = createTursoClient();
   try {
     await task(client);
   } finally {
@@ -148,4 +135,72 @@ export async function runWithClient(
       client.close();
     }
   }
+}
+
+export async function printDbVerification(client: Client): Promise<void> {
+  const tableResult = await client.execute<RawRow>(
+    `
+      SELECT name
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND name NOT LIKE 'sqlite_%'
+      ORDER BY name ASC
+    `,
+  );
+
+  const tableNames = tableResult.rows
+    .map((row) => {
+      const value = row.name;
+      return typeof value === "string" ? value : "";
+    })
+    .filter((name) => name.length > 0);
+
+  console.log(`[DB] tables: ${tableNames.join(", ") || "(none)"}`);
+
+  const studentsCountResult = await client.execute<RawRow>(
+    "SELECT COUNT(*) AS count FROM students",
+  );
+  const studentsCount = toSafeInteger(studentsCountResult.rows[0]?.count);
+  console.log(`[DB] students count: ${studentsCount}`);
+}
+
+function splitSqlStatements(sql: string): string[] {
+  const statements: string[] = [];
+  const lines = sql.split(/\r?\n/);
+  let buffer = "";
+  let inTrigger = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("--")) {
+      continue;
+    }
+
+    buffer += `${line}\n`;
+
+    if (!inTrigger && /^CREATE\s+TRIGGER\b/i.test(trimmed)) {
+      inTrigger = true;
+      continue;
+    }
+
+    if (inTrigger) {
+      if (/^END;$/i.test(trimmed)) {
+        statements.push(buffer.trim());
+        buffer = "";
+        inTrigger = false;
+      }
+      continue;
+    }
+
+    if (trimmed.endsWith(";")) {
+      statements.push(buffer.trim());
+      buffer = "";
+    }
+  }
+
+  if (buffer.trim()) {
+    statements.push(buffer.trim());
+  }
+
+  return statements;
 }
