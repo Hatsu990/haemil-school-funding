@@ -217,17 +217,17 @@ export default async function HomePage() {
               결연 현황
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-[#fff2e6] p-6 md:p-7">
+              <div className="rounded-2xl bg-[#fff2e6] p-5 md:p-6">
                 <p className="text-sm font-medium text-[#7b5a46]">결연 대기 수</p>
                 <p className="mt-2 text-4xl font-bold md:text-5xl">
                   {unmatchedCount}명
                 </p>
               </div>
-              <div className="rounded-2xl bg-[#fff8df] p-6 md:p-7">
+              <div className="rounded-2xl bg-[#fff8df] p-5 md:p-6">
                 <p className="text-sm font-medium text-[#7b5a46]">결연 완료 수</p>
                 <p className="mt-2 text-4xl font-bold md:text-5xl">{matchedCount}명</p>
               </div>
-              <div className="rounded-2xl bg-[#ebf3ff] p-6 md:p-7 sm:col-span-2">
+              <div className="rounded-2xl bg-[#ebf3ff] p-5 md:p-6 sm:col-span-2">
                 <p className="mt-1 text-3xl font-bold text-[#2e3b57] md:text-4xl">
                   <span className="rounded-lg bg-[#ffe7d4] px-3 py-1 text-[var(--brand-strong)]">
                     {matchedCount}
