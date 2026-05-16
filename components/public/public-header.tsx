@@ -24,22 +24,25 @@ export function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[#fff9f2]/92 backdrop-blur-md">
-      <div className="container-base flex min-h-20 items-center justify-between py-3">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#e8d2bf] bg-white shadow-sm">
+      <div className="mx-auto flex min-h-[68px] w-full max-w-[1360px] items-center justify-between px-5 py-1 sm:min-h-[78px] sm:px-7 sm:py-1.5 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12">
+        <Link href="/" className="flex items-center gap-3 sm:gap-5">
+          <div className="relative -my-4 h-[108px] w-[108px] shrink-0 sm:-my-8 sm:h-[196px] sm:w-[196px]">
             <Image
               src="/images/haemil/haemil-school-logo.png"
               alt="해밀학교 로고"
               fill
-              className="object-contain p-1"
-              sizes="48px"
+              className="object-contain drop-shadow-[0_10px_16px_rgba(84,55,34,0.24)]"
+              sizes="(max-width: 640px) 108px, 196px"
             />
           </div>
-          <div>
-            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#9f7e67]">
+          <div className="space-y-0.5 sm:space-y-1">
+            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#9f7e67] sm:text-[0.76rem]">
               Haemil School
             </p>
-            <p className="font-serif text-lg font-bold text-[#2c2018]">
+            <p className="font-serif text-[1.62rem] leading-none font-bold tracking-[-0.01em] text-[#2a1e17] sm:text-[2.05rem]">
+              해밀학교
+            </p>
+            <p className="text-sm font-medium tracking-[0.01em] text-[#755d4d] sm:text-base">
               생활관비 결연 후원
             </p>
           </div>

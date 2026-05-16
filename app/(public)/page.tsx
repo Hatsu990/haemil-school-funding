@@ -125,22 +125,35 @@ export default async function HomePage() {
   const publicSponsorMessages = getPublicSponsorMessages(sponsorships).slice(0, 3);
 
   return (
-    <div className="pb-16">
-      <section className="container-base grid gap-8 pt-10 md:grid-cols-[1.1fr_0.9fr] md:items-center md:gap-10 lg:pt-12">
-        <article className="relative min-h-[640px] overflow-hidden rounded-[34px] border border-[#e8d6c7] shadow-[0_24px_50px_rgba(121,84,53,0.18)] sm:min-h-[620px]">
+    <div className="relative overflow-hidden pb-16">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[560px] bg-[radial-gradient(ellipse_at_top,#f8e7d7_0%,rgba(248,231,215,0.18)_52%,transparent_75%)] xl:block"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-28 top-[34rem] -z-10 hidden h-72 w-72 rounded-full bg-[#f0d7bf]/45 blur-3xl xl:block"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 top-[58rem] -z-10 hidden h-80 w-80 rounded-full bg-[#d7e6fb]/50 blur-3xl xl:block"
+      />
+
+      <section className="container-home grid gap-8 pt-10 md:grid-cols-[minmax(0,1.14fr)_minmax(0,0.86fr)] md:items-stretch md:gap-7 lg:pt-12 xl:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] xl:gap-6 2xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <article className="relative min-h-[620px] overflow-hidden rounded-[34px] border border-[#e8d6c7] shadow-[0_24px_50px_rgba(121,84,53,0.18)] sm:min-h-[620px] xl:min-h-[680px] 2xl:min-h-[720px]">
           <Image
             src="/images/haemil/people-activity-4.jpg"
             alt="해밀학교 전경"
             fill
             priority
             className="object-cover object-[center_24%] sm:object-center"
-            sizes="(max-width: 1024px) 100vw, 58vw"
+            sizes="(max-width: 1024px) 100vw, (max-width: 1536px) 62vw, 60vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#2a1d15]/88 via-[#4d3323]/70 to-[#d18446]/35" />
           <div className="absolute -right-16 top-6 h-56 w-56 rounded-full bg-[#f0b37d]/35 blur-3xl" />
           <div className="absolute -left-16 bottom-6 h-44 w-44 rounded-full bg-[#f7e9d8]/25 blur-3xl" />
 
-          <div className="relative z-10 flex h-full flex-col justify-between p-7 sm:p-9 lg:p-11">
+          <div className="relative z-10 flex h-full flex-col justify-between p-7 sm:p-9 lg:p-10 xl:p-11 2xl:p-12">
             <div>
               <p className="inline-flex rounded-full border border-white/25 bg-white/15 px-4 py-1 text-xs font-bold tracking-[0.1em] text-[#fff2e6]">
                 해밀학교 생활관비 1:1 결연 후원
@@ -150,7 +163,7 @@ export default async function HomePage() {
                 <br />
                 꿈에 집중할 수 있도록
               </h1>
-              <div className="mt-6 max-w-2xl space-y-4 text-base leading-8 text-[#f7e9dd]">
+              <div className="mt-6 max-w-2xl space-y-4 text-base leading-8 text-[#f7e9dd] xl:max-w-3xl">
                 <p>
                   해밀학교의 학생들은 다문화·중도입국 가정이라는 다양한 환경
                   속에서도 자신의 꿈을 포기하지 않고 배움을 이어가기 위해 학교와
@@ -178,11 +191,11 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:gap-4">
               {activityHighlights.map((item) => (
                 <div
                   key={item.text}
-                  className="flex items-center gap-3 rounded-2xl border border-[#efd9c6]/95 bg-[#fff8f1]/95 p-3 shadow-[0_8px_18px_rgba(40,28,20,0.2)]"
+                  className="flex items-center gap-3 rounded-2xl border border-[#efd9c6]/95 bg-[#fff8f1]/95 p-3 shadow-[0_8px_18px_rgba(40,28,20,0.2)] xl:p-3.5"
                 >
                   <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border border-[#ead5c4]">
                     <Image
@@ -194,40 +207,42 @@ export default async function HomePage() {
                       sizes="80px"
                     />
                   </div>
-                  <p className="text-xs font-medium leading-5 text-[#4f3c30]">{item.text}</p>
+                  <p className="text-sm font-semibold leading-6 text-[#4f3c30] sm:text-base sm:leading-7">
+                    {item.text}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         </article>
 
-        <aside className="surface-card relative w-full overflow-hidden p-8 md:justify-self-end md:p-10">
+        <aside className="surface-card relative w-full overflow-hidden p-7 md:p-8 lg:p-9 xl:flex xl:min-h-[680px] xl:items-center xl:p-10 2xl:min-h-[720px] 2xl:p-11">
           <Image
             src="/images/haemil/school-campus-3.jpg"
             alt=""
             aria-hidden
             fill
             className="object-cover object-[center_30%] opacity-15 sm:object-center"
-            sizes="(max-width: 1024px) 100vw, 42vw"
+            sizes="(max-width: 1024px) 100vw, (max-width: 1536px) 38vw, 40vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#fffaf4]/98 via-[#fffaf4]/94 to-[#fffaf4]" />
 
-          <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-[#2f221a] md:text-[2rem]">
+          <div className="relative z-10 w-full">
+            <h2 className="text-2xl font-bold text-[#2f221a] md:text-[2rem] xl:text-[2.15rem]">
               결연 현황
             </h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-[#fff2e6] p-5 md:p-6">
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:mt-6 xl:gap-5">
+              <div className="rounded-2xl bg-[#fff2e6] p-5 md:p-6 xl:p-7">
                 <p className="text-sm font-medium text-[#7b5a46]">결연 대기 수</p>
                 <p className="mt-2 text-4xl font-bold md:text-5xl">
                   {unmatchedCount}명
                 </p>
               </div>
-              <div className="rounded-2xl bg-[#fff8df] p-5 md:p-6">
+              <div className="rounded-2xl bg-[#fff8df] p-5 md:p-6 xl:p-7">
                 <p className="text-sm font-medium text-[#7b5a46]">결연 완료 수</p>
                 <p className="mt-2 text-4xl font-bold md:text-5xl">{matchedCount}명</p>
               </div>
-              <div className="rounded-2xl bg-[#ebf3ff] p-5 md:p-6 sm:col-span-2">
+              <div className="rounded-2xl bg-[#ebf3ff] p-5 md:p-6 sm:col-span-2 xl:p-7">
                 <p className="mt-1 text-3xl font-bold text-[#2e3b57] md:text-4xl">
                   <span className="rounded-lg bg-[#ffe7d4] px-3 py-1 text-[var(--brand-strong)]">
                     {matchedCount}
@@ -251,8 +266,8 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      <section className="container-base mt-14">
-        <div className="mb-6 flex items-end justify-between">
+      <section className="container-home mt-14 xl:mt-16">
+        <div className="mb-6 flex items-end justify-between xl:mb-7">
           <div>
             <p className="text-sm font-semibold text-[#8f6f5a]">대표 학생 카드</p>
             <h2 className="section-title mt-2">함께 만나볼 학생들</h2>
@@ -267,7 +282,7 @@ export default async function HomePage() {
             description="학생 정보가 등록되면 대표 학생 카드가 표시됩니다."
           />
         ) : (
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(270px,1fr))] xl:gap-6 2xl:[grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
             {representativeStudents.map((student) => (
               <StudentCard key={student.id} student={student} />
             ))}
@@ -275,7 +290,7 @@ export default async function HomePage() {
         )}
       </section>
 
-      <section className="container-base mt-14">
+      <section className="container-home mt-14 xl:mt-16">
         <article className="surface-card relative overflow-hidden p-6 sm:p-7">
           <Image
             src="/images/haemil/school-campus-1.jpg"
@@ -311,8 +326,8 @@ export default async function HomePage() {
         </article>
       </section>
 
-      <section className="container-base mt-14">
-        <div className="surface-card relative overflow-hidden p-7 md:grid md:grid-cols-[1fr_auto] md:items-center">
+      <section className="container-home mt-14 xl:mt-16">
+        <div className="surface-card relative overflow-hidden p-7 md:grid md:grid-cols-[1fr_auto] md:items-center xl:p-8">
           <Image
             src="/images/haemil/school-campus-2.png"
             alt=""

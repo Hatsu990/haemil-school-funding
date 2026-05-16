@@ -14,7 +14,7 @@ export function PublicFooter() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#fff8f0]/95 to-[#fdf7f0]" />
 
-      <div className="container-base relative z-10 grid gap-8 py-12 md:grid-cols-[1.2fr_0.8fr] md:items-start">
+      <div className="relative z-10 mx-auto w-full max-w-[1360px] px-5 py-12 sm:px-7 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-start">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#e8d2bf] bg-white shadow-sm">
