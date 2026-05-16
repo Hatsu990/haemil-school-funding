@@ -182,57 +182,57 @@ export default function ProjectPage() {
 
       <section className="mt-8">
         <article className="surface-card overflow-hidden p-6 sm:p-7">
-          <div className="mb-5 grid gap-4 sm:grid-cols-3">
-            <div className="relative min-h-[130px] overflow-hidden rounded-2xl border border-[var(--border)]">
-              <Image
-                src="/images/haemil/people-activity-3.png"
-                alt="학생 활동 사진"
-                fill
-                className="object-cover object-[center_34%] sm:object-center"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2a1f17]/45 via-transparent to-transparent" />
-            </div>
-            <div className="relative min-h-[130px] overflow-hidden rounded-2xl border border-[var(--border)]">
-              <Image
-                src="/images/haemil/people-activity-5.jpg"
-                alt="학교 활동 사진"
-                fill
-                className="object-cover object-[center_34%] sm:object-center"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2a1f17]/45 via-transparent to-transparent" />
-            </div>
-            <div className="relative min-h-[130px] overflow-hidden rounded-2xl border border-[var(--border)]">
-              <Image
-                src="/images/haemil/school-campus-3.jpg"
-                alt="학교 전경 사진"
-                fill
-                className="object-cover object-[center_34%] sm:object-center"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2a1f17]/45 via-transparent to-transparent" />
-            </div>
-          </div>
-
           <h2 className="text-xl font-bold text-[#2f231b] sm:text-2xl">후원 절차</h2>
-          <ol className="mt-4 grid gap-4 md:grid-cols-2">
-            {processSteps.map((step, index) => (
-              <li
-                key={step.title}
-                className="rounded-2xl border border-[var(--border)] bg-[#fff8f1] p-5"
-              >
-                <p className="text-xs font-bold tracking-[0.08em] text-[#9f5f34]">
-                  STEP {index + 1}
-                </p>
-                <h3 className="mt-2 text-base font-bold leading-7 text-[#2f231b]">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-7 text-[#5d483a]">
-                  {step.description}
-                </p>
-              </li>
-            ))}
+          <ol className="mt-4 grid gap-0">
+            {processSteps.flatMap((step, index) => {
+              const isLast = index === processSteps.length - 1;
+
+              return [
+                <li
+                  key={`step-${step.title}`}
+                  className="rounded-2xl border border-[var(--border)] bg-[#fff8f1] p-5"
+                >
+                  <p className="text-xs font-bold tracking-[0.08em] text-[#9f5f34]">
+                    STEP {index + 1}
+                  </p>
+                  <h3 className="mt-2 text-base font-bold leading-7 text-[#2f231b]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-7 text-[#5d483a]">
+                    {step.description}
+                  </p>
+                </li>,
+                !isLast ? (
+                  <li
+                    key={`connector-${step.title}`}
+                    aria-hidden
+                    className="flex h-28 items-center justify-center py-6"
+                  >
+                    <svg
+                      width="36"
+                      height="41"
+                      viewBox="0 0 30 34"
+                      className="drop-shadow-[0_2px_3px_rgba(121,84,53,0.18)]"
+                    >
+                      <path
+                        d="M15 4V22"
+                        stroke="#9d6038"
+                        strokeWidth="4.2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M8 17L15 29L22 17"
+                        fill="none"
+                        stroke="#9d6038"
+                        strokeWidth="4.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </li>
+                ) : null,
+              ];
+            })}
           </ol>
         </article>
       </section>

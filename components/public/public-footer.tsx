@@ -14,30 +14,35 @@ export function PublicFooter() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#fff8f0]/95 to-[#fdf7f0]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1360px] px-5 py-12 sm:px-7 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-start">
-        <div>
-          <Link href="/" className="inline-flex items-center gap-3">
-            <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#e8d2bf] bg-white shadow-sm">
+      <div className="relative z-10 mx-auto w-full max-w-[1360px] px-5 pt-8 pb-4 sm:px-7 sm:pt-9 sm:pb-4 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-start">
+        <div className="pl-2 sm:pl-3">
+          <div className="inline-flex items-start gap-2.5 sm:gap-3">
+            <Link
+              href="/"
+              className="relative -mt-4 h-[96px] w-[96px] shrink-0 self-start sm:-mt-6 sm:h-[126px] sm:w-[126px]"
+              aria-label="해밀학교 홈"
+            >
               <Image
                 src="/images/haemil/haemil-school-logo.png"
                 alt="해밀학교 로고"
                 fill
-                className="object-contain p-1"
-                sizes="48px"
+                className="object-contain object-top drop-shadow-[0_10px_16px_rgba(84,55,34,0.24)]"
+                sizes="(max-width: 640px) 96px, 126px"
               />
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8c6953]">
+            </Link>
+
+            <Link href="/" className="block">
+              <p className="text-[0.68rem] leading-none font-semibold uppercase tracking-[0.12em] text-[#8c6953]">
                 Haemil School
               </p>
-              <h3 className="font-serif text-xl font-bold text-[#2c2018]">
+              <h3 className="mt-0.5 font-serif text-xl leading-tight font-bold text-[#2c2018]">
                 해밀학교 후원 프로젝트
               </h3>
-            </div>
-          </Link>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-[#5f4b3f]">
-            학생들의 생활관비를 함께 책임지는 1:1 결연 후원 플랫폼.
-            후원자와 학생이 신뢰로 연결되는 과정을 투명하게 운영합니다.
+            </Link>
+          </div>
+          <p className="-mt-12 max-w-xl text-sm leading-7 text-[#5f4b3f] sm:-mt-14">
+            학생들의 생활관비를 함께 책임지는 1:1 결연 후원 플랫폼. 후원자와 학생이
+            신뢰로 연결되는 과정을 투명하게 운영합니다.
           </p>
         </div>
 
@@ -51,7 +56,7 @@ export function PublicFooter() {
         </div>
       </div>
 
-      <div className="relative z-10 border-t border-[var(--border)] py-4 text-center text-xs subtle-text">
+      <div className="relative z-10 border-t border-[var(--border)] py-3 text-center text-xs subtle-text">
         © 2026 해밀학교 후원 프로젝트. All rights reserved.
       </div>
     </footer>
