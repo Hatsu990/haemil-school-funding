@@ -40,17 +40,17 @@ export function StudentCard({ student }: StudentCardProps) {
 
   return (
     <>
-      <article className="surface-card overflow-hidden">
-        <div className={`bg-gradient-to-br p-4 ${profileTheme}`}>
+      <article className="surface-card overflow-hidden rounded-[24px] border-[#e8d9cd] shadow-[0_14px_34px_rgba(121,84,53,0.14)]">
+        <div className={`bg-gradient-to-br p-5 ${profileTheme}`}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <StudentProfileImage
                 src={studentUi.profileImageUrl}
                 alt={`${studentUi.nickname} 학생 프로필 이미지`}
-                className="w-20 shrink-0"
+                className="w-24 shrink-0 border-white/70 shadow-lg"
               />
               <div className="min-w-0">
-                <h3 className="truncate text-lg font-bold text-[#2f231b]">
+                <h3 className="truncate text-xl font-bold text-[#2f231b]">
                   {studentUi.nickname}
                 </h3>
                 <p className="mt-1 text-sm text-[#5f4a3c]">
@@ -65,8 +65,8 @@ export function StudentCard({ student }: StudentCardProps) {
           </div>
         </div>
 
-        <div className="space-y-4 p-5">
-          <p className="text-sm leading-6 text-[#4d3d31]">{studentUi.description}</p>
+        <div className="space-y-4 p-5 sm:p-6">
+          <p className="text-sm leading-7 text-[#4d3d31]">{studentUi.description}</p>
           <div className="rounded-xl bg-[#fff5ea] p-3 text-xs leading-5 text-[#6a5445]">
             손편지 상태: {letterStatusText}
           </div>

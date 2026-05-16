@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,22 +15,28 @@ const navItems = [
 function getLinkClass(pathname: string, href: string): string {
   const isActive = pathname === href;
   return isActive
-    ? "rounded-lg bg-[#f8e6d7] px-3 py-2 text-sm font-semibold text-[#8b4a20]"
-    : "rounded-lg px-3 py-2 text-sm font-medium text-[#5d4a3e] transition hover:bg-[#fff1e5]";
+    ? "rounded-full bg-[#f6dfcb] px-4 py-2 text-sm font-semibold text-[#8b4a20]"
+    : "rounded-full px-4 py-2 text-sm font-medium text-[#5d4a3e] transition hover:bg-[#fff1e5]";
 }
 
 export function PublicHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[#fff9f2]/95 backdrop-blur">
-      <div className="container-base flex h-18 items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[#fff9f2]/92 backdrop-blur-md">
+      <div className="container-base flex min-h-20 items-center justify-between py-3">
         <Link href="/" className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#f5d9be] text-lg font-bold text-[#8d4f28]">
-            해
+          <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#e8d2bf] bg-white shadow-sm">
+            <Image
+              src="/images/haemil/haemil-school-logo.png"
+              alt="해밀학교 로고"
+              fill
+              className="object-contain p-1"
+              sizes="48px"
+            />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#9f7e67]">
+            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#9f7e67]">
               Haemil School
             </p>
             <p className="font-serif text-lg font-bold text-[#2c2018]">
@@ -56,11 +63,11 @@ export function PublicHeader() {
         <details className="relative md:hidden">
           <summary
             aria-label="모바일 메뉴 열기"
-            className="list-none rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[#614d3e]"
+            className="list-none rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm font-semibold text-[#614d3e]"
           >
             메뉴
           </summary>
-          <div className="absolute right-0 mt-2 w-52 rounded-xl border border-[var(--border)] bg-white p-2 shadow-lg">
+          <div className="absolute right-0 mt-2 w-56 rounded-xl border border-[var(--border)] bg-white p-2 shadow-lg">
             <div className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <Link

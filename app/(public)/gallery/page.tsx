@@ -91,12 +91,27 @@ export default async function GalleryPage() {
 
   return (
     <div className="container-base pb-16 pt-10 sm:pt-12">
-      <header className="mb-8">
-        <p className="text-sm font-semibold text-[#8d694f]">갤러리</p>
-        <h1 className="section-title mt-2">학교 활동 기록</h1>
-        <p className="mt-3 text-sm leading-7 subtle-text">
-          학교의 주요 활동 사진과 영상을 모아 공개합니다.
-        </p>
+      <header className="relative mb-8 overflow-hidden rounded-[30px] border border-[#e8d6c8] shadow-[0_18px_42px_rgba(121,84,53,0.16)] sm:mb-10">
+        <Image
+          src="/images/haemil/people-activity-5.jpg"
+          alt="해밀학교 활동 현장"
+          fill
+          priority
+          className="object-cover object-[center_28%] sm:object-center"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#191717]/82 via-[#3d3027]/68 to-[#c87f47]/44" />
+        <div className="relative z-10 px-7 py-11 sm:px-9 sm:py-14">
+          <p className="text-sm font-semibold text-[#f0d8c2]">갤러리</p>
+          <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-[#fff8f2] sm:text-4xl">
+            학교 활동 기록
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-[#f8eade] sm:text-base sm:leading-8">
+            교실과 기숙사, 다양한 활동 현장에서 이어지는 해밀학교의 하루를
+            사진과 영상으로 전합니다.
+          </p>
+
+        </div>
       </header>
 
       {dbErrorMessage ? (
