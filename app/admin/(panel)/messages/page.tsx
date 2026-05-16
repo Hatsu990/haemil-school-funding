@@ -1,4 +1,5 @@
 import { AdminMessagesManager } from "@/components/admin/admin-messages-manager";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getSmsLogs } from "@/lib/repositories/sms";
 import { getSmsClientStatus } from "@/lib/sms/client";
 import { listSmsTemplates } from "@/lib/sms/templates";
@@ -14,9 +15,10 @@ export default async function AdminMessagesPage() {
   try {
     logs = await getSmsLogs();
   } catch (error) {
-    console.error("[admin messages page] failed to load sms logs", error);
-    dbErrorMessage =
-      "문자 발송 이력을 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
+    logDbLoadError("admin messages page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "문자 발송 이력을 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
+    );
   }
 
   return (

@@ -109,7 +109,6 @@ export async function resetAllStudentStatusesToAvailable(): Promise<number> {
     `
       UPDATE students
       SET sponsorship_status = 'available', updated_at = CURRENT_TIMESTAMP
-      WHERE sponsorship_status <> 'available'
     `,
   );
 

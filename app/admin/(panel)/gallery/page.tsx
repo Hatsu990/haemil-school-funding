@@ -1,6 +1,9 @@
 import { AdminGalleryManager } from "@/components/admin/admin-gallery-manager";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getGalleryItems } from "@/lib/repositories/gallery";
 import { GalleryItem } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminGalleryPage() {
   let galleryItems: GalleryItem[] = [];
@@ -9,9 +12,10 @@ export default async function AdminGalleryPage() {
   try {
     galleryItems = await getGalleryItems();
   } catch (error) {
-    console.error("[admin gallery page] failed to load gallery items", error);
-    dbErrorMessage =
-      "갤러리 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
+    logDbLoadError("admin gallery page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "갤러리 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
+    );
   }
 
   if (dbErrorMessage) {

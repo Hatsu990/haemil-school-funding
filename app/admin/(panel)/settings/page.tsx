@@ -1,4 +1,5 @@
 import { AdminSettingsManager } from "@/components/admin/admin-settings-manager";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getSettings } from "@/lib/repositories/settings";
 import {
   ADMIN_SETTINGS_DEFAULT_VALUES,
@@ -13,9 +14,10 @@ export default async function AdminSettingsPage() {
     const settings = await getSettings();
     initialValues = buildAdminSettingsFormValues(settings);
   } catch (error) {
-    console.error("[admin settings page] failed to load settings", error);
-    dbErrorMessage =
-      "설정 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
+    logDbLoadError("admin settings page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "설정 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
+    );
   }
 
   return (

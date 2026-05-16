@@ -351,7 +351,6 @@ export async function resetSponsorshipsAndStudentStatuses(): Promise<ResetSponso
       `
         UPDATE students
         SET sponsorship_status = 'available', updated_at = CURRENT_TIMESTAMP
-        WHERE sponsorship_status <> 'available'
       `,
     );
 

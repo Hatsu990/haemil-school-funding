@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useRef, useState, useTransition } from "react";
 import {
   createStudentAction,
@@ -37,6 +38,7 @@ function hasLetterImage(letterImageUrl: string | null | undefined): boolean {
 export function AdminStudentsManager({
   initialStudents,
 }: AdminStudentsManagerProps) {
+  const router = useRouter();
   const [students, setStudents] = useState<StudentProfile[]>(initialStudents);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [keyword, setKeyword] = useState("");
@@ -122,6 +124,7 @@ export function AdminStudentsManager({
         type: "success",
         message: `${result.message} (ID: ${nextStudent.id})`,
       });
+      router.refresh();
     });
   };
 
@@ -154,6 +157,7 @@ export function AdminStudentsManager({
         type: "success",
         message: result.message,
       });
+      router.refresh();
     } catch (error) {
       console.error("[admin students manager] failed to delete student", error);
       setFeedback({
@@ -200,6 +204,7 @@ export function AdminStudentsManager({
         type: "success",
         message: `${result.message} (${result.updatedCount ?? 0}명 변경)`,
       });
+      router.refresh();
     } catch (error) {
       console.error("[admin students manager] failed to reset student statuses", error);
       setFeedback({
@@ -245,6 +250,7 @@ export function AdminStudentsManager({
         type: "success",
         message: result.message,
       });
+      router.refresh();
     } catch (error) {
       console.error("[admin students manager] failed to upload letter image", error);
       setFeedback({
@@ -286,6 +292,7 @@ export function AdminStudentsManager({
         type: "success",
         message: result.message,
       });
+      router.refresh();
     } catch (error) {
       console.error("[admin students manager] failed to delete letter image", error);
       setFeedback({

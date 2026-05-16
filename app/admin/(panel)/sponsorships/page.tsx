@@ -1,8 +1,11 @@
 import { AdminSponsorshipsManager } from "@/components/admin/admin-sponsorships-manager";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
 import { getStudents } from "@/lib/repositories/students";
 import { withStudentUiFallbackList } from "@/lib/students/ui";
 import { SponsorshipRecord, StudentProfile } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminSponsorshipsPage() {
   let sponsorships: SponsorshipRecord[] = [];
@@ -15,12 +18,10 @@ export default async function AdminSponsorshipsPage() {
       getStudents(),
     ]);
   } catch (error) {
-    console.error(
-      "[admin sponsorships page] failed to load sponsorships from repository",
-      error,
+    logDbLoadError("admin sponsorships page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "결연 신청 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
     );
-    dbErrorMessage =
-      "결연 신청 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
   }
 
   if (dbErrorMessage) {

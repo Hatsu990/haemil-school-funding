@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { unstable_noStore as noStore } from "next/cache";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getGalleryItems } from "@/lib/repositories/gallery";
 import { formatDateKorean } from "@/lib/utils";
 import { GalleryItem } from "@/types";
@@ -27,6 +29,8 @@ export const metadata: Metadata = {
     description: "해밀학교의 사진/영상 활동 기록을 확인해 보세요.",
   },
 };
+
+export const dynamic = "force-dynamic";
 
 function GalleryCard({ item }: { item: GalleryItem }) {
   return (
@@ -71,15 +75,18 @@ function GalleryCard({ item }: { item: GalleryItem }) {
 }
 
 export default async function GalleryPage() {
+  noStore();
+
   let galleryItems: GalleryItem[] = [];
   let dbErrorMessage: string | null = null;
 
   try {
     galleryItems = await getGalleryItems();
   } catch (error) {
-    console.error("[gallery page] failed to load gallery items", error);
-    dbErrorMessage =
-      "갤러리 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    logDbLoadError("gallery page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "갤러리 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    );
   }
 
   return (

@@ -50,6 +50,82 @@ Vercel 확인 경로:
 4) `/students` 요청 시점 로그 확인
 
 --------------------------------------------------
+DB 연결 소스/동기화 점검 (2026-05-15)
+--------------------------------------------------
+
+목적:
+- localhost 개발 서버와 Vercel Production이 같은 Turso DB를 바라보는지 확인
+- 운영 반영 지연이 "코드 배포 문제"인지 "서로 다른 DB 연결 문제"인지 분리
+
+lib/db/client.ts 환경변수 로딩 규칙:
+1) Vercel 런타임(`VERCEL`/`VERCEL_ENV` 존재)
+- `.env.local`을 읽지 않음
+- Vercel Environment Variables만 사용
+
+2) localhost 개발 런타임
+- 프로젝트 루트 `.env.local`을 로딩 시도
+- 없으면 OS process environment 사용
+
+보안 정책:
+- `TURSO_AUTH_TOKEN` 전체값 출력 금지
+- `TURSO_DATABASE_URL` 전체값 출력 금지
+- 로그에는 마스킹된 일부만 출력
+
+출력되는 DB 디버그 로그 예시:
+- `[DB] runtime=localhost-development, source=.env.local (local file), url=libsql://xxxx***yyyyyy, token=abcd***xyz`
+- `[DB] runtime=vercel-production, source=Vercel Environment Variables, url=libsql://xxxx***yyyyyy, token=abcd***xyz`
+
+동일 DB 판별 방법:
+1) localhost에서 관리자 페이지 요청(또는 DB 조회 발생) 후 터미널 로그의 `url=...` 확인
+2) 운영 사이트에서 동일 기능 호출 후 Vercel Runtime Logs의 `url=...` 확인
+3) 두 로그의 마스킹 URL 패턴이 동일하면 같은 Turso DB를 사용 중
+
+중요:
+- localhost와 Production이 같은 DB를 바라보면,
+  localhost 관리자 페이지에서 수정한 데이터는 운영 사이트에도 즉시 반영될 수 있음
+  (동일 DB이므로 배포 없이 데이터 레벨로 바로 공유됨)
+
+DB 연결 실패 시:
+- 화면 메시지에 `환경(runtime)` + `마스킹 DB URL`이 함께 표시됨
+- 서버 콘솔에도 동일 디버그 컨텍스트로 에러가 남음
+
+--------------------------------------------------
+운영 시작 전 초기화/삭제 정책 (2026-05-16)
+--------------------------------------------------
+
+운영 초기화 명령:
+- `npm run db:reset-operational -- --confirm`
+
+동작:
+- `sponsorships` 전체 삭제
+- `students.sponsorship_status` 전체 `available`로 일괄 변경
+- 학생 데이터 자체(`students` row), 학생 프로필 이미지, 손편지 이미지는 삭제하지 않음
+
+보존:
+- `gallery_items`
+- `settings`
+- `sms_logs`
+
+주의:
+- 더미 신청 데이터는 `db:seed`를 다시 실행할 때만 재삽입됩니다.
+- 앱 런타임에서 `seed.sql`을 자동 실행하지 않습니다.
+
+학생 상태 기준:
+- DB 내부 상태값: `available` / `pending` / `matched`
+- UI 표시값: 신청가능 / 입금대기 / 결연완료
+- 초기화는 상태값과 무관하게 모든 학생을 `available`로 재설정합니다.
+
+갤러리 삭제 정책:
+- 공개 노출 여부는 `gallery_items` 테이블 기준으로만 판단합니다.
+- 관리자에서 항목 삭제 시 `/`, `/gallery`, `/admin/gallery`, `/admin/dashboard` 경로를 revalidate합니다.
+- 따라서 DB에서 삭제된 항목은 공개 메인/갤러리에서 다시 보이면 안 됩니다.
+
+Blob 정리 정책:
+- `file_url`이 Vercel Blob URL(`*.blob.vercel-storage.com`)일 때만 Blob 삭제를 시도합니다.
+- Blob 삭제 실패 시에도 DB 삭제는 성공 처리하며, 화면에서는 "노출 삭제 완료 + 파일 정리 실패"를 분리 안내합니다.
+- Blob 삭제 실패 원인은 `console.error`로 기록합니다.
+
+--------------------------------------------------
 작업 로그 (2026-05-12)
 --------------------------------------------------
 

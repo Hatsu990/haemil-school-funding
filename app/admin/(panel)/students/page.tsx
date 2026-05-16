@@ -1,7 +1,10 @@
 import { AdminStudentsManager } from "@/components/admin/admin-students-manager";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getStudents } from "@/lib/repositories/students";
 import { withStudentUiFallbackList } from "@/lib/students/ui";
 import { StudentProfile } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminStudentsPage() {
   let students: StudentProfile[] = [];
@@ -11,12 +14,10 @@ export default async function AdminStudentsPage() {
     const loadedStudents = await getStudents();
     students = withStudentUiFallbackList(loadedStudents);
   } catch (error) {
-    console.error(
-      "[admin students page] failed to load students from repository",
-      error,
+    logDbLoadError("admin students page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "학생 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
     );
-    dbErrorMessage =
-      "학생 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
   }
 
   return (

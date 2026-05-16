@@ -1,6 +1,7 @@
 import { AdminMetricCard } from "@/components/admin/admin-metric-card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getGalleryItems } from "@/lib/repositories/gallery";
 import { getSmsLogs } from "@/lib/repositories/sms";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
@@ -13,6 +14,8 @@ const RECENT_REQUEST_LIMIT = 10;
 const CONTACT_TARGET_LIMIT = 10;
 const LAST_30_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
 const STATUS_CHANGE_TEMPLATE_NAME = "sponsorship_status_change";
+
+export const dynamic = "force-dynamic";
 
 function toTimestamp(value: string): number | null {
   const normalized = value.includes("T") ? value : value.replace(" ", "T");
@@ -60,12 +63,10 @@ export default async function AdminDashboardPage() {
       getGalleryItems(),
     ]);
   } catch (error) {
-    console.error(
-      "[admin dashboard page] failed to load dashboard data from repositories",
-      error,
+    logDbLoadError("admin dashboard page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "대시보드 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.",
     );
-    dbErrorMessage =
-      "대시보드 데이터를 불러오지 못했습니다. DB 연결 상태를 확인한 뒤 다시 시도해 주세요.";
   }
 
   if (dbErrorMessage) {

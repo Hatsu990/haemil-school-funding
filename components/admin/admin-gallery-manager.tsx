@@ -18,7 +18,7 @@ interface AdminGalleryManagerProps {
 }
 
 interface FeedbackState {
-  type: "success" | "error";
+  type: "success" | "error" | "info";
   message: string;
 }
 
@@ -120,7 +120,7 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
       }
 
       setFeedback({
-        type: result.blobDeleted ? "success" : "error",
+        type: result.blobDeleted ? "success" : "info",
         message: result.message,
       });
       router.refresh();

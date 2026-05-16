@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { StudentCard } from "@/components/public/student-card";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getSettings } from "@/lib/repositories/settings";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
 import { getStudents } from "@/lib/repositories/students";
@@ -45,6 +47,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 function resolveTargetStudentCount(settings: Array<{ settingKey: string; settingValue: string }>): number {
   const value = settings.find(
     (setting) => setting.settingKey === ADMIN_SETTINGS_KEYS.targetStudentCount,
@@ -79,6 +83,8 @@ function getPublicSponsorMessages(sponsorships: SponsorshipRecord[]) {
 }
 
 export default async function HomePage() {
+  noStore();
+
   let students: StudentProfile[] = [];
   let sponsorships: SponsorshipRecord[] = [];
   let targetStudentCount = DEFAULT_TARGET_STUDENT_COUNT;
@@ -95,9 +101,10 @@ export default async function HomePage() {
     sponsorships = loadedSponsorships;
     targetStudentCount = resolveTargetStudentCount(loadedSettings);
   } catch (error) {
-    console.error("[home page] failed to load home data from repositories", error);
-    dbErrorMessage =
-      "일부 운영 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    logDbLoadError("home page", error);
+    dbErrorMessage = buildDbErrorMessage(
+      "일부 운영 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    );
   }
 
   const matchedCount = students.filter(

@@ -87,6 +87,10 @@ export async function updateSponsorshipStatusAction(
     }
 
     revalidatePath("/admin/sponsorships");
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/students");
+    revalidatePath("/students");
+    revalidatePath("/");
     return {
       ok: true,
       message: smsFailed

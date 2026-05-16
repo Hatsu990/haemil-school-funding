@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   resetSponsorshipsAction,
   updateSponsorshipStatusAction,
@@ -77,6 +78,7 @@ export function AdminSponsorshipsManager({
   initialSponsorships,
   students,
 }: AdminSponsorshipsManagerProps) {
+  const router = useRouter();
   const [items, setItems] = useState<SponsorshipRecord[]>(initialSponsorships);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -209,6 +211,7 @@ export function AdminSponsorshipsManager({
         type: "success",
         message: result.message,
       });
+      router.refresh();
     } catch (error) {
       console.error(
         "[admin sponsorships manager] failed to apply sponsorship status",
@@ -257,6 +260,7 @@ export function AdminSponsorshipsManager({
         type: "success",
         message: `${result.message} (신청 ${deletedCount}건 삭제, 학생 ${resetStudentCount}명 초기화)`,
       });
+      router.refresh();
     } catch (error) {
       console.error("[admin sponsorships manager] failed to reset sponsorship list", error);
       setFeedback({

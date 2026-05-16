@@ -10,6 +10,7 @@ import { CreateGalleryItemInput, GalleryItemType } from "@/types";
 
 const MAX_FILE_SIZE_MB = 100;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const VERCEL_BLOB_HOST_SUFFIX = ".blob.vercel-storage.com";
 
 export interface UploadGalleryItemsActionResult {
   ok: boolean;
@@ -78,6 +79,18 @@ function getUploadPath(fileName: string, index: number): string {
   const extensionSuffix = extension ? `.${extension}` : "";
 
   return `gallery/${Date.now()}-${index + 1}-${baseName}${extensionSuffix}`;
+}
+
+function isVercelBlobUrl(fileUrl: string): boolean {
+  try {
+    const parsed = new URL(fileUrl);
+    return (
+      parsed.protocol === "https:" &&
+      parsed.hostname.endsWith(VERCEL_BLOB_HOST_SUFFIX)
+    );
+  } catch {
+    return false;
+  }
 }
 
 async function rollbackUploadedFiles(urls: string[], token: string): Promise<void> {
@@ -172,6 +185,7 @@ export async function uploadGalleryItemsAction(
 
     stage = "db";
     await createGalleryItems(itemsForInsert);
+    revalidatePath("/");
     revalidatePath("/admin/gallery");
     revalidatePath("/admin/dashboard");
     revalidatePath("/gallery");
@@ -249,24 +263,35 @@ export async function deleteGalleryItemAction(
   let blobDeleted = true;
   const fileUrl = deletedItem.fileUrl?.trim() ?? "";
   if (fileUrl) {
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN?.trim();
-    if (!blobToken) {
-      console.error("[admin gallery action] missing BLOB_READ_WRITE_TOKEN for blob cleanup");
-      blobDeleted = false;
+    if (!isVercelBlobUrl(fileUrl)) {
+      console.info("[admin gallery action] skip blob cleanup for non-vercel url", {
+        galleryId,
+        fileUrl,
+      });
     } else {
-      try {
-        await del(fileUrl, { token: blobToken });
-      } catch (error) {
-        console.error("[admin gallery action] failed to delete blob file", {
+      const blobToken = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+      if (!blobToken) {
+        console.error("[admin gallery action] missing BLOB_READ_WRITE_TOKEN for blob cleanup", {
           galleryId,
           fileUrl,
-          error,
         });
         blobDeleted = false;
+      } else {
+        try {
+          await del(fileUrl, { token: blobToken });
+        } catch (error) {
+          console.error("[admin gallery action] failed to delete blob file", {
+            galleryId,
+            fileUrl,
+            error,
+          });
+          blobDeleted = false;
+        }
       }
     }
   }
 
+  revalidatePath("/");
   revalidatePath("/admin/gallery");
   revalidatePath("/admin/dashboard");
   revalidatePath("/gallery");
@@ -275,7 +300,7 @@ export async function deleteGalleryItemAction(
     return {
       ok: true,
       message:
-        "DB에서는 삭제되었지만 Blob 파일 정리에 실패했습니다. 파일 정리는 운영 로그를 확인해 주세요.",
+        "갤러리 항목은 화면에서 삭제되었습니다. 다만 Blob 원본 파일 정리에 실패했습니다. 운영 로그를 확인해 주세요.",
       dbDeleted: true,
       blobDeleted: false,
     };
