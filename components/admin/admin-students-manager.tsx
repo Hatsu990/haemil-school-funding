@@ -8,6 +8,7 @@ import {
   deleteStudentAction,
   deleteStudentLetterImageAction,
   resetAllStudentsToAvailableAction,
+  updateStudentProfileAction,
   uploadStudentLetterImageAction,
 } from "@/app/admin/(panel)/students/actions";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
@@ -25,6 +26,14 @@ interface AdminStudentsManagerProps {
 interface FeedbackState {
   type: "success" | "error";
   message: string;
+}
+
+interface StudentEditFormState {
+  id: string;
+  nickname: string;
+  gender: string;
+  grade: string;
+  description: string;
 }
 
 function normalizeKeyword(value: string): string {
@@ -50,13 +59,18 @@ export function AdminStudentsManager({
   const [deletingLetterStudentId, setDeletingLetterStudentId] = useState<string | null>(
     null,
   );
+  const [editingStudent, setEditingStudent] = useState<StudentEditFormState | null>(
+    null,
+  );
   const [isCreating, startCreating] = useTransition();
+  const [isUpdatingProfile, startUpdatingProfile] = useTransition();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const isMutating =
     isCreating ||
     deletingId !== null ||
     resettingStatus ||
+    isUpdatingProfile ||
     uploadingLetterStudentId !== null ||
     deletingLetterStudentId !== null;
 
@@ -167,6 +181,58 @@ export function AdminStudentsManager({
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const openEditStudentModal = (student: StudentProfile) => {
+    if (isMutating) {
+      return;
+    }
+
+    setFeedback(null);
+    setEditingStudent({
+      id: student.id,
+      nickname: student.nickname,
+      gender: student.gender,
+      grade: student.grade,
+      description: student.description,
+    });
+  };
+
+  const closeEditStudentModal = () => {
+    if (isUpdatingProfile) {
+      return;
+    }
+    setEditingStudent(null);
+  };
+
+  const handleUpdateStudentProfile = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingStudent || isMutating) {
+      return;
+    }
+
+    const targetId = editingStudent.id;
+    setFeedback(null);
+
+    startUpdatingProfile(async () => {
+      const result = await updateStudentProfileAction(editingStudent);
+      if (!result.ok || !result.student) {
+        setFeedback({
+          type: "error",
+          message: result.message,
+        });
+        return;
+      }
+
+      const updatedStudent = withStudentUiFallback(result.student);
+      updateStudentItem(targetId, () => updatedStudent);
+      setEditingStudent(null);
+      setFeedback({
+        type: "success",
+        message: result.message,
+      });
+      router.refresh();
+    });
   };
 
   const handleResetStatuses = async () => {
@@ -547,6 +613,14 @@ export function AdminStudentsManager({
                   <div className="flex gap-2">
                     <button
                       type="button"
+                      onClick={() => openEditStudentModal(student)}
+                      disabled={isMutating}
+                      className="btn-secondary px-3 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      학생 수정
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => handleDeleteStudent(student.id, student.nickname)}
                       disabled={isMutating}
                       className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
@@ -560,6 +634,149 @@ export function AdminStudentsManager({
           })
         )}
       </section>
+
+      {editingStudent ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="학생 정보 수정"
+          onClick={closeEditStudentModal}
+        >
+          <div
+            className="surface-card w-full max-w-2xl p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-bold text-[#2f241d]">
+                학생 정보 수정 ({editingStudent.id})
+              </h3>
+              <button
+                type="button"
+                onClick={closeEditStudentModal}
+                disabled={isUpdatingProfile}
+                className="btn-secondary px-3 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                닫기
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleUpdateStudentProfile}
+              className="mt-4 grid gap-3 md:grid-cols-2"
+            >
+              <label className="text-sm">
+                <span className="mb-1 block font-semibold text-[#5f4a3c]">
+                  학생 닉네임 *
+                </span>
+                <input
+                  required
+                  maxLength={40}
+                  disabled={isUpdatingProfile}
+                  value={editingStudent.nickname}
+                  onChange={(event) =>
+                    setEditingStudent((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            nickname: event.target.value,
+                          }
+                        : prev,
+                    )
+                  }
+                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                />
+              </label>
+
+              <label className="text-sm">
+                <span className="mb-1 block font-semibold text-[#5f4a3c]">성별 *</span>
+                <select
+                  disabled={isUpdatingProfile}
+                  value={editingStudent.gender}
+                  onChange={(event) =>
+                    setEditingStudent((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            gender: event.target.value,
+                          }
+                        : prev,
+                    )
+                  }
+                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                >
+                  <option value="여">여</option>
+                  <option value="남">남</option>
+                  <option value="미정">미정</option>
+                </select>
+              </label>
+
+              <label className="text-sm">
+                <span className="mb-1 block font-semibold text-[#5f4a3c]">학년 *</span>
+                <input
+                  required
+                  maxLength={20}
+                  disabled={isUpdatingProfile}
+                  value={editingStudent.grade}
+                  onChange={(event) =>
+                    setEditingStudent((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            grade: event.target.value,
+                          }
+                        : prev,
+                    )
+                  }
+                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                />
+              </label>
+
+              <label className="text-sm md:col-span-2">
+                <span className="mb-1 block font-semibold text-[#5f4a3c]">
+                  소개 문구 *
+                </span>
+                <textarea
+                  required
+                  rows={4}
+                  maxLength={220}
+                  disabled={isUpdatingProfile}
+                  value={editingStudent.description}
+                  onChange={(event) =>
+                    setEditingStudent((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            description: event.target.value,
+                          }
+                        : prev,
+                    )
+                  }
+                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                />
+              </label>
+
+              <div className="md:col-span-2 flex items-center gap-2">
+                <button
+                  type="submit"
+                  disabled={isUpdatingProfile}
+                  className="btn-primary px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isUpdatingProfile ? "수정 중..." : "수정 저장"}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeEditStudentModal}
+                  disabled={isUpdatingProfile}
+                  className="btn-secondary px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  취소
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

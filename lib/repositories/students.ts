@@ -3,9 +3,11 @@ import { getDbClient } from "@/lib/db/client";
 import { resolveStudentProfileImageUrl } from "@/lib/students/profile-images";
 import {
   CreateStudentInput,
+  StudentGender,
   StudentProfile,
   StudentRow,
   StudentSponsorshipStatus,
+  UpdateStudentProfileInput,
   UpdateStudentStatusInput,
 } from "@/types";
 
@@ -101,6 +103,42 @@ export async function updateStudentStatus(
   if (result.rowsAffected === 0) {
     throw new Error(`[students repository] Student not found: ${id}`);
   }
+}
+
+export async function updateStudentProfile(
+  input: UpdateStudentProfileInput,
+): Promise<StudentProfile> {
+  const db = await getDbClient();
+  const studentId = input.id.trim();
+  const nickname = input.nickname.trim();
+  const grade = input.grade.trim();
+  const description = input.description.trim();
+  const gender = input.gender as StudentGender;
+
+  const result = await db.execute(
+    `
+      UPDATE students
+      SET
+        nickname = ?,
+        gender = ?,
+        grade = ?,
+        description = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `,
+    [nickname, gender, grade, description, studentId],
+  );
+
+  if (result.rowsAffected === 0) {
+    throw new Error(`${STUDENT_NOT_FOUND_ERROR_PREFIX}${studentId}`);
+  }
+
+  const updated = await getStudentById(studentId);
+  if (!updated) {
+    throw new Error(`${STUDENT_NOT_FOUND_ERROR_PREFIX}${studentId}`);
+  }
+
+  return updated;
 }
 
 export async function resetAllStudentStatusesToAvailable(): Promise<number> {

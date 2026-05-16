@@ -13,14 +13,6 @@ import { SponsorshipRecord, StudentProfile } from "@/types";
 
 const DEFAULT_TARGET_STUDENT_COUNT = 60;
 
-const FALLBACK_PUBLIC_MESSAGES = [
-  {
-    id: "fallback-msg-1",
-    sponsorName: "익명 후원자",
-    message: "학생들이 안정적으로 배우고 성장할 수 있도록 꾸준히 응원하겠습니다.",
-  },
-];
-
 export const metadata: Metadata = {
   title: "해밀학교 생활관비 1:1 결연 후원",
   description:
@@ -67,19 +59,13 @@ function resolveTargetStudentCount(settings: Array<{ settingKey: string; setting
 }
 
 function getPublicSponsorMessages(sponsorships: SponsorshipRecord[]) {
-  const publicMessages = sponsorships
+  return sponsorships
     .filter((item) => item.sponsorPublic && item.sponsorMessage?.trim())
     .map((item) => ({
       id: item.id,
       sponsorName: item.sponsorName,
       message: item.sponsorMessage?.trim() ?? "",
     }));
-
-  if (publicMessages.length > 0) {
-    return publicMessages;
-  }
-
-  return FALLBACK_PUBLIC_MESSAGES;
 }
 
 export default async function HomePage() {
@@ -110,11 +96,16 @@ export default async function HomePage() {
   const matchedCount = students.filter(
     (student) => student.sponsorshipStatus === "matched",
   ).length;
-  const pendingCount = sponsorships.filter(
-    (item) => item.status === "입금대기",
+  const unmatchedCount = students.filter(
+    (student) => student.sponsorshipStatus !== "matched",
   ).length;
+  const totalStudentCount = students.length;
   const progressBase =
-    targetStudentCount > 0 ? targetStudentCount : students.length;
+    totalStudentCount > 0
+      ? totalStudentCount
+      : targetStudentCount > 0
+        ? targetStudentCount
+        : DEFAULT_TARGET_STUDENT_COUNT;
   const progressRate =
     progressBase > 0 ? Math.round((matchedCount / progressBase) * 100) : 0;
 
@@ -123,22 +114,38 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
-      <section className="container-base grid gap-8 pt-12 md:grid-cols-[1.15fr_0.85fr] md:items-center">
+      <section className="container-base grid gap-8 pt-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <div className="space-y-6">
           <p className="inline-flex rounded-full bg-[#fce5d1] px-4 py-1 text-xs font-bold tracking-[0.1em] text-[#915831]">
             해밀학교 생활관비 1:1 결연 후원
           </p>
           <h1 className="font-serif text-4xl leading-tight font-extrabold text-[#2f2017] md:text-5xl">
-            생활관비 부담을 줄여
+            학생들이 생활의 걱정보다
             <br />
-            학생의 배움을 지켜주세요
+            꿈에 집중할 수 있도록 함께해주세요
           </h1>
-          <p className="max-w-xl text-base leading-7 text-[#5e4a3d]">
-            해밀학교는 다문화 학생과 중도입국 학생이 안정적으로 생활하고
-            학업에 집중할 수 있도록 생활관비 결연 후원을 운영합니다. 한 명의
-            학생에게 한 명의 후원자가 연결되는 구조로, 지원 흐름을 투명하게
-            관리합니다.
-          </p>
+          <div className="max-w-2xl space-y-4 text-base leading-7 text-[#5e4a3d]">
+            <p>
+              해밀학교의 학생들은 다문화·중도입국 가정이라는 다양한 환경
+              속에서도 자신의 꿈을 포기하지 않고 배움을 이어가기 위해 학교와
+              기숙사에서 함께 생활하고 있습니다.
+            </p>
+            <p>
+              하지만 아이들이 안정된 환경에서 공부를 계속하기 위해서는 매달
+              필요한 생활관비 지원이 꼭 필요합니다. 생활의 부담이 커질수록
+              아이들은 배움보다 현실을 먼저 걱정해야 하기 때문입니다.
+            </p>
+            <p>
+              여러분의 결연 후원은 단순한 생활비 지원이 아니라, 아이들이 걱정
+              대신 꿈을 이야기하고, 오늘보다 더 나은 내일을 준비할 수 있도록
+              지켜주는 따뜻한 응원입니다.
+            </p>
+            <p>
+              특히 다문화·중도입국 학생들에게 해밀학교는 단순한 학교를 넘어,
+              안전하게 머물고 다시 자신의 가능성을 믿어볼 수 있는 소중한 삶의
+              터전이 되고 있습니다.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/students" className="btn-primary">
               학생 만나기
@@ -149,21 +156,25 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <aside className="surface-card p-6">
-          <h2 className="text-lg font-bold text-[#2f221a]">결연 현황</h2>
+        <aside className="surface-card p-6 md:justify-self-end md:p-7">
+          <h2 className="text-xl font-bold text-[#2f221a]">결연 현황</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-[#fff2e6] p-4">
-              <p className="text-xs font-medium text-[#7b5a46]">결연 완료</p>
+            <div className="rounded-xl bg-[#fff2e6] p-5">
+              <p className="text-xs font-medium text-[#7b5a46]">
+                결연 대기 수
+              </p>
+              <p className="mt-1 text-2xl font-bold">{unmatchedCount}명</p>
+            </div>
+            <div className="rounded-xl bg-[#fff8df] p-5">
+              <p className="text-xs font-medium text-[#7b5a46]">결연 완료 수</p>
               <p className="mt-1 text-2xl font-bold">{matchedCount}명</p>
             </div>
-            <div className="rounded-xl bg-[#fff8df] p-4">
-              <p className="text-xs font-medium text-[#7b5a46]">입금 대기</p>
-              <p className="mt-1 text-2xl font-bold">{pendingCount}건</p>
-            </div>
-            <div className="rounded-xl bg-[#ebf3ff] p-4 sm:col-span-2">
-              <p className="text-xs font-medium text-[#4c5b73]">목표 대비 진행률</p>
+            <div className="rounded-xl bg-[#ebf3ff] p-5 sm:col-span-2">
               <p className="mt-1 text-2xl font-bold text-[#2e3b57]">
-                {progressRate}% ({matchedCount}/{progressBase})
+                <span className="rounded-md bg-[#ffe7d4] px-2 py-0.5 text-[var(--brand-strong)]">
+                  {matchedCount}
+                </span>{" "}
+                /{progressBase}명 결연 완료
               </p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#d9e5f8]">
                 <div
@@ -205,40 +216,27 @@ export default async function HomePage() {
         )}
       </section>
 
-      <section className="container-base mt-14 grid gap-6 md:grid-cols-2">
+      <section className="container-base mt-14">
         <article className="surface-card p-6">
           <h2 className="text-xl font-bold text-[#2f231b]">후원자 응원 메시지</h2>
           <div className="mt-4 space-y-3">
-            {publicSponsorMessages.map((item) => (
-              <blockquote
-                key={item.id}
-                className="rounded-xl border border-[var(--border)] bg-[#fff8f1] p-4"
-              >
-                <p className="text-sm leading-6 text-[#5b473a]">{item.message}</p>
-                <footer className="mt-2 text-xs font-semibold text-[#8f6f5a]">
-                  후원자 {item.sponsorName}
-                </footer>
-              </blockquote>
-            ))}
-          </div>
-        </article>
-
-        <article className="surface-card p-6">
-          <h2 className="text-xl font-bold text-[#2f231b]">운영 원칙</h2>
-          <ul className="mt-4 space-y-3 text-sm leading-6 text-[#5c493c]">
-            <li>학생 실명과 실제 학생 사진은 공개하지 않습니다.</li>
-            <li>학생 프로필은 AI 카툰 이미지 정책을 유지합니다.</li>
-            <li>학생 1명당 후원자 1명만 결연 가능합니다.</li>
-            <li>입금 완료 기준으로 결연이 확정됩니다.</li>
-            <li>자동 결제는 제공하지 않으며 관리자가 직접 안내합니다.</li>
-          </ul>
-          <div className="mt-5 flex gap-2">
-            <Link href="/project" className="btn-secondary py-2">
-              세부 정책 보기
-            </Link>
-            <Link href="/students" className="btn-primary py-2">
-              결연 신청하러 가기
-            </Link>
+            {publicSponsorMessages.length === 0 ? (
+              <p className="rounded-xl border border-[var(--border)] bg-[#fff8f1] px-4 py-3 text-sm text-[#6f594b]">
+                현재 공개된 후원자 응원 메시지가 없습니다.
+              </p>
+            ) : (
+              publicSponsorMessages.map((item) => (
+                <blockquote
+                  key={item.id}
+                  className="rounded-xl border border-[var(--border)] bg-[#fff8f1] p-4"
+                >
+                  <p className="text-sm leading-6 text-[#5b473a]">{item.message}</p>
+                  <footer className="mt-2 text-xs font-semibold text-[#8f6f5a]">
+                    후원자 {item.sponsorName}
+                  </footer>
+                </blockquote>
+              ))
+            )}
           </div>
         </article>
       </section>
@@ -246,13 +244,9 @@ export default async function HomePage() {
       <section className="container-base mt-14">
         <div className="surface-card grid gap-4 bg-gradient-to-r from-[#fce6d3] to-[#f9eddc] p-7 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <h2 className="font-serif text-2xl font-bold text-[#2f2118]">
+            <h2 className="font-serif text-3xl leading-tight font-bold text-[#2f2118] md:text-4xl">
               한 번의 후원이 학생의 한 학기를 지탱합니다
             </h2>
-            <p className="mt-2 text-sm leading-6 text-[#664f40]">
-              현재 접수된 후원 신청 {sponsorships.length}건을 기반으로 운영 중입니다.
-              지금 참여하시면 관리자가 직접 연락드려 결연 과정을 안내합니다.
-            </p>
           </div>
           <Link href="/students" className="btn-primary">
             지금 결연 신청하기

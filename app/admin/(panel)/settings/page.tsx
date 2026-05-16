@@ -6,6 +6,8 @@ import {
   buildAdminSettingsFormValues,
 } from "@/lib/settings/admin-settings";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
   let initialValues = ADMIN_SETTINGS_DEFAULT_VALUES;
   let dbErrorMessage: string | null = null;

@@ -144,6 +144,14 @@ export interface CreateStudentInput {
   sponsorshipStatus?: StudentSponsorshipStatus;
 }
 
+export interface UpdateStudentProfileInput {
+  id: string;
+  nickname: string;
+  gender: StudentGender;
+  grade: string;
+  description: string;
+}
+
 export interface CreateSponsorshipInput {
   studentId: string;
   sponsorName: string;

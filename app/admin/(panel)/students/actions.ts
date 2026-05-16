@@ -10,6 +10,7 @@ import {
   isStudentNotFoundError,
   resetAllStudentStatusesToAvailable,
   updateStudentLetterImageUrl,
+  updateStudentProfile,
 } from "@/lib/repositories/students";
 import { StudentGender, StudentProfile, StudentSponsorshipStatus } from "@/types";
 
@@ -29,6 +30,20 @@ export interface CreateStudentActionResult {
 export interface DeleteStudentActionResult {
   ok: boolean;
   message: string;
+}
+
+export interface UpdateStudentProfileActionInput {
+  id: string;
+  nickname: string;
+  gender: string;
+  grade: string;
+  description: string;
+}
+
+export interface UpdateStudentProfileActionResult {
+  ok: boolean;
+  message: string;
+  student?: StudentProfile;
 }
 
 export interface ResetStudentStatusesActionResult {
@@ -175,6 +190,66 @@ export async function deleteStudentAction(id: string): Promise<DeleteStudentActi
     return {
       ok: false,
       message: "학생 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    };
+  }
+}
+
+export async function updateStudentProfileAction(
+  input: UpdateStudentProfileActionInput,
+): Promise<UpdateStudentProfileActionResult> {
+  const id = input.id.trim();
+  const nickname = input.nickname.trim();
+  const genderRaw = input.gender.trim();
+  const grade = input.grade.trim();
+  const description = input.description.trim();
+
+  if (!id) {
+    return { ok: false, message: "수정할 학생 ID가 누락되었습니다." };
+  }
+  if (!nickname) {
+    return { ok: false, message: "학생 닉네임을 입력해 주세요." };
+  }
+  if (!isValidGender(genderRaw)) {
+    return { ok: false, message: "학생 성별을 선택해 주세요." };
+  }
+  if (!grade) {
+    return { ok: false, message: "학년을 입력해 주세요." };
+  }
+  if (!description) {
+    return { ok: false, message: "소개 문구를 입력해 주세요." };
+  }
+
+  try {
+    const student = await updateStudentProfile({
+      id,
+      nickname,
+      gender: genderRaw,
+      grade,
+      description,
+    });
+
+    revalidatePath("/admin/students");
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/students");
+    revalidatePath("/");
+
+    return {
+      ok: true,
+      message: "학생 정보가 수정되었습니다.",
+      student,
+    };
+  } catch (error) {
+    if (isStudentNotFoundError(error)) {
+      return {
+        ok: false,
+        message: "학생 정보를 찾을 수 없습니다.",
+      };
+    }
+
+    console.error("[admin students action] failed to update student profile", error);
+    return {
+      ok: false,
+      message: "학생 정보 수정에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 }

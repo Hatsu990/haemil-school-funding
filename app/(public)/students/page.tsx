@@ -51,16 +51,24 @@ export default async function StudentsPage() {
       <header className="mb-7 sm:mb-9">
         <p className="text-sm font-semibold text-[#8d694f]">학생 만나기</p>
         <h1 className="section-title mt-2">결연을 기다리는 학생들</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 subtle-text">
-          학생 실명 대신 닉네임을 공개하며, 실제 사진 대신 AI 캐릭터 프로필을 사용합니다.
-          결연은 학생 1명당 후원자 1명 기준으로 운영됩니다.
-        </p>
       </header>
 
-      <section className="surface-card mb-5 grid gap-2 p-5 text-sm leading-6 text-[#4f3d32]">
-        <p>결연 원칙: 학생 1명당 후원자 1명만 신청 가능합니다.</p>
-        <p>입금 대기 상태에서는 다른 후원 신청이 불가합니다.</p>
-        <p>결연 완료 기준은 입금 완료입니다.</p>
+      <section className="surface-card mb-5 space-y-4 p-5 text-sm leading-7 text-[#4f3d32]">
+        <p>
+          해밀학교는 한 학생과 한 후원자가 따뜻하게 연결되는 1:1 결연 방식을
+          지향하고 있습니다. 보다 안정적이고 책임감 있는 후원 운영을 위해, 한
+          학생에게는 한 분의 후원자만 연결됩니다.
+        </p>
+        <p>
+          후원 신청이 접수되면 해당 학생은 일시적으로 결연 대기 상태로
+          전환되며, 중복 신청은 제한됩니다. 이는 꼭 필요한 학생에게 후원이
+          정확하게 연결될 수 있도록 하기 위한 운영 원칙입니다.
+        </p>
+        <p>
+          또한 해밀학교는 모든 후원 과정을 직접 확인하며 운영하고 있습니다.
+          후원금 입금이 확인되면 결연이 최종 확정되며, 이후 학생의 생활관비와
+          안정적인 학교생활 지원에 사용됩니다.
+        </p>
       </section>
 
       <StudentsListClient students={students} dbErrorMessage={dbErrorMessage} />
