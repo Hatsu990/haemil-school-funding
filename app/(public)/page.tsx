@@ -114,7 +114,7 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
-      <section className="container-base grid gap-8 pt-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+      <section className="container-base grid gap-8 pt-12 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-10">
         <div className="space-y-6">
           <p className="inline-flex rounded-full bg-[#fce5d1] px-4 py-1 text-xs font-bold tracking-[0.1em] text-[#915831]">
             해밀학교 생활관비 1:1 결연 후원
@@ -156,27 +156,27 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <aside className="surface-card p-6 md:justify-self-end md:p-7">
-          <h2 className="text-xl font-bold text-[#2f221a]">결연 현황</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-[#fff2e6] p-5">
-              <p className="text-xs font-medium text-[#7b5a46]">
+        <aside className="surface-card w-full p-8 md:justify-self-end md:p-11">
+          <h2 className="text-2xl font-bold text-[#2f221a] md:text-[2rem]">결연 현황</h2>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div className="rounded-2xl bg-[#fff2e6] p-8">
+              <p className="text-sm font-medium text-[#7b5a46]">
                 결연 대기 수
               </p>
-              <p className="mt-1 text-2xl font-bold">{unmatchedCount}명</p>
+              <p className="mt-2 text-4xl font-bold md:text-5xl">{unmatchedCount}명</p>
             </div>
-            <div className="rounded-xl bg-[#fff8df] p-5">
-              <p className="text-xs font-medium text-[#7b5a46]">결연 완료 수</p>
-              <p className="mt-1 text-2xl font-bold">{matchedCount}명</p>
+            <div className="rounded-2xl bg-[#fff8df] p-8">
+              <p className="text-sm font-medium text-[#7b5a46]">결연 완료 수</p>
+              <p className="mt-2 text-4xl font-bold md:text-5xl">{matchedCount}명</p>
             </div>
-            <div className="rounded-xl bg-[#ebf3ff] p-5 sm:col-span-2">
-              <p className="mt-1 text-2xl font-bold text-[#2e3b57]">
-                <span className="rounded-md bg-[#ffe7d4] px-2 py-0.5 text-[var(--brand-strong)]">
+            <div className="rounded-2xl bg-[#ebf3ff] p-8 sm:col-span-2">
+              <p className="mt-1 text-3xl font-bold text-[#2e3b57] md:text-4xl">
+                <span className="rounded-lg bg-[#ffe7d4] px-3 py-1 text-[var(--brand-strong)]">
                   {matchedCount}
                 </span>{" "}
                 /{progressBase}명 결연 완료
               </p>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#d9e5f8]">
+              <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#d9e5f8]">
                 <div
                   className="h-full rounded-full bg-[#5f82c8]"
                   style={{ width: `${progressRate}%` }}
@@ -185,7 +185,7 @@ export default async function HomePage() {
             </div>
           </div>
           {dbErrorMessage ? (
-            <p className="mt-4 rounded-xl border border-[#f0dfca] bg-[#fff8ef] px-3 py-2 text-xs text-[#7a563f]">
+            <p className="mt-5 rounded-xl border border-[#f0dfca] bg-[#fff8ef] px-4 py-3 text-sm text-[#7a563f]">
               {dbErrorMessage}
             </p>
           ) : null}
