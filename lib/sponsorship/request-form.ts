@@ -4,11 +4,9 @@ const ONE_TIME_TYPE = "일시후원";
 const REGULAR_TYPE = "정기후원";
 
 export const DIRECT_PERIOD_OPTION = "직접입력";
-const MONTH_PERIOD_OPTIONS = ["1개월", "3개월", "6개월", "12개월"] as const;
-const PERIOD_OPTIONS = [...MONTH_PERIOD_OPTIONS, DIRECT_PERIOD_OPTION] as const;
-
+export const THREE_YEAR_SPONSORSHIP_PERIOD = "3년";
 export type SponsorshipPeriodOption =
-  | (typeof MONTH_PERIOD_OPTIONS)[number]
+  | typeof THREE_YEAR_SPONSORSHIP_PERIOD
   | typeof DIRECT_PERIOD_OPTION
   | "";
 
@@ -72,28 +70,12 @@ export const initialSponsorshipRequestState: SponsorshipRequestState = {
   values: initialSponsorshipRequestValues,
 };
 
-function isSponsorshipPeriodOption(
-  value: string,
-): value is Exclude<SponsorshipPeriodOption, ""> {
-  return (PERIOD_OPTIONS as readonly string[]).includes(value);
-}
-
 export function extractSponsorshipRequestValues(
   formData: FormData,
 ): SponsorshipRequestValues {
   const sponsorshipTypeRaw = String(formData.get("sponsorshipType") ?? "").trim();
   const sponsorshipType: SponsorshipTypeOption =
-    sponsorshipTypeRaw === ONE_TIME_TYPE || sponsorshipTypeRaw === REGULAR_TYPE
-      ? sponsorshipTypeRaw
-      : "";
-
-  const sponsorshipPeriodOptionRaw = String(
-    formData.get("sponsorshipPeriodOption") ?? "",
-  ).trim();
-  const sponsorshipPeriodOption: SponsorshipPeriodOption =
-    isSponsorshipPeriodOption(sponsorshipPeriodOptionRaw)
-      ? sponsorshipPeriodOptionRaw
-      : "";
+    sponsorshipTypeRaw === REGULAR_TYPE ? sponsorshipTypeRaw : "";
 
   const sponsorPublicRaw = String(formData.get("sponsorPublic") ?? "").trim();
   const sponsorPublic: SponsorPublicOption =
@@ -105,7 +87,7 @@ export function extractSponsorshipRequestValues(
     sponsorPhone: String(formData.get("sponsorPhone") ?? "").trim(),
     sponsorEmail: String(formData.get("sponsorEmail") ?? "").trim(),
     sponsorshipType,
-    sponsorshipPeriodOption,
+    sponsorshipPeriodOption: THREE_YEAR_SPONSORSHIP_PERIOD,
     sponsorshipPeriodCustom: String(
       formData.get("sponsorshipPeriodCustom") ?? "",
     ).trim(),
@@ -142,12 +124,12 @@ export function validateSponsorshipRequestValues(
   }
 
   if (!values.sponsorshipType) {
-    errors.sponsorshipType = "후원 방식을 선택해 주세요.";
+    errors.sponsorshipType = "결연 방식 정보가 누락되었습니다.";
   }
 
   if (values.sponsorshipType === REGULAR_TYPE) {
     if (!values.sponsorshipPeriodOption) {
-      errors.sponsorshipPeriodOption = "정기후원 기간을 선택해 주세요.";
+      errors.sponsorshipPeriodOption = "3년 결연 기간 정보가 누락되었습니다.";
     } else if (
       values.sponsorshipPeriodOption === DIRECT_PERIOD_OPTION &&
       !values.sponsorshipPeriodCustom

@@ -14,6 +14,11 @@ interface SmsTemplateEntry {
   name: string;
   title: string;
   body: string;
+  manualFields: Array<{
+    name: string;
+    label: string;
+    placeholder: string;
+  }>;
 }
 
 interface AdminMessagesManagerProps {
@@ -105,7 +110,7 @@ export function AdminMessagesManager({
   };
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="space-y-4 pb-6">
       <section className="surface-card p-5">
         <h2 className="text-lg font-bold text-[#2f241d]">문자 발송 연결 상태</h2>
         <div className="mt-3 space-y-2 text-sm">
@@ -139,16 +144,16 @@ export function AdminMessagesManager({
 
       {feedback ? <FeedbackToast type={feedback.type} message={feedback.message} /> : null}
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <article className="surface-card p-5">
+      <section className="grid gap-3 md:grid-cols-3">
+        <article className="surface-card p-4">
           <p className="text-sm font-medium text-[#6b5444]">최근 발송 성공</p>
           <p className="mt-2 text-3xl font-bold text-[#2f241d]">{stats.success}건</p>
         </article>
-        <article className="surface-card p-5">
+        <article className="surface-card p-4">
           <p className="text-sm font-medium text-[#6b5444]">최근 발송 실패</p>
           <p className="mt-2 text-3xl font-bold text-[#2f241d]">{stats.failed}건</p>
         </article>
-        <article className="surface-card p-5">
+        <article className="surface-card p-4">
           <p className="text-sm font-medium text-[#6b5444]">발송 대기/기타</p>
           <p className="mt-2 text-3xl font-bold text-[#2f241d]">{stats.pending}건</p>
         </article>
@@ -156,16 +161,12 @@ export function AdminMessagesManager({
 
       <section className="surface-card p-5">
         <h2 className="text-lg font-bold text-[#2f241d]">문자 템플릿 수동 발송</h2>
-        <p className="mt-2 text-sm subtle-text">
-          템플릿별로 수신번호와 변수값을 입력해 테스트 또는 운영 발송을 직접 수행할 수
-          있습니다.
-        </p>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-2">
           {templates.map((template) => (
             <article
               key={template.name}
-              className="rounded-xl border border-[var(--border)] bg-[#fff9f3] p-4"
+                  className="rounded-xl border border-[var(--border)] bg-white p-4"
             >
               <p className="font-semibold text-[#4f3d31]">{template.title}</p>
               <p className="mt-1 text-xs text-[#8a6550]">{template.name}</p>
@@ -179,83 +180,32 @@ export function AdminMessagesManager({
                   name="phone"
                   required
                   disabled={isSending}
-                  placeholder="수신번호 (예: 01012345678)"
+                  placeholder="수신번호 (예: 01012345678)…"
                   className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm"
                 />
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <input
-                    name="name"
-                    disabled={isSending}
-                    placeholder="name"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="studentNickname"
-                    disabled={isSending}
-                    placeholder="studentNickname"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="amount"
-                    disabled={isSending}
-                    placeholder="amount"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                </div>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <input
-                    name="period"
-                    disabled={isSending}
-                    placeholder="period"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="sponsorshipType"
-                    disabled={isSending}
-                    placeholder="sponsorshipType"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="templatePhone"
-                    disabled={isSending}
-                    placeholder="phone(템플릿 변수)"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                </div>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <input
-                    name="contactPhone"
-                    disabled={isSending}
-                    placeholder="contactPhone"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="date"
-                    disabled={isSending}
-                    placeholder="date"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                  <input
-                    name="count"
-                    disabled={isSending}
-                    placeholder="count"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                  />
-                </div>
-                <input
-                  name="items"
-                  disabled={isSending}
-                  placeholder="items"
-                  className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
-                />
+                {template.manualFields.length > 0 ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {template.manualFields.map((field) => (
+                      <label key={field.name} className="text-xs font-semibold text-[#5f4a3c]">
+                        <span className="mb-1 block">{field.label}</span>
+                        <input
+                          name={field.name}
+                          disabled={isSending}
+                          placeholder={field.placeholder}
+                          className="w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                ) : null}
                 <button
                   type="submit"
                   disabled={isSending}
                   className="btn-secondary mt-1 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isSending && sendingTemplateName === template.name
-                    ? "발송 중..."
-                    : "수동 발송"}
+                    ? "발송 중…"
+                    : "문자 발송"}
                 </button>
               </form>
             </article>
@@ -264,7 +214,7 @@ export function AdminMessagesManager({
       </section>
 
       <section className="surface-card overflow-hidden">
-        <header className="border-b border-[var(--border)] px-5 py-4">
+        <header className="border-b border-[var(--border)] px-5 py-3">
           <h2 className="text-lg font-bold text-[#2f241d]">문자 발송 이력</h2>
         </header>
 
@@ -277,9 +227,48 @@ export function AdminMessagesManager({
             description="문자 발송이 시작되면 이력 목록이 자동으로 표시됩니다."
           />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          <ul className="space-y-3 p-4 md:hidden">
+            {logs.map((item) => (
+              <li
+                key={item.id}
+                className="rounded-2xl border border-[var(--border)] bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mono text-sm font-bold text-[#18211d] tabular-nums">
+                      {item.phone}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-[#63706a]">
+                      {formatDateTimeKorean(item.createdAt)}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${getStatusClass(item.status)}`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm">
+                  <p className="break-all font-bold text-[#314039]">
+                    {item.templateName}
+                  </p>
+                  <p className="break-all text-xs font-semibold text-[#5d473b]">
+                    {item.responseMessage || "-"}
+                  </p>
+                </div>
+                {item.phone !== "-" ? (
+                  <div className="mt-3">
+                    <CopyButton value={item.phone} label="복사" />
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden overflow-x-auto md:block">
             <table className="data-table min-w-[860px]">
-              <thead className="bg-[#fff5ea] text-left text-[#6d5545]">
+              <thead>
                 <tr>
                   <th>시간</th>
                   <th>수신번호</th>
@@ -320,6 +309,7 @@ export function AdminMessagesManager({
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
     </div>

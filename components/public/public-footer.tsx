@@ -1,63 +1,98 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getSettings } from "@/lib/repositories/settings";
+import {
+  ADMIN_SETTINGS_DEFAULT_VALUES,
+  ADMIN_SETTINGS_KEYS,
+} from "@/lib/settings/admin-settings";
 
-export function PublicFooter() {
+function getSettingValue(
+  settings: Array<{ settingKey: string; settingValue: string }>,
+  key: string,
+  fallback: string,
+): string {
+  return settings.find((setting) => setting.settingKey === key)?.settingValue ?? fallback;
+}
+
+export async function PublicFooter() {
+  let representativePhone = ADMIN_SETTINGS_DEFAULT_VALUES.representativeContactPhone;
+  let sponsorshipPhone = ADMIN_SETTINGS_DEFAULT_VALUES.sponsorshipContactPhone;
+
+  try {
+    const settings = await getSettings();
+    representativePhone = getSettingValue(
+      settings,
+      ADMIN_SETTINGS_KEYS.representativeContactPhone,
+      representativePhone,
+    );
+    sponsorshipPhone = getSettingValue(
+      settings,
+      ADMIN_SETTINGS_KEYS.sponsorshipContactPhone,
+      sponsorshipPhone,
+    );
+  } catch (error) {
+    console.error("[public footer] failed to load public contact settings", error);
+  }
+
   return (
-    <footer className="relative mt-20 overflow-hidden border-t border-[var(--border)] bg-[#fdf7f0]">
+    <footer className="relative mt-20 overflow-hidden border-t border-[#d9d2c5] bg-[#18211d] text-white">
       <Image
         src="/images/haemil/school-campus-1.jpg"
         alt=""
         fill
         aria-hidden
-        className="object-cover opacity-15"
+        className="object-cover opacity-20"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#fff8f0]/95 to-[#fdf7f0]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/96 via-[#24372c]/92 to-[#4a382f]/88" />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1360px] px-5 pt-8 pb-4 sm:px-7 sm:pt-9 sm:pb-4 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-start">
-        <div className="pl-2 sm:pl-3">
-          <div className="inline-flex items-start gap-2.5 sm:gap-3">
+      <div className="relative z-10 mx-auto w-full max-w-[1360px] px-5 py-10 sm:px-7 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-start">
+        <div>
+          <div className="inline-flex items-center gap-3 sm:gap-4">
             <Link
               href="/"
-              className="relative -mt-4 h-[96px] w-[96px] shrink-0 self-start sm:-mt-6 sm:h-[126px] sm:w-[126px]"
+              className="relative h-[86px] w-[86px] shrink-0 sm:h-[104px] sm:w-[104px]"
               aria-label="해밀학교 홈"
             >
               <Image
                 src="/images/haemil/haemil-school-logo.png"
                 alt="해밀학교 로고"
                 fill
-                className="object-contain object-top drop-shadow-[0_10px_16px_rgba(84,55,34,0.24)]"
-                sizes="(max-width: 640px) 96px, 126px"
+                className="object-contain drop-shadow-[0_12px_22px_rgba(0,0,0,0.28)]"
+                sizes="(max-width: 640px) 86px, 104px"
               />
             </Link>
 
             <Link href="/" className="block">
-              <p className="text-[0.68rem] leading-none font-semibold uppercase tracking-[0.12em] text-[#8c6953]">
+              <p className="text-[0.68rem] leading-none font-bold uppercase tracking-[0.16em] text-[#c7d4c6]">
                 Haemil School
               </p>
-              <h3 className="mt-0.5 font-serif text-xl leading-tight font-bold text-[#2c2018]">
-                해밀학교 후원 프로젝트
+              <h3 className="mt-1 text-xl leading-tight font-black text-white sm:text-2xl">
+                해밀학교와 함께하는 생활관비 결연
               </h3>
             </Link>
           </div>
-          <p className="-mt-12 max-w-xl text-sm leading-7 text-[#5f4b3f] sm:-mt-14">
-            학생들의 생활관비를 함께 책임지는 1:1 결연 후원 플랫폼. 후원자와 학생이
-            신뢰로 연결되는 과정을 투명하게 운영합니다.
-          </p>
         </div>
 
-        <div className="md:justify-self-end md:text-right">
-          <p className="text-sm font-semibold text-[#5a4639]">문의 안내</p>
-          <ul className="mt-3 space-y-2 text-sm subtle-text">
-            <li>대표 연락: 010-4330-3764</li>
-            <li>후원 상담: 010-4330-3764</li>
-            <li>평일 상담: 09:00 - 18:00</li>
+        <div className="mt-8 md:mt-0 md:justify-self-end md:text-right">
+          <p className="text-sm font-bold text-white">문의 안내</p>
+          <ul className="mt-3 space-y-2 text-sm text-[#d8ded7]">
+            <li>대표 연락: {representativePhone}</li>
+            <li>장학금 결연 상담: {sponsorshipPhone}</li>
+            <li className="flex flex-wrap items-baseline gap-x-1.5 md:justify-end">
+              <span>평일 상담:</span>
+              <span className="inline-grid grid-cols-[3.9rem_0.8rem_3.9rem] items-baseline font-mono text-[1.08em] font-bold tracking-[0.01em] text-white tabular-nums">
+                <span className="text-center">09:00</span>
+                <span className="text-center text-[#c7d4c6]">-</span>
+                <span className="text-center">18:00</span>
+              </span>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div className="relative z-10 border-t border-[var(--border)] py-3 text-center text-xs subtle-text">
-        © 2026 해밀학교 후원 프로젝트. All rights reserved.
+      <div className="relative z-10 border-t border-white/12 py-3 text-center text-xs text-[#b9c5bb]">
+        © 2026 해밀학교와 함께하는 생활관비 결연. All rights reserved.
       </div>
     </footer>
   );

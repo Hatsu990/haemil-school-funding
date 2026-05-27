@@ -14,6 +14,7 @@ import {
 const STUDENT_NOT_FOUND_ERROR_PREFIX = "[students repository] Student not found:";
 const STUDENT_DELETE_BLOCKED_ERROR_PREFIX =
   "[students repository] Student delete blocked by sponsorship:";
+let studentSchemaReady: Promise<void> | null = null;
 
 function makeStudentId(): string {
   return `st-${randomUUID()}`;
@@ -23,6 +24,7 @@ function mapStudentRow(row: StudentRow): StudentProfile {
   return {
     id: row.id,
     nickname: row.nickname,
+    realName: row.real_name,
     gender: row.gender,
     grade: row.grade,
     description: row.description,
@@ -34,13 +36,30 @@ function mapStudentRow(row: StudentRow): StudentProfile {
   };
 }
 
+async function ensureStudentSchema(): Promise<void> {
+  if (!studentSchemaReady) {
+    studentSchemaReady = (async () => {
+      const db = await getDbClient();
+      const columns = await db.execute<{ name: string }>("PRAGMA table_info(students)");
+      const columnNames = new Set(columns.rows.map((row) => row.name));
+      if (!columnNames.has("real_name")) {
+        await db.execute("ALTER TABLE students ADD COLUMN real_name TEXT");
+      }
+    })();
+  }
+
+  return studentSchemaReady;
+}
+
 export async function getStudents(): Promise<StudentProfile[]> {
+  await ensureStudentSchema();
   const db = await getDbClient();
   const result = await db.execute<StudentRow>(
     `
       SELECT
         id,
         nickname,
+        real_name,
         gender,
         grade,
         description,
@@ -58,12 +77,14 @@ export async function getStudents(): Promise<StudentProfile[]> {
 }
 
 export async function getStudentById(id: string): Promise<StudentProfile | null> {
+  await ensureStudentSchema();
   const db = await getDbClient();
   const result = await db.execute<StudentRow>(
     `
       SELECT
         id,
         nickname,
+        real_name,
         gender,
         grade,
         description,
@@ -111,6 +132,7 @@ export async function updateStudentProfile(
   const db = await getDbClient();
   const studentId = input.id.trim();
   const nickname = input.nickname.trim();
+  const realName = input.realName?.trim() || null;
   const grade = input.grade.trim();
   const description = input.description.trim();
   const gender = input.gender as StudentGender;
@@ -120,13 +142,14 @@ export async function updateStudentProfile(
       UPDATE students
       SET
         nickname = ?,
+        real_name = ?,
         gender = ?,
         grade = ?,
         description = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `,
-    [nickname, gender, grade, description, studentId],
+    [nickname, realName, gender, grade, description, studentId],
   );
 
   if (result.rowsAffected === 0) {
@@ -180,6 +203,7 @@ export async function updateStudentStatusByInput(
 }
 
 export async function createStudent(data: CreateStudentInput): Promise<StudentProfile> {
+  await ensureStudentSchema();
   const db = await getDbClient();
   const studentId = makeStudentId();
   const sponsorshipStatus = data.sponsorshipStatus ?? "available";
@@ -190,6 +214,7 @@ export async function createStudent(data: CreateStudentInput): Promise<StudentPr
       INSERT INTO students (
         id,
         nickname,
+        real_name,
         gender,
         grade,
         description,
@@ -199,11 +224,12 @@ export async function createStudent(data: CreateStudentInput): Promise<StudentPr
         created_at,
         updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `,
     [
       studentId,
       data.nickname.trim(),
+      data.realName?.trim() || null,
       data.gender,
       data.grade.trim(),
       data.description.trim(),

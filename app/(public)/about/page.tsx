@@ -84,7 +84,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-20 pt-10 sm:px-6 sm:pt-12">
-      <header className="relative overflow-hidden rounded-[32px] border border-[#e9d9cd] shadow-[0_18px_42px_rgba(121,84,53,0.16)]">
+      <header className="relative overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)]">
         <Image
           src="/images/haemil/school-campus-1.jpg"
           alt="해밀학교 전경"
@@ -93,13 +93,12 @@ export default function AboutPage() {
           className="object-cover object-[center_28%] sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2a1d15]/85 via-[#4f3526]/70 to-[#cd7c41]/45" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#18211d]/88 via-[#24372c]/72 to-[#c66f4a]/40" />
         <div className="relative z-10 p-8 sm:p-10">
-          <p className="text-sm font-semibold text-[#f2d9c2]">학교 소개</p>
-          <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-[#fff7ef] sm:text-4xl">
+          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
             해밀학교는 함께 살아가는 힘을 가르칩니다
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-[#f8eadf]">
+          <p className="mt-4 max-w-3xl text-base leading-8 text-[#edf3ed]">
             해밀학교는 강원특별자치도 홍천군에 위치한 다문화 대안학교입니다.
             학생들이 안전한 기숙사 환경에서 학업과 생활을 함께 성장시킬 수
             있도록 교육하고 있습니다.
@@ -109,11 +108,10 @@ export default function AboutPage() {
 
       <section className="mt-12">
         <div className="mb-8 sm:mb-10">
-          <p className="text-sm font-semibold text-[#8d694f]">교육 철학</p>
-          <h2 className="mt-2 font-serif text-3xl font-bold leading-tight text-[#2f2119] sm:text-4xl">
+          <h2 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#18211d] text-balance sm:text-4xl">
             해밀학교의 교육과 후원의 가치
           </h2>
-          <p className="mt-4 max-w-4xl text-base leading-8 text-[#5a473a]">
+          <p className="mt-4 max-w-4xl text-base font-semibold leading-8 text-[#1f2b25]">
             아이들의 오늘을 지키는 일상과, 내일을 열어주는 교육을 함께 이어가기
             위해 해밀학교는 후원자와 학생이 신뢰로 연결되는 구조를 만들어가고
             있습니다.
@@ -124,23 +122,23 @@ export default function AboutPage() {
           {valueCards.map((card, index) => (
             <article
               key={card.title}
-              className={`surface-card overflow-hidden rounded-[30px] p-8 shadow-[0_16px_42px_rgba(137,93,58,0.12)] sm:p-10 lg:p-11 ${
+              className={`surface-card overflow-hidden rounded-[34px] p-8 shadow-[0_22px_58px_rgba(43,54,47,0.1)] sm:p-10 lg:p-11 ${
                 index < 3 ? "md:col-span-2" : ""
               }`}
             >
               <div className={index < 3 ? "grid gap-8 lg:grid-cols-[1.2fr_0.8fr]" : ""}>
                 <div>
-                  <h3 className="font-serif text-2xl font-bold leading-tight text-[#2d2119] sm:text-[2rem]">
+                  <h3 className="text-2xl font-black leading-tight tracking-[-0.02em] text-[#18211d] text-balance sm:text-[2rem]">
                     {card.title}
                   </h3>
-                  <div className="mt-6 space-y-5 text-base leading-8 text-[#5a473a] sm:text-[1.03rem]">
+                  <div className="mt-6 space-y-5 text-base font-semibold leading-8 text-[#1f2b25] sm:text-[1.03rem]">
                     {card.paragraphs.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
                   </div>
                 </div>
 
-                <div className="relative mt-7 min-h-[220px] overflow-hidden rounded-2xl border border-[var(--border)] lg:mt-0">
+                <div className="relative mt-7 min-h-[220px] overflow-hidden rounded-[26px] border border-[var(--border)] lg:mt-0">
                   <Image
                     src={card.imageSrc}
                     alt={card.imageAlt}

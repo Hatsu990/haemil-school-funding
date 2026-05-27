@@ -13,7 +13,7 @@ function getToastClass(type: FeedbackToastProps["type"]): string {
     return "toast-error";
   }
 
-  return "rounded-xl border border-[var(--border)] bg-[#fff9f3] px-4 py-3 text-sm text-[#6d5545]";
+  return "rounded-2xl border border-[var(--border)] bg-[#f7f3ea] px-4 py-3 text-sm text-[#63706a]";
 }
 
 export function FeedbackToast({ type, message, className }: FeedbackToastProps) {

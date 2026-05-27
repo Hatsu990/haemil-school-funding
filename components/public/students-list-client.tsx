@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { StudentCard } from "@/components/public/student-card";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { getStudentStatusSortWeight } from "@/lib/students/sort";
 import { StudentProfile } from "@/types";
 
 type StatusFilter = "all" | "available" | "pending" | "matched";
@@ -38,9 +39,7 @@ function getGradeOrder(grade: string): number {
 }
 
 function getAvailableFirstWeight(status: StudentProfile["sponsorshipStatus"]): number {
-  if (status === "available") return 0;
-  if (status === "pending") return 1;
-  return 2;
+  return getStudentStatusSortWeight(status);
 }
 
 function getMatchedFirstWeight(status: StudentProfile["sponsorshipStatus"]): number {
@@ -95,7 +94,10 @@ export function StudentsListClient({
 
     filtered.sort((a, b) => {
       if (sortKey === "default") {
-        return a.index - b.index;
+        const weightDiff =
+          getStudentStatusSortWeight(a.student.sponsorshipStatus) -
+          getStudentStatusSortWeight(b.student.sponsorshipStatus);
+        return weightDiff !== 0 ? weightDiff : a.index - b.index;
       }
 
       if (sortKey === "grade-asc") {
@@ -147,35 +149,31 @@ export function StudentsListClient({
   return (
     <>
       <section className="surface-card relative mb-6 overflow-hidden p-5 md:p-6">
-        <div className="absolute -left-12 -top-12 h-36 w-36 rounded-full bg-[#f5d3b3]/45 blur-2xl" />
-        <div className="absolute -right-14 -bottom-14 h-44 w-44 rounded-full bg-[#cfe3d2]/40 blur-3xl" />
+        <div className="absolute -left-12 -top-12 h-36 w-36 rounded-full bg-[#dfe8d8]/70 blur-2xl" />
+        <div className="absolute -right-14 -bottom-14 h-44 w-44 rounded-full bg-[#f1d6c4]/60 blur-3xl" />
 
         <div className="relative z-10">
-          <p className="text-xs font-semibold tracking-[0.08em] text-[#8d6d57]">
-            학생 찾기 필터
-          </p>
-          <div className="mt-4 grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-4">
             <label className="text-sm">
-              <span className="mb-2 block font-semibold text-[#5f4a3c]">성별</span>
+              <span className="mb-2 block font-bold text-[#24372c]">성별</span>
               <select
                 value={genderFilter}
                 onChange={(event) => setGenderFilter(event.target.value)}
                 aria-label="학생 성별 필터"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2.5 text-[#18211d]"
               >
                 <option value="전체">전체</option>
                 <option value="남">남</option>
                 <option value="여">여</option>
-                <option value="미정">미정</option>
               </select>
             </label>
             <label className="text-sm">
-              <span className="mb-2 block font-semibold text-[#5f4a3c]">학년</span>
+              <span className="mb-2 block font-bold text-[#24372c]">학년</span>
               <select
                 value={gradeFilter}
                 onChange={(event) => setGradeFilter(event.target.value)}
                 aria-label="학생 학년 필터"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2.5 text-[#18211d]"
               >
                 <option value="전체">전체</option>
                 {uniqueGrades.map((grade) => (
@@ -186,12 +184,12 @@ export function StudentsListClient({
               </select>
             </label>
             <label className="text-sm">
-              <span className="mb-2 block font-semibold text-[#5f4a3c]">결연 상태</span>
+              <span className="mb-2 block font-bold text-[#24372c]">결연 상태</span>
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
                 aria-label="학생 결연 상태 필터"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2.5 text-[#18211d]"
               >
                 <option value="all">전체</option>
                 <option value="available">요청 가능</option>
@@ -200,14 +198,14 @@ export function StudentsListClient({
               </select>
             </label>
             <label className="text-sm">
-              <span className="mb-2 block font-semibold text-[#5f4a3c]">정렬</span>
+              <span className="mb-2 block font-bold text-[#24372c]">정렬</span>
               <select
                 value={sortKey}
                 onChange={(event) => setSortKey(event.target.value as SortKey)}
                 aria-label="학생 정렬 기준"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2.5 text-[#18211d]"
               >
-                <option value="default">기본순</option>
+                <option value="default">기본순 (신청 가능 우선)</option>
                 <option value="grade-asc">학년 낮은 순</option>
                 <option value="grade-desc">학년 높은 순</option>
                 <option value="available-first">신청 가능 우선</option>
@@ -219,29 +217,29 @@ export function StudentsListClient({
       </section>
 
       <section className="mb-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-[var(--border)] bg-[#fff9f3] px-4 py-3 text-xs leading-6 text-[#6a5547] sm:col-span-2 lg:col-span-1">
+        <div className="rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-4 py-3 text-xs font-semibold leading-6 text-[#314039] sm:col-span-2 lg:col-span-1">
           현재 필터: 성별 {genderFilter} · 학년 {gradeFilter} · 상태{" "}
           {getStatusLabel(statusFilter)}
         </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[#f9f4ea] px-4 py-3 text-sm font-semibold text-[#5f4a3c]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[#eef4eb] px-4 py-3 text-sm font-bold text-[#24372c]">
           요청 가능 {filteredSummary.available}명
         </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[#f8f2e4] px-4 py-3 text-sm font-semibold text-[#5f4a3c]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[#f7f3ea] px-4 py-3 text-sm font-bold text-[#24372c]">
           입금 대기 {filteredSummary.pending}명
         </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[#eef5ff] px-4 py-3 text-sm font-semibold text-[#4b5b79]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[#edf3f7] px-4 py-3 text-sm font-bold text-[#385366]">
           결연 완료 {filteredSummary.matched}명
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[28px] border border-[#eadbce] bg-gradient-to-b from-[#fffaf5] to-[#fff7ef] p-4 sm:p-6">
-        <div className="absolute -left-10 top-0 h-36 w-36 rounded-full bg-[#f4dcc6]/60 blur-2xl" />
-        <div className="absolute -right-10 bottom-0 h-44 w-44 rounded-full bg-[#d9eadf]/45 blur-3xl" />
+      <section className="relative overflow-hidden rounded-[32px] border border-[#d8d1c4] bg-gradient-to-b from-[#fffdf8] to-[#f7f3ea] p-4 shadow-[var(--shadow-soft)] sm:p-6">
+        <div className="absolute -left-10 top-0 h-36 w-36 rounded-full bg-[#dfe8d8]/70 blur-2xl" />
+        <div className="absolute -right-10 bottom-0 h-44 w-44 rounded-full bg-[#f1d6c4]/55 blur-3xl" />
 
         <div className="relative z-10">
           {dbErrorMessage ? (
-            <article className="surface-card p-6 text-sm leading-7 text-[#5b473b]">
-              <p className="font-semibold text-[#8c4f2d]">데이터 연결 안내</p>
+            <article className="surface-card p-6 text-sm font-semibold leading-7 text-[#1f2b25]">
+              <p className="font-bold text-[#c66f4a]">데이터 연결 안내</p>
               <p className="mt-2">{dbErrorMessage}</p>
             </article>
           ) : students.length === 0 ? (

@@ -71,7 +71,25 @@ function getMessagePreview(message: string): string {
     return message;
   }
 
-  return `${message.slice(0, 24)}...`;
+  return `${message.slice(0, 24)}…`;
+}
+
+function getStudentDisplayName(student?: StudentProfile): string {
+  if (!student) {
+    return "학생 정보 없음";
+  }
+
+  const realName = student.realName?.trim();
+  if (!realName) {
+    return student.nickname;
+  }
+
+  return `${student.nickname} (${realName})`;
+}
+
+function toTelHref(phone: string): string {
+  const dialNumber = phone.replace(/[^\d+]/g, "");
+  return `tel:${dialNumber}`;
 }
 
 export function AdminSponsorshipsManager({
@@ -128,12 +146,13 @@ export function AdminSponsorshipsManager({
         return true;
       }
 
-      const studentNickname = studentById.get(item.studentId)?.nickname ?? "";
+      const student = studentById.get(item.studentId);
       const searchTargets = [
         item.sponsorName,
         item.sponsorPhone,
         item.sponsorEmail,
-        studentNickname,
+        student?.nickname ?? "",
+        student?.realName ?? "",
       ].map((value) => normalize(value));
 
       return searchTargets.some((value) => value.includes(normalizedKeyword));
@@ -273,7 +292,7 @@ export function AdminSponsorshipsManager({
   };
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="space-y-4 pb-6">
       <section className="surface-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 검색/필터</h2>
@@ -283,16 +302,16 @@ export function AdminSponsorshipsManager({
             disabled={isMutating}
             className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isResetting ? "초기화 중..." : "결연 신청 목록 초기화"}
+            {isResetting ? "초기화 중…" : "결연 신청 목록 초기화"}
           </button>
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-[1.6fr_1fr_auto_auto]">
+        <div className="mt-4 grid gap-2 md:grid-cols-[1.6fr_1fr_auto_auto]">
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
             aria-label="결연 신청 검색"
             className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
-            placeholder="이름 / 전화번호 / 이메일 / 학생 닉네임 검색"
+            placeholder="이름 / 전화번호 / 이메일 / 학생 닉네임 검색…"
           />
           <select
             value={statusFilter}
@@ -318,7 +337,7 @@ export function AdminSponsorshipsManager({
           >
             필터 초기화
           </button>
-          <div className="inline-flex items-center rounded-xl border border-[var(--border)] bg-[#fff8f0] px-3 py-2 text-xs font-semibold text-[#7f5f4b]">
+          <div className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[#f5f2eb] px-3 py-2 text-xs font-black text-[#4b5f53]">
             {filteredItems.length} / {items.length}건
           </div>
         </div>
@@ -328,7 +347,7 @@ export function AdminSponsorshipsManager({
       </section>
 
       <section className="surface-card overflow-hidden">
-        <header className="border-b border-[var(--border)] px-5 py-4">
+        <header className="border-b border-[var(--border)] px-5 py-3">
           <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 목록</h2>
         </header>
         {filteredItems.length === 0 ? (
@@ -338,9 +357,122 @@ export function AdminSponsorshipsManager({
             description="검색어 또는 상태 필터를 조정해 주세요."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="data-table min-w-[1680px]">
-              <thead className="bg-[#fff5ea] text-left text-[#6d5545]">
+          <>
+          <ul className="space-y-3 p-4 md:hidden">
+            {filteredItems.map((item) => {
+              const student = studentById.get(item.studentId);
+              const studentStatus = toStudentStatus(item.status);
+              const message = item.sponsorMessage?.trim() || "응원 메시지 없음";
+              const draftStatus = draftStatusById[item.id] ?? item.status;
+              const canApply = !isMutating && draftStatus !== item.status;
+
+              return (
+                <li
+                  key={item.id}
+                  className="rounded-2xl border border-[var(--border)] bg-white p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-base font-black text-[#18211d]">
+                        {item.sponsorName}
+                      </p>
+                      <p className="mt-1 text-sm font-bold text-[#314039]">
+                        {getStudentDisplayName(student)}
+                      </p>
+                    </div>
+                    <StatusPill
+                      label={item.status}
+                      className={getSponsorshipStatusClass(item.status)}
+                    />
+                  </div>
+
+                  <dl className="mt-3 grid gap-2 text-sm text-[#314039]">
+                    <div className="grid grid-cols-[4.5rem_1fr] gap-2">
+                      <dt className="font-bold text-[#63706a]">신청일</dt>
+                      <dd>{formatDateTimeKorean(item.createdAt)}</dd>
+                    </div>
+                    <div className="grid grid-cols-[4.5rem_1fr] gap-2">
+                      <dt className="font-bold text-[#63706a]">전화</dt>
+                      <dd className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono font-bold tabular-nums">
+                          {item.sponsorPhone}
+                        </span>
+                        <a
+                          href={toTelHref(item.sponsorPhone)}
+                          aria-label={`전화 걸기: ${item.sponsorPhone}`}
+                          className="rounded-lg border border-[var(--border)] bg-white px-2 py-1 text-[11px] font-bold text-[#7a5d4a]"
+                        >
+                          전화 걸기
+                        </a>
+                        <CopyButton value={item.sponsorPhone} label="복사" />
+                      </dd>
+                    </div>
+                    <div className="grid grid-cols-[4.5rem_1fr] gap-2">
+                      <dt className="font-bold text-[#63706a]">이메일</dt>
+                      <dd className="min-w-0 break-all">{item.sponsorEmail}</dd>
+                    </div>
+                    <div className="grid grid-cols-[4.5rem_1fr] gap-2">
+                      <dt className="font-bold text-[#63706a]">학생 상태</dt>
+                      <dd>
+                        <StatusPill
+                          label={getStudentStatusLabel(studentStatus)}
+                          className={getStudentStatusClass(studentStatus)}
+                        />
+                      </dd>
+                    </div>
+                    <div className="grid grid-cols-[4.5rem_1fr] gap-2">
+                      <dt className="font-bold text-[#63706a]">메시지</dt>
+                      <dd>
+                        <p className="break-words">{getMessagePreview(message)}</p>
+                        <button
+                          type="button"
+                          onClick={() => setOpenedMessageId(item.id)}
+                          className="mt-1 text-xs font-bold text-[#8b552f] underline underline-offset-2"
+                        >
+                          상세 보기
+                        </button>
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div className="mt-4 grid grid-cols-[1fr_auto] gap-2">
+                    <select
+                      value={draftStatus}
+                      onChange={(event) =>
+                        setDraftStatusById((prev) => ({
+                          ...prev,
+                          [item.id]: event.target
+                            .value as SponsorshipProgressStatus,
+                        }))
+                      }
+                      disabled={isMutating}
+                      aria-label={`${item.sponsorName} 상태 변경 선택`}
+                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
+                    >
+                      {STATUS_UPDATE_OPTIONS.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyStatus(item.id)}
+                      disabled={!canApply}
+                      className="btn-secondary px-4 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
+                      aria-label={`${item.sponsorName} 상태 저장`}
+                    >
+                      {updatingId === item.id ? "저장 중…" : "적용"}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="hidden overflow-x-auto md:block">
+            <table className="data-table min-w-[1420px]">
+              <thead>
                 <tr>
                   <th>신청일</th>
                   <th>후원자 이름</th>
@@ -387,7 +519,7 @@ export function AdminSponsorshipsManager({
                       <td className="whitespace-nowrap">
                         <div className="space-y-2">
                           <p className="font-semibold text-[#4f3b30]">
-                            {student?.nickname ?? "알 수 없음"}
+                            {getStudentDisplayName(student)}
                           </p>
                           <StatusPill
                             label={getStudentStatusLabel(studentStatus)}
@@ -450,7 +582,7 @@ export function AdminSponsorshipsManager({
                             className="btn-secondary px-3 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
                             aria-label={`${item.sponsorName} 상태 저장`}
                           >
-                            {updatingId === item.id ? "저장 중..." : "적용"}
+                            {updatingId === item.id ? "저장 중…" : "적용"}
                           </button>
                         </div>
                       </td>
@@ -460,6 +592,7 @@ export function AdminSponsorshipsManager({
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
 
@@ -472,7 +605,7 @@ export function AdminSponsorshipsManager({
           onClick={() => setOpenedMessageId(null)}
         >
           <div
-            className="surface-card w-full max-w-xl p-6"
+            className="surface-card w-full max-w-xl p-5"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
@@ -484,7 +617,7 @@ export function AdminSponsorshipsManager({
                   {openedItem.sponsorName} 후원자
                 </h3>
                 <p className="mt-1 text-sm subtle-text">
-                  학생: {openedStudent?.nickname ?? "알 수 없음"}
+                  학생: {getStudentDisplayName(openedStudent ?? undefined)}
                 </p>
               </div>
               <button
@@ -496,7 +629,7 @@ export function AdminSponsorshipsManager({
                 닫기
               </button>
             </div>
-            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[#fffaf4] p-4 text-sm leading-7 text-[#4f3b30]">
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-white p-4 text-sm leading-7 text-[#2f3d35]">
               {openedItem.sponsorMessage?.trim() || "등록된 응원 메시지가 없습니다."}
             </div>
           </div>

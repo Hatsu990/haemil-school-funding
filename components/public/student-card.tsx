@@ -9,6 +9,7 @@ import {
   getSponsorshipBlockedReason,
   isSponsorshipRequestable,
 } from "@/lib/sponsorship/policy";
+import { getPublicStudentName } from "@/lib/students/display";
 import { withStudentUiFallback } from "@/lib/students/ui";
 import { getStudentStatusClass, getStudentStatusLabel } from "@/lib/utils";
 import { StudentProfile } from "@/types";
@@ -19,11 +20,12 @@ interface StudentCardProps {
 
 export function StudentCard({ student }: StudentCardProps) {
   const studentUi = withStudentUiFallback(student);
+  const publicStudentName = getPublicStudentName(studentUi);
   const requestable = isSponsorshipRequestable(studentUi.sponsorshipStatus);
   const blockedReason = requestable
     ? "학생 1명당 후원자 1명 결연 원칙으로 운영됩니다."
     : getSponsorshipBlockedReason(studentUi.sponsorshipStatus);
-  const profileTheme = studentUi.profileTheme ?? "from-[#f3e3d6] to-[#fff4ea]";
+  const profileTheme = studentUi.profileTheme ?? "from-[#dfe8d8] to-[#fffdf8]";
   const letterImageUrl = useMemo(
     () => studentUi.letterImageUrl?.trim() ?? "",
     [studentUi.letterImageUrl],
@@ -35,25 +37,25 @@ export function StudentCard({ student }: StudentCardProps) {
 
   const letterStatusText = hasLetterImage
     ? studentUi.letterSummary ??
-      "학생이 직접 전한 손편지 이미지를 확인할 수 있습니다."
-    : "손편지 없음";
+      "학생이 직접 전한 꿈편지 이미지를 확인할 수 있습니다."
+    : "꿈편지 없음";
 
   return (
     <>
-      <article className="surface-card overflow-hidden rounded-[24px] border-[#e8d9cd] shadow-[0_14px_34px_rgba(121,84,53,0.14)]">
+      <article className="surface-card overflow-hidden rounded-[28px] border-[#d8d1c4] shadow-[0_18px_42px_rgba(43,54,47,0.1)]">
         <div className={`bg-gradient-to-br p-5 ${profileTheme}`}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <StudentProfileImage
                 src={studentUi.profileImageUrl}
-                alt={`${studentUi.nickname} 학생 프로필 이미지`}
+                alt={`${publicStudentName} 학생 프로필 이미지`}
                 className="w-24 shrink-0 border-white/70 shadow-lg"
               />
               <div className="min-w-0">
-                <h3 className="truncate text-xl font-bold text-[#2f231b]">
-                  {studentUi.nickname}
+                <h3 className="truncate text-xl font-black text-[#18211d]">
+                  {publicStudentName}
                 </h3>
-                <p className="mt-1 text-sm text-[#5f4a3c]">
+                <p className="mt-1 text-sm font-bold text-[#314039]">
                   {studentUi.gender} · {studentUi.grade}
                 </p>
               </div>
@@ -66,9 +68,11 @@ export function StudentCard({ student }: StudentCardProps) {
         </div>
 
         <div className="space-y-4 p-5 sm:p-6">
-          <p className="text-sm leading-7 text-[#4d3d31]">{studentUi.description}</p>
-          <div className="rounded-xl bg-[#fff5ea] p-3 text-xs leading-5 text-[#6a5445]">
-            손편지 상태: {letterStatusText}
+          <p className="text-sm font-semibold leading-7 text-[#1f2b25]">
+            {studentUi.description}
+          </p>
+          <div className="rounded-2xl bg-[#f7f3ea] p-3 text-xs font-bold leading-5 text-[#314039]">
+            꿈편지 상태: {letterStatusText}
           </div>
           <div className="flex gap-2">
             <button
@@ -83,11 +87,11 @@ export function StudentCard({ student }: StudentCardProps) {
               className="btn-secondary flex-1 py-2 disabled:cursor-not-allowed disabled:opacity-60"
               aria-label={
                 hasLetterImage
-                  ? `${studentUi.nickname} 학생 손편지 보기`
-                  : `${studentUi.nickname} 학생 손편지 없음`
+                  ? `${publicStudentName} 학생 꿈편지 보기`
+                  : `${publicStudentName} 학생 꿈편지 없음`
               }
             >
-              {hasLetterImage ? "손편지 보기" : "손편지 없음"}
+              {hasLetterImage ? "꿈편지 보기" : "꿈편지 없음"}
             </button>
 
             {requestable ? (
@@ -106,7 +110,9 @@ export function StudentCard({ student }: StudentCardProps) {
               </button>
             )}
           </div>
-          <p className="text-xs leading-5 text-[#826451]">{blockedReason}</p>
+          <p className="text-xs font-semibold leading-5 text-[#314039]">
+            {blockedReason}
+          </p>
         </div>
       </article>
 
@@ -116,34 +122,34 @@ export function StudentCard({ student }: StudentCardProps) {
           onClick={() => setIsLetterModalOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="손편지 이미지 보기"
+          aria-label="꿈편지 이미지 보기"
         >
           <div
             className="surface-card w-full max-w-2xl p-4 sm:p-6"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h4 className="text-base font-bold text-[#2f241d]">
-                {studentUi.nickname} 학생 손편지
+              <h4 className="text-base font-bold text-[#18211d]">
+                {publicStudentName} 학생 꿈편지
               </h4>
               <button
                 type="button"
                 onClick={() => setIsLetterModalOpen(false)}
                 className="btn-secondary px-3 py-2 text-xs"
-                aria-label="손편지 모달 닫기"
+                aria-label="꿈편지 모달 닫기"
               >
                 닫기
               </button>
             </div>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-[var(--border)] bg-[#f7eadf]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-[var(--border)] bg-[#f7f3ea]">
               {hasLetterImageError ? (
-                <div className="grid h-full place-items-center px-6 text-center text-sm text-[#8b5e46]">
-                  손편지 이미지를 불러오지 못했습니다.
+                <div className="grid h-full place-items-center px-6 text-center text-sm text-[#63706a]">
+                  꿈편지 이미지를 불러오지 못했습니다.
                 </div>
               ) : (
                 <Image
                   src={letterImageUrl}
-                  alt={`${studentUi.nickname} 학생 손편지 이미지`}
+                  alt={`${publicStudentName} 학생 꿈편지 이미지`}
                   fill
                   unoptimized
                   className="object-contain object-center"

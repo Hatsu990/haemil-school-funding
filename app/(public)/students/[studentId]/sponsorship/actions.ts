@@ -56,8 +56,8 @@ export async function submitSponsorshipRequest(
   try {
     const sponsorshipType = values.sponsorshipType;
     if (!sponsorshipType) {
-      return buildErrorState(values, "후원 방식을 선택해 주세요.", {
-        sponsorshipType: "후원 방식을 선택해 주세요.",
+      return buildErrorState(values, "결연 방식 정보가 누락되었습니다.", {
+        sponsorshipType: "결연 방식 정보가 누락되었습니다.",
       });
     }
 

@@ -2,7 +2,7 @@ export type IsoDateTimeString = string;
 
 export type StudentSponsorshipStatus = "available" | "pending" | "matched";
 
-export type StudentGender = "\uB0A8" | "\uC5EC" | "\uBBF8\uC815";
+export type StudentGender = "\uB0A8" | "\uC5EC";
 
 export type SponsorshipKind =
   | "\uC77C\uC2DC\uD6C4\uC6D0"
@@ -20,9 +20,15 @@ export type SmsDeliveryStatus =
   | "\uC2E4\uD328"
   | "\uB300\uAE30";
 
+export type ScholarshipType =
+  | "\uC804\uC561\uC7A5\uD559\uAE08"
+  | "\uBC18\uC561\uC7A5\uD559\uAE08"
+  | "\uBD80\uBD84\uC7A5\uD559\uAE08";
+
 export interface StudentProfile {
   id: string;
   nickname: string;
+  realName?: string | null;
   gender: StudentGender;
   grade: string;
   description: string;
@@ -81,6 +87,7 @@ export interface Setting {
 export interface StudentRow {
   id: string;
   nickname: string;
+  real_name: string | null;
   gender: StudentGender;
   grade: string;
   description: string;
@@ -131,6 +138,43 @@ export interface SettingRow {
   updated_at: IsoDateTimeString;
 }
 
+export interface StudentScholarshipRecord {
+  id: string;
+  studentId: string;
+  scholarshipType: ScholarshipType;
+  studentName: string;
+  studentPhone: string;
+  parentName: string;
+  parentPhone: string;
+  bankAccount: string;
+  residentRegistrationFileUrl: string | null;
+  bankbookFileUrl: string | null;
+  createdAt: IsoDateTimeString;
+  updatedAt: IsoDateTimeString;
+}
+
+export interface StudentScholarshipRecordRow {
+  id: string;
+  student_id: string;
+  scholarship_type: ScholarshipType;
+  student_name: string;
+  student_phone: string;
+  parent_name: string;
+  parent_phone: string;
+  bank_account: string;
+  resident_registration_file_url: string | null;
+  bankbook_file_url: string | null;
+  created_at: IsoDateTimeString;
+  updated_at: IsoDateTimeString;
+}
+
+export interface StudentScholarshipView {
+  student: StudentProfile;
+  scholarshipType: ScholarshipType;
+  scholarshipAmount: number;
+  record: StudentScholarshipRecord | null;
+}
+
 export interface UpdateStudentStatusInput {
   id: string;
   sponsorshipStatus: StudentSponsorshipStatus;
@@ -138,6 +182,7 @@ export interface UpdateStudentStatusInput {
 
 export interface CreateStudentInput {
   nickname: string;
+  realName?: string | null;
   gender: StudentGender;
   grade: string;
   description: string;
@@ -147,6 +192,7 @@ export interface CreateStudentInput {
 export interface UpdateStudentProfileInput {
   id: string;
   nickname: string;
+  realName?: string | null;
   gender: StudentGender;
   grade: string;
   description: string;

@@ -7,17 +7,17 @@ export function getStudentStatusLabel(status: StudentSponsorshipStatus): string 
 }
 
 export function getStudentStatusClass(status: StudentSponsorshipStatus): string {
-  if (status === "matched") return "bg-[#e8f5eb] text-[#256f43]";
-  if (status === "pending") return "bg-[#fff6df] text-[#915f00]";
-  return "bg-[#eef2ff] text-[#3f4f9f]";
+  if (status === "matched") return "bg-[#e3efe4] text-[#284635]";
+  if (status === "pending") return "bg-[#fbefd3] text-[#8a631d]";
+  return "bg-[#edf3f7] text-[#385366]";
 }
 
 export function getSponsorshipStatusClass(
   status: SponsorshipProgressStatus,
 ): string {
-  if (status === "입금완료") return "bg-[#e8f5eb] text-[#256f43]";
-  if (status === "입금대기") return "bg-[#fff6df] text-[#915f00]";
-  return "bg-[#f4ece8] text-[#7f5f4b]";
+  if (status === "입금완료") return "bg-[#e3efe4] text-[#284635]";
+  if (status === "입금대기") return "bg-[#fbefd3] text-[#8a631d]";
+  return "bg-[#f1e7dd] text-[#7a513e]";
 }
 
 function parseDateValue(value: string): Date | null {

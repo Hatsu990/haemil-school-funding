@@ -7,7 +7,6 @@ import {
   createStudentAction,
   deleteStudentAction,
   deleteStudentLetterImageAction,
-  resetAllStudentsToAvailableAction,
   updateStudentProfileAction,
   uploadStudentLetterImageAction,
 } from "@/app/admin/(panel)/students/actions";
@@ -31,6 +30,7 @@ interface FeedbackState {
 interface StudentEditFormState {
   id: string;
   nickname: string;
+  realName: string;
   gender: string;
   grade: string;
   description: string;
@@ -52,7 +52,6 @@ export function AdminStudentsManager({
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [keyword, setKeyword] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [resettingStatus, setResettingStatus] = useState(false);
   const [uploadingLetterStudentId, setUploadingLetterStudentId] = useState<string | null>(
     null,
   );
@@ -69,7 +68,6 @@ export function AdminStudentsManager({
   const isMutating =
     isCreating ||
     deletingId !== null ||
-    resettingStatus ||
     isUpdatingProfile ||
     uploadingLetterStudentId !== null ||
     deletingLetterStudentId !== null;
@@ -84,6 +82,7 @@ export function AdminStudentsManager({
       const searchable = [
         student.id,
         student.nickname,
+        student.realName ?? "",
         student.gender,
         student.grade,
         student.description,
@@ -192,6 +191,7 @@ export function AdminStudentsManager({
     setEditingStudent({
       id: student.id,
       nickname: student.nickname,
+      realName: student.realName ?? "",
       gender: student.gender,
       grade: student.grade,
       description: student.description,
@@ -235,53 +235,6 @@ export function AdminStudentsManager({
     });
   };
 
-  const handleResetStatuses = async () => {
-    if (isMutating) {
-      return;
-    }
-
-    const shouldReset = window.confirm(
-      "전체 학생을 신청 가능 상태로 초기화하시겠습니까?\n운영 시작 전 초기화 용도로만 사용해 주세요.",
-    );
-    if (!shouldReset) {
-      return;
-    }
-
-    setFeedback(null);
-    setResettingStatus(true);
-
-    try {
-      const result = await resetAllStudentsToAvailableAction();
-      if (!result.ok) {
-        setFeedback({
-          type: "error",
-          message: result.message,
-        });
-        return;
-      }
-
-      setStudents((prevStudents) =>
-        prevStudents.map((student) => ({
-          ...student,
-          sponsorshipStatus: "available",
-        })),
-      );
-      setFeedback({
-        type: "success",
-        message: `${result.message} (${result.updatedCount ?? 0}명 변경)`,
-      });
-      router.refresh();
-    } catch (error) {
-      console.error("[admin students manager] failed to reset student statuses", error);
-      setFeedback({
-        type: "error",
-        message: "상태 초기화 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-      });
-    } finally {
-      setResettingStatus(false);
-    }
-  };
-
   const handleUploadLetterImage = async (
     event: FormEvent<HTMLFormElement>,
     studentId: string,
@@ -321,7 +274,7 @@ export function AdminStudentsManager({
       console.error("[admin students manager] failed to upload letter image", error);
       setFeedback({
         type: "error",
-        message: "손편지 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+        message: "꿈편지 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
       });
     } finally {
       setUploadingLetterStudentId(null);
@@ -333,7 +286,7 @@ export function AdminStudentsManager({
       return;
     }
 
-    const shouldDelete = window.confirm("해당 학생의 손편지 이미지를 삭제하시겠습니까?");
+    const shouldDelete = window.confirm("해당 학생의 꿈편지 이미지를 삭제하시겠습니까?");
     if (!shouldDelete) {
       return;
     }
@@ -363,7 +316,7 @@ export function AdminStudentsManager({
       console.error("[admin students manager] failed to delete letter image", error);
       setFeedback({
         type: "error",
-        message: "손편지 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+        message: "꿈편지 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
       });
     } finally {
       setDeletingLetterStudentId(null);
@@ -371,23 +324,10 @@ export function AdminStudentsManager({
   };
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="space-y-4 pb-6">
       <section className="surface-card p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-bold text-[#2f241d]">학생 추가</h2>
-            <p className="mt-2 text-sm subtle-text">
-              학생 실명 대신 닉네임/성별/학년/소개 문구만 등록합니다.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={handleResetStatuses}
-            disabled={isMutating}
-            className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {resettingStatus ? "초기화 중..." : "전체 학생 신청 가능 상태로 초기화"}
-          </button>
+        <div>
+          <h2 className="text-lg font-bold text-[#2f241d]">학생 추가</h2>
         </div>
         <form
           ref={formRef}
@@ -404,7 +344,19 @@ export function AdminStudentsManager({
               maxLength={40}
               disabled={isMutating}
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-              placeholder="예: 맑은 별빛"
+              placeholder="예: 맑은 별빛…"
+            />
+          </label>
+          <label className="text-sm">
+            <span className="mb-1 block font-semibold text-[#5f4a3c]">
+              학생 실명
+            </span>
+            <input
+              name="realName"
+              maxLength={40}
+              disabled={isMutating}
+              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+              placeholder="예: 홍길동…"
             />
           </label>
           <label className="text-sm">
@@ -417,7 +369,6 @@ export function AdminStudentsManager({
             >
               <option value="여">여</option>
               <option value="남">남</option>
-              <option value="미정">미정</option>
             </select>
           </label>
           <label className="text-sm">
@@ -428,7 +379,7 @@ export function AdminStudentsManager({
               maxLength={20}
               disabled={isMutating}
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-              placeholder="예: 중2"
+              placeholder="예: 중2…"
             />
           </label>
           <label className="text-sm">
@@ -457,7 +408,7 @@ export function AdminStudentsManager({
               maxLength={220}
               disabled={isMutating}
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-              placeholder="학생 소개 문구를 입력해 주세요."
+              placeholder="학생 소개 문구를 입력해 주세요…"
             />
           </label>
           <div className="md:col-span-2">
@@ -466,7 +417,7 @@ export function AdminStudentsManager({
               disabled={isMutating}
               className="btn-primary px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isCreating ? "추가 중..." : "학생 추가"}
+              {isCreating ? "추가 중…" : "학생 추가"}
             </button>
           </div>
         </form>
@@ -480,7 +431,7 @@ export function AdminStudentsManager({
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="닉네임, 학년, ID 검색"
+            placeholder="실명, 닉네임, 학년, ID 검색…"
             aria-label="학생 검색"
             className="min-w-[220px] flex-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
           />
@@ -491,7 +442,7 @@ export function AdminStudentsManager({
           >
             검색 초기화
           </button>
-          <span className="rounded-lg bg-[#fff4e8] px-3 py-2 text-xs font-semibold text-[#7f5f4b]">
+          <span className="inline-flex min-h-10 items-center rounded-lg bg-[#f5f2eb] px-3 py-2 text-xs font-black text-[#4b5f53]">
             {filteredStudents.length} / {students.length}명
           </span>
         </div>
@@ -510,14 +461,14 @@ export function AdminStudentsManager({
             const profileTheme = student.profileTheme ?? "from-[#f3e3d6] to-[#fff4ea]";
             return (
               <article key={student.id} className="surface-card overflow-hidden">
-                <div className={`bg-gradient-to-r p-4 ${profileTheme}`}>
+                  <div className={`bg-gradient-to-r p-3 ${profileTheme}`}>
                   <StudentProfileImage
                     src={student.profileImageUrl}
                     alt={`${student.nickname} 학생 프로필 이미지`}
                     className="w-20"
                   />
                 </div>
-                <div className="space-y-3 p-5">
+                <div className="space-y-3 p-4">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-lg font-bold text-[#2f241d]">
                       {student.nickname}
@@ -527,20 +478,25 @@ export function AdminStudentsManager({
                       className={getStudentStatusClass(student.sponsorshipStatus)}
                     />
                   </div>
-                  <p className="text-sm subtle-text">
+                  <p className="text-sm font-semibold text-[#1f2b25]">
                     {student.gender} · {student.grade}
                   </p>
-                  <p className="text-sm subtle-text">{student.description}</p>
+                  <p className="text-sm font-semibold text-[#1f2b25]">
+                    실명: {student.realName?.trim() || "미등록"}
+                  </p>
+                  <p className="text-sm leading-6 text-[#1f2b25]">
+                    {student.description}
+                  </p>
                   <p className="text-xs text-[#7a5b49]">ID: {student.id}</p>
 
                   <div className="rounded-xl border border-[var(--border)] bg-[#fffaf4] p-3">
-                    <p className="text-xs font-semibold text-[#6d5545]">손편지 이미지</p>
+                    <p className="text-xs font-semibold text-[#6d5545]">꿈편지 이미지</p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-[120px_1fr]">
                       <div className="relative aspect-square overflow-hidden rounded-lg border border-[var(--border)] bg-[#f6ebe0]">
                         {letterExists ? (
                           <Image
                             src={student.letterImageUrl as string}
-                            alt={`${student.nickname} 손편지 이미지`}
+                            alt={`${student.nickname} 꿈편지 이미지`}
                             fill
                             unoptimized
                             className="object-cover object-center"
@@ -548,7 +504,7 @@ export function AdminStudentsManager({
                           />
                         ) : (
                           <div className="grid h-full place-items-center px-2 text-center text-xs text-[#8a6a56]">
-                            손편지 없음
+                            꿈편지 없음
                           </div>
                         )}
                       </div>
@@ -573,10 +529,10 @@ export function AdminStudentsManager({
                             className="btn-secondary px-3 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {uploadingLetterStudentId === student.id
-                              ? "업로드 중..."
+                              ? "업로드 중…"
                               : letterExists
-                                ? "손편지 교체"
-                                : "손편지 업로드"}
+                                ? "꿈편지 교체"
+                                : "꿈편지 업로드"}
                           </button>
                         </form>
 
@@ -597,13 +553,13 @@ export function AdminStudentsManager({
                               className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
                             >
                               {deletingLetterStudentId === student.id
-                                ? "삭제 중..."
-                                : "손편지 삭제"}
+                                ? "삭제 중…"
+                                : "꿈편지 삭제"}
                             </button>
                           </div>
                         ) : (
                           <p className="text-xs text-[#7f5f4b]">
-                            아직 손편지 이미지가 등록되지 않았습니다.
+                            아직 꿈편지 이미지가 등록되지 않았습니다.
                           </p>
                         )}
                       </div>
@@ -625,7 +581,7 @@ export function AdminStudentsManager({
                       disabled={isMutating}
                       className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {deletingId === student.id ? "삭제 중..." : "학생 삭제"}
+                      {deletingId === student.id ? "삭제 중…" : "학생 삭제"}
                     </button>
                   </div>
                 </div>
@@ -687,6 +643,28 @@ export function AdminStudentsManager({
                   className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
                 />
               </label>
+              <label className="text-sm">
+                <span className="mb-1 block font-semibold text-[#5f4a3c]">
+                  학생 실명
+                </span>
+                <input
+                  maxLength={40}
+                  disabled={isUpdatingProfile}
+                  value={editingStudent.realName}
+                  onChange={(event) =>
+                    setEditingStudent((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            realName: event.target.value,
+                          }
+                        : prev,
+                    )
+                  }
+                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                  placeholder="예: 홍길동…"
+                />
+              </label>
 
               <label className="text-sm">
                 <span className="mb-1 block font-semibold text-[#5f4a3c]">성별 *</span>
@@ -707,7 +685,6 @@ export function AdminStudentsManager({
                 >
                   <option value="여">여</option>
                   <option value="남">남</option>
-                  <option value="미정">미정</option>
                 </select>
               </label>
 
@@ -762,7 +739,7 @@ export function AdminStudentsManager({
                   disabled={isUpdatingProfile}
                   className="btn-primary px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isUpdatingProfile ? "수정 중..." : "수정 저장"}
+                  {isUpdatingProfile ? "수정 중…" : "수정 저장"}
                 </button>
                 <button
                   type="button"

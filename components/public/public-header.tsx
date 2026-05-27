@@ -15,34 +15,34 @@ const navItems = [
 function getLinkClass(pathname: string, href: string): string {
   const isActive = pathname === href;
   return isActive
-    ? "rounded-full bg-[#f6dfcb] px-4 py-2 text-sm font-semibold text-[#8b4a20]"
-    : "rounded-full px-4 py-2 text-sm font-medium text-[#5d4a3e] transition hover:bg-[#fff1e5]";
+    ? "rounded-full bg-[#24372c] px-4 py-2 text-sm font-bold !text-white shadow-[0_10px_22px_rgba(36,55,44,0.16)]"
+    : "rounded-full px-4 py-2 text-sm font-semibold text-[#4c5a52] transition-colors hover:bg-[#eef4eb] hover:text-[#18211d]";
 }
 
 export function PublicHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[#fff9f2]/92 backdrop-blur-md">
-      <div className="mx-auto flex min-h-[68px] w-full max-w-[1360px] items-center justify-between px-5 py-1 sm:min-h-[78px] sm:px-7 sm:py-1.5 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12">
-        <Link href="/" className="flex items-center gap-3 sm:gap-5">
-          <div className="relative -my-4 h-[108px] w-[108px] shrink-0 sm:-my-8 sm:h-[196px] sm:w-[196px]">
+    <header className="sticky top-0 z-40 border-b border-[#d9d2c5]/80 bg-[#fbf8f1]/88 backdrop-blur-xl">
+      <div className="mx-auto flex min-h-[72px] w-full max-w-[1360px] items-center justify-between px-4 py-2 sm:px-6 lg:max-w-[1480px] lg:px-10 xl:max-w-[1560px] xl:px-12">
+        <Link href="/" className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="relative h-[76px] w-[76px] shrink-0 sm:h-[92px] sm:w-[92px]">
             <Image
               src="/images/haemil/haemil-school-logo.png"
               alt="해밀학교 로고"
               fill
-              className="object-contain drop-shadow-[0_10px_16px_rgba(84,55,34,0.24)]"
-              sizes="(max-width: 640px) 108px, 196px"
+              className="object-contain drop-shadow-[0_10px_18px_rgba(43,54,47,0.18)]"
+              sizes="(max-width: 640px) 76px, 92px"
             />
           </div>
-          <div className="space-y-0.5 sm:space-y-1">
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#9f7e67] sm:text-[0.76rem]">
+          <div className="min-w-0 space-y-0.5">
+            <p className="text-[0.63rem] font-bold uppercase tracking-[0.18em] text-[#728276] sm:text-[0.7rem]">
               Haemil School
             </p>
-            <p className="font-serif text-[1.62rem] leading-none font-bold tracking-[-0.01em] text-[#2a1e17] sm:text-[2.05rem]">
+            <p className="truncate text-[1.45rem] leading-none font-black tracking-[-0.02em] text-[#18211d] sm:text-[1.75rem]">
               해밀학교
             </p>
-            <p className="text-sm font-medium tracking-[0.01em] text-[#755d4d] sm:text-base">
+            <p className="truncate text-xs font-semibold tracking-[0.01em] text-[#63706a] sm:text-sm">
               생활관비 결연 후원
             </p>
           </div>
@@ -66,11 +66,11 @@ export function PublicHeader() {
         <details className="relative md:hidden">
           <summary
             aria-label="모바일 메뉴 열기"
-            className="list-none rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm font-semibold text-[#614d3e]"
+            className="list-none rounded-full border border-[var(--border)] bg-[#fffdf8] px-4 py-2 text-sm font-bold text-[#24372c] shadow-[0_10px_20px_rgba(43,54,47,0.08)]"
           >
             메뉴
           </summary>
-          <div className="absolute right-0 mt-2 w-56 rounded-xl border border-[var(--border)] bg-white p-2 shadow-lg">
+          <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-[var(--border)] bg-[#fffdf8] p-2 shadow-[0_18px_44px_rgba(43,54,47,0.16)]">
             <div className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <Link

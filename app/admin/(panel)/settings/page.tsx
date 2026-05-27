@@ -23,14 +23,7 @@ export default async function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-y-5 pb-8">
-      <section className="surface-card p-5">
-        <h2 className="text-lg font-bold text-[#2f241d]">운영 설정</h2>
-        <p className="mt-2 text-sm subtle-text">
-          관리자 연락, 문자 표시값, 운영 공개/신청 정책, 기본 목표값을 관리합니다.
-        </p>
-      </section>
-
+    <div className="pb-6">
       {dbErrorMessage ? (
         <section className="surface-card p-6 text-sm leading-7 text-[#5b473b]">
           <p className="font-semibold text-[#8c4f2d]">데이터 연결 안내</p>

@@ -5,22 +5,22 @@ const processSteps = [
   {
     title: "마음이 가는 학생을 선택하고 결연을 신청합니다",
     description:
-      "학생들의 이야기와 편지를 읽어보고, 응원하고 싶은 학생에게 후원을 신청할 수 있습니다.",
+      "학생들의 이야기와 꿈편지를 읽어보고, 응원하고 싶은 학생에게 3년 결연을 신청할 수 있습니다.",
   },
   {
     title: "해밀학교에서 직접 안내드립니다",
     description:
-      "후원 신청이 접수되면 관리자가 직접 연락드려 후원 방법과 결연 절차를 안내해드립니다.",
+      "결연 신청이 접수되면 관리자가 직접 연락드려 3년 결연 방식과 절차를 안내해드립니다.",
   },
   {
-    title: "결연이 완료되고 학생의 생활을 함께 응원합니다",
+    title: "3년 결연이 확정되고 학생의 생활을 함께 응원합니다",
     description:
-      "후원이 확인되면 해당 학생과의 결연이 확정되며, 후원은 학생들의 생활관비와 안정적인 학교생활 지원에 사용됩니다.",
+      "확인 절차가 끝나면 해당 학생과의 3년 결연이 확정되며, 장학금은 학생들의 생활관비와 안정적인 학교생활 지원에 사용됩니다.",
   },
   {
     title: "학교의 이야기와 아이들의 성장을 함께 나눕니다",
     description:
-      "해밀학교는 학교 소식과 아이들의 성장 이야기를 꾸준히 전하며, 후원자분들과 따뜻한 연결을 이어가고 있습니다.",
+      "해밀학교는 학교 소식과 아이들의 성장 이야기를 꾸준히 전하며, 후원자분들과 3년의 따뜻한 연결을 이어가고 있습니다.",
   },
 ];
 
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
 export default function ProjectPage() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
-      <header className="relative mb-8 overflow-hidden rounded-[32px] border border-[#e9d9cc] shadow-[0_18px_42px_rgba(121,84,53,0.16)] sm:mb-10">
+      <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
         <Image
           src="/images/haemil/people-activity-6.jpg"
           alt="해밀학교 전경"
@@ -61,13 +61,12 @@ export default function ProjectPage() {
           className="object-cover object-[center_26%] sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#2a1b12]/88 via-[#5a3d2b]/72 to-[#d78a4d]/45" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/88 via-[#24372c]/72 to-[#c66f4a]/42" />
         <div className="relative z-10 p-8 sm:p-10">
-          <p className="text-sm font-semibold text-[#f0d7c0]">프로젝트 안내</p>
-          <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-[#fff8f2] sm:text-4xl">
+          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
             생활관비 후원이 필요한 이유와 운영 방식
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-[#f7e8db]">
+          <p className="mt-4 max-w-3xl text-base leading-8 text-[#edf3ed]">
             학생들이 배움을 포기하지 않도록 지키는 생활관비 결연. 후원자와
             학생이 신뢰로 연결되는 과정을 투명하게 안내드립니다.
           </p>
@@ -86,8 +85,8 @@ export default function ProjectPage() {
           />
           <div className="absolute inset-0 bg-[#fffdfb]/94" />
           <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-[#2f231b]">후원 필요성</h2>
-            <div className="mt-4 space-y-4 text-sm leading-8 text-[#5a473a] sm:text-base">
+            <h2 className="text-2xl font-black text-[#18211d]">후원 필요성</h2>
+            <div className="mt-4 space-y-4 text-sm font-semibold leading-8 text-[#1f2b25] sm:text-base">
               <p>
                 학생 대부분은 다문화·중도입국 가정의 아이들로, 낯선 환경 속에서도
                 학업을 이어가기 위해 해밀학교 기숙사에서 생활하고 있습니다.
@@ -122,44 +121,44 @@ export default function ProjectPage() {
           />
           <div className="absolute inset-0 bg-[#fffdfb]/94" />
           <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-[#2f231b]">
+            <h2 className="text-2xl font-black text-[#18211d]">
               해밀학교 결연 후원 운영 원칙
             </h2>
-            <div className="mt-4 space-y-5 text-sm leading-8 text-[#5a473a] sm:text-base">
+            <div className="mt-4 space-y-5 text-sm font-semibold leading-8 text-[#1f2b25] sm:text-base">
               <div>
-                <h3 className="text-lg font-bold text-[#2f231b]">
+                <h3 className="text-lg font-black text-[#18211d]">
                   한 학생과 한 후원자를 연결합니다
                 </h3>
                 <p className="mt-2">
-                  해밀학교는 학생 한 명과 후원자 한 분이 꾸준히 연결되는 1:1
-                  결연 방식을 지향합니다. 단순한 후원이 아니라, 한 아이의
-                  학교생활을 함께 응원하고 지켜주는 따뜻한 관계가 되기를 바라고
-                  있습니다.
+                  해밀학교는 학생 한 명과 후원자 한 분이 3년 동안 꾸준히
+                  연결되는 결연 방식을 지향합니다. 단순한 후원이 아니라, 한
+                  아이의 학교생활을 함께 응원하고 지켜주는 따뜻한 관계가 되기를
+                  바라고 있습니다.
                 </p>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#2f231b]">
+                <h3 className="text-lg font-black text-[#18211d]">
                   모든 후원은 직접 확인 후 진행됩니다
                 </h3>
                 <p className="mt-2">
-                  해밀학교는 자동 결제 시스템 대신, 후원 신청 후 관리자가 직접
-                  연락드려 안내를 진행하고 있습니다. 조금 번거롭더라도 후원 과정
+                  해밀학교는 결연 신청 후 관리자가 직접 연락드려 3년 결연
+                  절차를 안내하고 있습니다. 조금 번거롭더라도 결연 과정
                   하나하나를 직접 확인함으로써, 보다 투명하고 책임감 있게
                   운영하기 위한 방식입니다.
                 </p>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#2f231b]">
-                  입금 완료 후 결연이 확정됩니다
+                <h3 className="text-lg font-black text-[#18211d]">
+                  확인 후 3년 결연이 확정됩니다
                 </h3>
                 <p className="mt-2">
-                  학생들의 생활관비 지원은 실제 입금 완료 기준으로 확정됩니다.
+                  학생들의 생활관비 지원은 관리자의 확인 절차를 거쳐 확정됩니다.
                   이를 통해 중복 결연이나 운영 혼선을 줄이고, 필요한 학생에게
-                  안정적으로 후원이 연결될 수 있도록 관리하고 있습니다.
+                  안정적으로 3년 장학금 결연이 이어질 수 있도록 관리하고 있습니다.
                 </p>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#2f231b]">
+                <h3 className="text-lg font-black text-[#18211d]">
                   학생의 개인정보와 초상권을 소중히 보호합니다
                 </h3>
                 <p className="mt-2">
@@ -182,7 +181,7 @@ export default function ProjectPage() {
 
       <section className="mt-8">
         <article className="surface-card overflow-hidden p-6 sm:p-7">
-          <h2 className="text-xl font-bold text-[#2f231b] sm:text-2xl">후원 절차</h2>
+          <h2 className="text-xl font-black text-[#18211d] sm:text-2xl">후원 절차</h2>
           <ol className="mt-4 grid gap-0">
             {processSteps.flatMap((step, index) => {
               const isLast = index === processSteps.length - 1;
@@ -190,15 +189,15 @@ export default function ProjectPage() {
               return [
                 <li
                   key={`step-${step.title}`}
-                  className="rounded-2xl border border-[var(--border)] bg-[#fff8f1] p-5"
+                  className="rounded-[26px] border border-[var(--border)] bg-[#fffdf8] p-5 shadow-[0_14px_34px_rgba(43,54,47,0.06)]"
                 >
-                  <p className="text-xs font-bold tracking-[0.08em] text-[#9f5f34]">
+                  <p className="text-xs font-black tracking-[0.12em] text-[#486f5b]">
                     STEP {index + 1}
                   </p>
-                  <h3 className="mt-2 text-base font-bold leading-7 text-[#2f231b]">
+                  <h3 className="mt-2 text-base font-black leading-7 text-[#18211d]">
                     {step.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-7 text-[#5d483a]">
+                  <p className="mt-2 text-sm font-semibold leading-7 text-[#1f2b25]">
                     {step.description}
                   </p>
                 </li>,
@@ -209,24 +208,22 @@ export default function ProjectPage() {
                     className="flex h-28 items-center justify-center py-6"
                   >
                     <svg
-                      width="36"
+                      width="38"
                       height="41"
-                      viewBox="0 0 30 34"
+                      viewBox="0 0 38 41"
                       className="drop-shadow-[0_2px_3px_rgba(121,84,53,0.18)]"
                     >
-                      <path
-                        d="M15 4V22"
-                        stroke="#9d6038"
-                        strokeWidth="4.2"
-                        strokeLinecap="round"
+                      <rect
+                        x="16"
+                        y="2"
+                        width="6"
+                        height="27"
+                        rx="3"
+                        fill="#486f5b"
                       />
                       <path
-                        d="M8 17L15 29L22 17"
-                        fill="none"
-                        stroke="#9d6038"
-                        strokeWidth="4.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                        d="M5.8 20.6C7.1 19.5 9 19.7 10 21L19 32.2L28 21C29 19.7 30.9 19.5 32.2 20.6C33.5 21.7 33.7 23.6 32.6 24.9L21.4 38.8C20.2 40.3 17.8 40.3 16.6 38.8L5.4 24.9C4.3 23.6 4.5 21.7 5.8 20.6Z"
+                        fill="#486f5b"
                       />
                     </svg>
                   </li>

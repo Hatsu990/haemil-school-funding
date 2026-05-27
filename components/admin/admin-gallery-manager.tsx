@@ -136,12 +136,12 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
   };
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="space-y-4 pb-6">
       <section className="surface-card p-5">
         <h2 className="text-lg font-bold text-[#2f241d]">갤러리 업로드</h2>
-        <p className="mt-2 text-sm subtle-text">
-          사진(image/*)과 영상(video/*) 파일만 업로드할 수 있습니다. 파일은 최대
-          100MB까지 업로드 가능합니다.
+        <p className="mt-2 text-sm font-semibold text-[#1f2b25]">
+          지원 형식: PNG, JPG, JPEG, WebP, GIF, MP4, WebM, MOV. 최대 용량:
+          100MB
         </p>
         <form ref={formRef} onSubmit={handleUpload} className="mt-4 space-y-4">
           <label className="block text-sm">
@@ -151,7 +151,7 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
               required
               maxLength={100}
               disabled={isMutating}
-              placeholder="예: 2026 봄 학습활동"
+              placeholder="예: 2026 봄 학습활동…"
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
             />
           </label>
@@ -177,11 +177,8 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
               disabled={isMutating}
               className="btn-primary px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isUploading ? "업로드 중..." : "업로드 실행"}
+              {isUploading ? "업로드 중…" : "업로드 실행"}
             </button>
-            <p className="text-xs subtle-text">
-              업로드와 DB 저장까지 완료되면 목록에 즉시 반영됩니다.
-            </p>
           </div>
         </form>
 
@@ -191,7 +188,7 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
       </section>
 
       <section className="surface-card overflow-hidden">
-        <header className="border-b border-[var(--border)] px-5 py-4">
+        <header className="border-b border-[var(--border)] px-5 py-3">
           <h2 className="text-lg font-bold text-[#2f241d]">
             업로드한 갤러리 목록 ({initialItems.length}건)
           </h2>
@@ -212,7 +209,7 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
               >
                 <GalleryPreview item={item} />
                 <div className="min-w-[220px] flex-1">
-                  <p className="font-semibold text-[#4f3d31]">{item.title}</p>
+                  <p className="font-bold text-[#24372c]">{item.title}</p>
                   <p className="mt-1 text-xs subtle-text">
                     유형 {item.type === "video" ? "영상" : "이미지"} · 업로드
                     {" " + formatDateTimeKorean(item.createdAt)}
@@ -239,7 +236,7 @@ export function AdminGalleryManager({ initialItems }: AdminGalleryManagerProps) 
                     className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
                     aria-label={`${item.title} 갤러리 항목 삭제`}
                   >
-                    {deletingId === item.id ? "삭제 중..." : "삭제"}
+                    {deletingId === item.id ? "삭제 중…" : "삭제"}
                   </button>
                 </div>
               </li>

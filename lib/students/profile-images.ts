@@ -65,14 +65,7 @@ export function buildStudentProfileImageUrl(
     return getMaleProfileImageUrl(studentId);
   }
 
-  if (gender === "여") {
-    return getFemaleProfileImageUrl(studentId);
-  }
-
-  const useMale = getStableIndex(studentId, 2) === 0;
-  return useMale
-    ? getMaleProfileImageUrl(studentId)
-    : getFemaleProfileImageUrl(studentId);
+  return getFemaleProfileImageUrl(studentId);
 }
 
 export function resolveStudentProfileImageUrl(

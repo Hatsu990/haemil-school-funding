@@ -1,4 +1,5 @@
 import { getSponsorshipById, getSponsorships } from "@/lib/repositories/sponsorships";
+import { buildScholarshipViews } from "@/lib/repositories/scholarships";
 import { getStudents } from "@/lib/repositories/students";
 import { sendSms, SendSmsResult } from "./client";
 import { getSmsTemplate, SmsTemplateName } from "./templates";
@@ -9,6 +10,7 @@ interface SponsorshipContext {
   sponsorPhone: string;
   sponsorshipType: string;
   sponsorshipPeriod: string;
+  scholarshipAmount: number | null;
   studentNickname: string;
 }
 
@@ -20,7 +22,15 @@ function getAdminNotificationPhone(): string {
   return normalizePhoneNumber(process.env.ADMIN_NOTIFICATION_PHONE?.trim() ?? "");
 }
 
-function resolveAmountLabel(sponsorshipType: string): string {
+function resolveAmountLabel(
+  sponsorshipType: string,
+  scholarshipAmount: number | null,
+): string {
+  if (scholarshipAmount) {
+    const amount = new Intl.NumberFormat("ko-KR").format(scholarshipAmount);
+    return sponsorshipType === "정기후원" ? `월 ${amount}원` : `${amount}원`;
+  }
+
   if (sponsorshipType === "정기후원") {
     return "월 100,000원";
   }
@@ -51,6 +61,10 @@ async function loadSponsorshipContext(
       `[sms service] Student not found for sponsorship: ${sponsorshipId}`,
     );
   }
+  const scholarshipViews = await buildScholarshipViews(students);
+  const scholarshipView = scholarshipViews.find(
+    (item) => item.student.id === sponsorship.studentId,
+  );
 
   return {
     sponsorshipId: sponsorship.id,
@@ -58,6 +72,7 @@ async function loadSponsorshipContext(
     sponsorPhone: sponsorship.sponsorPhone,
     sponsorshipType: sponsorship.sponsorshipType,
     sponsorshipPeriod: sponsorship.sponsorshipPeriod,
+    scholarshipAmount: scholarshipView?.scholarshipAmount ?? null,
     studentNickname: student.nickname,
   };
 }
@@ -78,7 +93,7 @@ export async function sendSponsorshipReceivedSms(
   return sendTemplateMessage("sponsorship_received", context.sponsorPhone, {
     name: context.sponsorName,
     studentNickname: context.studentNickname,
-    amount: resolveAmountLabel(context.sponsorshipType),
+    amount: resolveAmountLabel(context.sponsorshipType, context.scholarshipAmount),
     period: context.sponsorshipPeriod,
   });
 }
@@ -115,7 +130,7 @@ export async function sendRecurringReminderSms(
   return sendTemplateMessage("recurring_reminder", context.sponsorPhone, {
     name: context.sponsorName,
     studentNickname: context.studentNickname,
-    amount: resolveAmountLabel(context.sponsorshipType),
+    amount: resolveAmountLabel(context.sponsorshipType, context.scholarshipAmount),
     contactPhone,
   });
 }

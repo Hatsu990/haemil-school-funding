@@ -1,51 +1,42 @@
-import { AdminMetricCard } from "@/components/admin/admin-metric-card";
+import Link from "next/link";
 import { CopyButton } from "@/components/ui/copy-button";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
+import { StatusPill } from "@/components/ui/status-pill";
 import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
 import { getGalleryItems } from "@/lib/repositories/gallery";
 import { getSmsLogs } from "@/lib/repositories/sms";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
 import { getStudents } from "@/lib/repositories/students";
-import { formatDateTimeKorean, getSponsorshipStatusClass } from "@/lib/utils";
-import { StatusPill } from "@/components/ui/status-pill";
+import {
+  formatDateTimeKorean,
+  getSponsorshipStatusClass,
+} from "@/lib/utils";
 import { GalleryItem, SmsLog, SponsorshipRecord, StudentProfile } from "@/types";
 
-const RECENT_REQUEST_LIMIT = 10;
-const CONTACT_TARGET_LIMIT = 10;
-const LAST_30_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
-const STATUS_CHANGE_TEMPLATE_NAME = "sponsorship_status_change";
+const RECENT_REQUEST_LIMIT = 3;
+const CONTACT_TARGET_LIMIT = 2;
+const RECENT_GALLERY_LIMIT = 1;
 
 export const dynamic = "force-dynamic";
 
-function toTimestamp(value: string): number | null {
-  const normalized = value.includes("T") ? value : value.replace(" ", "T");
-  const timestamp = Date.parse(normalized);
-  if (!Number.isNaN(timestamp)) {
-    return timestamp;
-  }
-
-  const utcTimestamp = Date.parse(`${normalized}Z`);
-  if (!Number.isNaN(utcTimestamp)) {
-    return utcTimestamp;
-  }
-
-  return null;
+function toTelHref(phone: string): string {
+  const dialNumber = phone.replace(/[^\d+]/g, "");
+  return `tel:${dialNumber}`;
 }
 
-function isWithinRecent30Days(createdAt: string): boolean {
-  const timestamp = toTimestamp(createdAt);
-  if (timestamp === null) {
-    return false;
-  }
-
-  const diff = Date.now() - timestamp;
-  return diff >= 0 && diff <= LAST_30_DAYS_IN_MS;
+function formatPercent(value: number): string {
+  return `${new Intl.NumberFormat("ko-KR").format(value)}%`;
 }
 
-function isDeliveryLog(log: SmsLog): boolean {
-  return (
-    log.templateName !== STATUS_CHANGE_TEMPLATE_NAME && log.phone.trim() !== "-"
-  );
+function formatCount(value: number, suffix: string): string {
+  return `${new Intl.NumberFormat("ko-KR").format(value)}${suffix}`;
+}
+
+function getStudentName(
+  studentById: Map<string, StudentProfile>,
+  studentId: string,
+): string {
+  return studentById.get(studentId)?.nickname ?? "학생 정보 없음";
 }
 
 export default async function AdminDashboardPage() {
@@ -85,196 +76,333 @@ export default async function AdminDashboardPage() {
   const pendingStudentCount = students.filter(
     (student) => student.sponsorshipStatus === "pending",
   ).length;
-
-  const pendingSponsorshipCount = sponsorships.filter(
-    (item) => item.status === "입금대기",
+  const availableStudentCount = students.filter(
+    (student) => student.sponsorshipStatus === "available",
   ).length;
+  const pendingSponsorships = sponsorships.filter(
+    (item) => item.status === "입금대기",
+  );
+  const pendingSponsorshipCount = pendingSponsorships.length;
   const completedSponsorshipCount = sponsorships.filter(
     (item) => item.status === "입금완료",
   ).length;
-  const cancelledSponsorshipCount = sponsorships.filter(
-    (item) => item.status === "취소",
-  ).length;
-
-  const oneTimeSponsorshipCount = sponsorships.filter(
-    (item) => item.sponsorshipType === "일시후원",
-  ).length;
-  const recurringSponsorshipCount = sponsorships.filter(
-    (item) => item.sponsorshipType === "정기후원",
-  ).length;
-
-  const recentDeliveryLogs = smsLogs.filter(
-    (log) => isDeliveryLog(log) && isWithinRecent30Days(log.createdAt),
-  );
-  const recentSmsSentCount = recentDeliveryLogs.length;
-  const recentSmsFailedCount = recentDeliveryLogs.filter(
-    (log) => log.status === "실패",
-  ).length;
-
-  const galleryItemCount = galleryItems.length;
-
-  const progressPercentage =
-    totalStudentCount === 0
-      ? 0
-      : Math.round((matchedStudentCount / totalStudentCount) * 100);
-
-  const studentById = new Map(students.map((student) => [student.id, student]));
-
   const recentRequests = sponsorships.slice(0, RECENT_REQUEST_LIMIT);
-  const callTargets = sponsorships
-    .filter((item) => item.status === "입금대기")
-    .slice(0, CONTACT_TARGET_LIMIT);
-
+  const callTargets = pendingSponsorships.slice(0, CONTACT_TARGET_LIMIT);
+  const recentGalleryItems = galleryItems.slice(0, RECENT_GALLERY_LIMIT);
   const hiddenCallTargetCount = Math.max(
     0,
     pendingSponsorshipCount - callTargets.length,
   );
-
-  const metrics = [
-    { label: "전체 학생 수", value: `${totalStudentCount}명`, helper: "students 기준" },
-    { label: "결연 완료 학생 수", value: `${matchedStudentCount}명`, helper: "matched 상태" },
-    { label: "결연 대기 학생 수", value: `${pendingStudentCount}명`, helper: "pending 상태" },
-    { label: "입금 대기 신청 수", value: `${pendingSponsorshipCount}건`, helper: "입금대기 상태" },
-    {
-      label: "입금 완료 신청 수",
-      value: `${completedSponsorshipCount}건`,
-      helper: "입금완료 상태",
-    },
-    { label: "취소 신청 수", value: `${cancelledSponsorshipCount}건`, helper: "취소 상태" },
-    { label: "일시후원 수", value: `${oneTimeSponsorshipCount}건`, helper: "sponsorship_type 기준" },
-    { label: "정기후원 수", value: `${recurringSponsorshipCount}건`, helper: "sponsorship_type 기준" },
-    {
-      label: "최근 30일 문자 발송 수",
-      value: `${recentSmsSentCount}건`,
-      helper: "sms_logs(감사로그 제외)",
-    },
-    {
-      label: "최근 30일 문자 실패 수",
-      value: `${recentSmsFailedCount}건`,
-      helper: "status=실패",
-    },
-    { label: "갤러리 등록 수", value: `${galleryItemCount}건`, helper: "gallery_items 기준" },
-  ];
+  const progressPercentage =
+    totalStudentCount === 0
+      ? 0
+      : Math.round((matchedStudentCount / totalStudentCount) * 100);
+  const studentById = new Map(students.map((student) => [student.id, student]));
+  const latestSmsLog = smsLogs[0] ?? null;
+  const needsContact = pendingSponsorshipCount > 0;
 
   return (
-    <div className="space-y-5 pb-8">
-      <section className="surface-card p-5">
-        <h2 className="text-lg font-bold text-[#2f241d]">결연 진행률</h2>
-        {totalStudentCount === 0 ? (
-          <p className="mt-2 text-sm subtle-text">
-            등록된 학생 데이터가 없어 진행률을 계산할 수 없습니다.
-          </p>
-        ) : (
-          <p className="mt-2 text-sm text-[#5f4a3c]">
-            <span className="font-semibold text-[#2f241d]">
-              {matchedStudentCount} / {totalStudentCount}명 결연 완료
-            </span>
-            , {progressPercentage}% 달성
-          </p>
-        )}
-      </section>
+    <div className="grid items-start gap-4 pb-4 xl:grid-cols-[minmax(0,1fr)_minmax(340px,0.36fr)]">
+      <section className="min-w-0 space-y-4">
+        <article className="surface-card overflow-hidden p-5 sm:p-6 xl:p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-black text-[#486f5b] xl:text-xs">
+                현재 결연률
+              </p>
+              <h2 className="mt-2 text-4xl font-black leading-none text-[#18211d] sm:text-5xl xl:text-4xl">
+                {formatPercent(progressPercentage)}
+              </h2>
+            </div>
+            <div className="rounded-2xl bg-[#f7f3ea] px-4 py-3 text-right xl:px-3 xl:py-2">
+              <p className="text-xs font-bold text-[#63706a]">결연 완료</p>
+              <p className="mt-1 text-xl font-black text-[#18211d] xl:text-lg">
+                {matchedStudentCount} / {totalStudentCount}명
+              </p>
+            </div>
+          </div>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {metrics.map((metric) => (
-          <AdminMetricCard
-            key={metric.label}
-            label={metric.label}
-            value={metric.value}
-            helper={metric.helper}
-          />
-        ))}
-      </section>
+          <div className="mt-5 h-4 overflow-hidden rounded-full bg-[#e8dfcf] xl:mt-3 xl:h-2.5">
+            <div
+              className="h-full rounded-full bg-[#486f5b]"
+              style={{ width: `${progressPercentage}%` }}
+              aria-label={`현재 결연률 ${progressPercentage}%`}
+            />
+          </div>
 
-      <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+          <div className="mt-5 grid gap-3 sm:grid-cols-4 xl:mt-3 xl:gap-2">
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#63706a]">전체 학생</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d] xl:text-xl">
+                {formatCount(totalStudentCount, "명")}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#63706a]">결연 완료</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d] xl:text-xl">
+                {formatCount(matchedStudentCount, "명")}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#63706a]">결연 대기</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d] xl:text-xl">
+                {formatCount(pendingStudentCount, "명")}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#e8c991] bg-[#fff8e7] p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#8a631d]">입금 대기</p>
+              <p className="mt-1 text-2xl font-black text-[#7a5212] xl:text-xl">
+                {formatCount(pendingSponsorshipCount, "건")}
+              </p>
+            </div>
+          </div>
+        </article>
+
         <article className="surface-card overflow-hidden">
-          <header className="border-b border-[var(--border)] px-5 py-4">
-            <h2 className="text-lg font-bold text-[#2f241d]">최근 후원 신청</h2>
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-5 py-4 xl:px-4 xl:py-3">
+            <div>
+              <h2 className="text-lg font-black text-[#18211d] xl:text-base">
+                최근 신청 내역
+              </h2>
+              <p className="mt-1 text-xs font-semibold text-[#63706a] xl:hidden">
+                새 신청과 상태 확인이 필요한 항목입니다.
+              </p>
+            </div>
+            <Link href="/admin/sponsorships" className="btn-secondary min-h-9 px-4 py-2 text-xs">
+              전체 보기
+            </Link>
           </header>
           {recentRequests.length === 0 ? (
             <EmptyStateCard
               className="m-5"
-              title="최근 후원 신청이 없습니다."
-              description="후원 신청이 접수되면 최근 신청 목록에 자동으로 표시됩니다."
+              title="최근 결연 신청이 없습니다."
+              description="신청이 접수되면 최근순으로 표시됩니다."
             />
           ) : (
-            <div className="overflow-x-auto">
-            <table className="data-table min-w-[720px]">
-              <thead className="bg-[#fff5ea] text-left text-[#6d5545]">
-                <tr>
-                  <th>후원자 이름</th>
-                  <th>학생 닉네임</th>
-                  <th>상태</th>
-                  <th>신청일</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentRequests.map((item) => (
-                  <tr key={item.id}>
-                    <td className="whitespace-nowrap font-semibold text-[#4f3d31]">
-                      {item.sponsorName}
-                    </td>
-                    <td className="whitespace-nowrap">
-                      {studentById.get(item.studentId)?.nickname ?? "알 수 없음"}
-                    </td>
-                    <td className="whitespace-nowrap">
-                      <StatusPill
-                        label={item.status}
-                        className={getSponsorshipStatusClass(item.status)}
-                      />
-                    </td>
-                    <td className="whitespace-nowrap">
+            <>
+            <ul className="space-y-3 p-4 sm:hidden">
+              {recentRequests.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-2xl border border-[var(--border)] bg-white p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-black text-[#18211d]">
+                        {item.sponsorName}
+                      </p>
+                      <p className="mt-1 text-sm font-bold text-[#314039]">
+                        {getStudentName(studentById, item.studentId)}
+                      </p>
+                    </div>
+                    <StatusPill
+                      label={item.status}
+                      className={getSponsorshipStatusClass(item.status)}
+                    />
+                  </div>
+                  <div className="mt-3 grid gap-2 text-sm text-[#314039]">
+                    <p className="font-mono font-bold tabular-nums">
+                      {item.sponsorPhone}
+                    </p>
+                    <p className="text-xs font-semibold text-[#63706a]">
                       {formatDateTimeKorean(item.createdAt)}
-                    </td>
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="data-table min-w-full">
+                <thead>
+                  <tr>
+                    <th>신청일</th>
+                    <th>후원자</th>
+                    <th>학생</th>
+                    <th>연락처</th>
+                    <th>상태</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="xl:text-xs">
+                  {recentRequests.map((item) => (
+                    <tr key={item.id}>
+                      <td className="whitespace-nowrap">
+                        {formatDateTimeKorean(item.createdAt)}
+                      </td>
+                      <td className="whitespace-nowrap font-bold text-[#18211d]">
+                        {item.sponsorName}
+                      </td>
+                      <td className="whitespace-nowrap">
+                        {getStudentName(studentById, item.studentId)}
+                      </td>
+                      <td className="whitespace-nowrap font-mono text-xs font-bold tabular-nums">
+                        {item.sponsorPhone}
+                      </td>
+                      <td className="whitespace-nowrap">
+                        <StatusPill
+                          label={item.status}
+                          className={getSponsorshipStatusClass(item.status)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            </>
           )}
         </article>
+      </section>
 
-        <article className="surface-card p-5">
-          <h2 className="text-lg font-bold text-[#2f241d]">오늘 전화할 후원자</h2>
-          <p className="mt-2 text-xs subtle-text">
-            입금대기 상태 신청 {pendingSponsorshipCount}건 기준
-          </p>
+      <aside className="min-w-0 space-y-4">
+        <article className="surface-card p-5 sm:p-6 xl:p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-black text-[#486f5b] xl:text-xs">
+                오늘 연락 필요한 후원자
+              </p>
+              <h2 className="mt-2 text-4xl font-black leading-none text-[#18211d] xl:text-3xl">
+                {formatCount(pendingSponsorshipCount, "건")}
+              </h2>
+            </div>
+            <Link href="/admin/sponsorships" className="btn-secondary min-h-9 px-4 py-2 text-xs">
+              결연 관리
+            </Link>
+          </div>
 
           {callTargets.length === 0 ? (
             <EmptyStateCard
-              className="mt-4"
-              title="오늘 연락이 필요한 신청이 없습니다."
-              description="입금대기 상태 신청이 생기면 이 목록에 자동으로 표시됩니다."
+              className="mt-5"
+              title="오늘 연락할 후원자가 없습니다."
+              description="입금 대기 신청이 생기면 이곳에 먼저 표시됩니다."
             />
           ) : (
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-5 space-y-3 xl:mt-3 xl:space-y-2">
               {callTargets.map((item) => (
                 <li
                   key={item.id}
-                  className="rounded-xl border border-[var(--border)] bg-[#fff9f3] p-4"
+                  className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3"
                 >
-                  <p className="font-semibold text-[#4f3d31]">{item.sponsorName}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-2">
-                    <p className="text-sm subtle-text">{item.sponsorPhone}</p>
-                    <CopyButton value={item.sponsorPhone} label="전화번호 복사" />
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-black text-[#18211d] xl:text-sm">
+                        {item.sponsorName}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-[#314039] xl:text-xs">
+                        {getStudentName(studentById, item.studentId)}
+                      </p>
+                    </div>
+                    <StatusPill
+                      label={item.status}
+                      className={getSponsorshipStatusClass(item.status)}
+                    />
                   </div>
-                  <p className="mt-1 text-xs text-[#7c6658]">
-                    대상 학생: {studentById.get(item.studentId)?.nickname ?? "알 수 없음"}
-                  </p>
-                  <p className="mt-1 text-xs text-[#7c6658]">
-                    신청일: {formatDateTimeKorean(item.createdAt)}
-                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2 xl:mt-2">
+                    <p className="font-mono text-sm font-bold text-[#18211d] tabular-nums xl:text-xs">
+                      {item.sponsorPhone}
+                    </p>
+                    <CopyButton
+                      value={item.sponsorPhone}
+                      label="전화번호 복사"
+                      className="hidden sm:inline-flex"
+                    />
+                    <a
+                      href={toTelHref(item.sponsorPhone)}
+                      aria-label={`전화 걸기: ${item.sponsorPhone}`}
+                      className="inline-flex rounded-lg border border-[var(--border)] bg-white px-2 py-1 text-[11px] font-semibold text-[#7a5d4a] hover:bg-[#fff4e9] sm:hidden"
+                    >
+                      전화 걸기
+                    </a>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
 
           {hiddenCallTargetCount > 0 ? (
-            <p className="mt-3 text-xs subtle-text">
+            <p className="mt-3 text-xs font-semibold text-[#63706a]">
               외 {hiddenCallTargetCount}건은 결연 신청 관리에서 확인할 수 있습니다.
             </p>
           ) : null}
         </article>
-      </section>
+
+        <section className="surface-card p-5 xl:p-4">
+          <h2 className="text-lg font-black text-[#18211d] xl:text-base">현재 운영 상태</h2>
+          <div className="mt-4 space-y-3 xl:mt-3 xl:space-y-2">
+            <div className="rounded-2xl bg-[#f7f3ea] p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#63706a]">우선 처리</p>
+              <p className="mt-1 text-base font-black text-[#18211d] xl:text-sm">
+                {needsContact
+                  ? `입금 대기 ${pendingSponsorshipCount}건 확인 필요`
+                  : "새로 연락할 입금 대기 신청 없음"}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 xl:gap-2">
+              <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+                <p className="text-xs font-bold text-[#63706a]">신청 가능</p>
+                <p className="mt-1 text-xl font-black text-[#18211d] xl:text-lg">
+                  {formatCount(availableStudentCount, "명")}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+                <p className="text-xs font-bold text-[#63706a]">입금 완료 신청</p>
+                <p className="mt-1 text-xl font-black text-[#18211d] xl:text-lg">
+                  {formatCount(completedSponsorshipCount, "건")}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3">
+              <p className="text-xs font-bold text-[#63706a]">최근 문자 상태</p>
+              <p className="mt-1 text-sm font-black text-[#18211d] xl:text-xs">
+                {latestSmsLog
+                  ? `${latestSmsLog.status} · ${formatDateTimeKorean(latestSmsLog.createdAt)}`
+                  : "발송 이력 없음"}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="surface-card p-5 xl:p-4">
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="text-lg font-black text-[#18211d] xl:text-base">
+              최근 갤러리 업로드
+            </h2>
+            <Link href="/admin/gallery" className="btn-secondary min-h-9 px-4 py-2 text-xs">
+              관리
+            </Link>
+          </div>
+          {recentGalleryItems.length === 0 ? (
+            <EmptyStateCard
+              className="mt-4"
+              title="최근 업로드가 없습니다."
+              description="갤러리 관리에서 학교 활동 기록을 추가할 수 있습니다."
+            />
+          ) : (
+            <ul className="mt-4 space-y-3 xl:mt-3 xl:space-y-2">
+              {recentGalleryItems.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-2xl border border-[var(--border)] bg-white p-4 xl:p-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-bold text-[#18211d]">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold text-[#63706a]">
+                        {formatDateTimeKorean(item.createdAt)}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-[#eef4eb] px-3 py-1 text-xs font-bold text-[#486f5b]">
+                      {item.type === "video" ? "영상" : "사진"}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </aside>
     </div>
   );
 }

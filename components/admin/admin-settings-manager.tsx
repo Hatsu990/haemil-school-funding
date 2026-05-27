@@ -18,38 +18,26 @@ interface FeedbackState {
   message: string;
 }
 
-function toToggleLabel(value: "true" | "false", enabled: string, disabled: string) {
-  return value === "true" ? enabled : disabled;
-}
-
-function formatWon(value: string): string {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return `${value}원`;
-  }
-
-  return `${new Intl.NumberFormat("ko-KR").format(parsed)}원`;
-}
-
 export function AdminSettingsManager({ initialValues }: AdminSettingsManagerProps) {
   const router = useRouter();
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [isSaving, startSaving] = useTransition();
 
   const formResetKey = [
-    initialValues.adminContactPhone,
+    initialValues.representativeContactPhone,
+    initialValues.sponsorshipContactPhone,
     initialValues.smsSenderPhoneDisplay,
     initialValues.autoSmsSendTime,
-    initialValues.sitePublicEnabled,
-    initialValues.sponsorshipRequestEnabled,
-    initialValues.defaultSponsorshipAmount,
-    initialValues.targetStudentCount,
   ].join("|");
 
   const contactSummary = [
     {
-      label: "설정된 연락처",
-      value: initialValues.adminContactPhone,
+      label: "대표 연락",
+      value: initialValues.representativeContactPhone,
+    },
+    {
+      label: "장학금 결연 상담",
+      value: initialValues.sponsorshipContactPhone,
     },
     {
       label: "문자 발신 번호",
@@ -100,14 +88,11 @@ export function AdminSettingsManager({ initialValues }: AdminSettingsManagerProp
   };
 
   return (
-    <form key={formResetKey} onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
-      <article className="surface-card p-5 md:col-span-2">
+    <form key={formResetKey} onSubmit={handleSubmit} className="space-y-5">
+      <article className="surface-card p-4 md:col-span-2">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="font-semibold text-[#4f3d31]">현재 적용 중인 연락/문자 설정</h3>
-            <p className="mt-1 text-xs subtle-text">
-              저장된 값 기준으로 실제 운영에 사용되는 연락 정보를 보여줍니다.
-            </p>
           </div>
           <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-medium text-[#34507a]">
             현재 설정값
@@ -118,56 +103,49 @@ export function AdminSettingsManager({ initialValues }: AdminSettingsManagerProp
           {contactSummary.map((item) => (
             <div
               key={item.label}
-              className="rounded-xl border border-[var(--border)] bg-[#fff9f3] p-4"
+              className="rounded-xl border border-[var(--border)] bg-white p-4"
             >
               <p className="text-xs font-medium text-[#7c6658]">{item.label}</p>
               <p className="mt-1 text-lg font-bold text-[#2f241d]">{item.value}</p>
             </div>
           ))}
         </div>
-
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-            <p className="text-xs font-medium text-[#7c6658]">사이트 공개</p>
-            <p className="mt-1 text-sm font-semibold text-[#2f241d]">
-              {toToggleLabel(initialValues.sitePublicEnabled, "공개", "비공개")}
-            </p>
-          </div>
-          <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-            <p className="text-xs font-medium text-[#7c6658]">후원 요청 접수</p>
-            <p className="mt-1 text-sm font-semibold text-[#2f241d]">
-              {toToggleLabel(initialValues.sponsorshipRequestEnabled, "가능", "중지")}
-            </p>
-          </div>
-          <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-            <p className="text-xs font-medium text-[#7c6658]">기본 후원 금액</p>
-            <p className="mt-1 text-sm font-semibold text-[#2f241d]">
-              {formatWon(initialValues.defaultSponsorshipAmount)}
-            </p>
-          </div>
-          <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-            <p className="text-xs font-medium text-[#7c6658]">목표 학생 수</p>
-            <p className="mt-1 text-sm font-semibold text-[#2f241d]">
-              {initialValues.targetStudentCount}명
-            </p>
-          </div>
-        </div>
       </article>
 
-      <article className="surface-card p-5">
+      <article className="surface-card p-4">
         <h3 className="font-semibold text-[#4f3d31]">연락/문자 설정</h3>
         <div className="mt-4 space-y-3">
           <label className="block text-sm">
-            <span className="mb-2 block font-medium text-[#5f4a3c]" id="admin-phone-label">
-              관리자 안내 전화번호
+            <span
+              className="mb-2 block font-medium text-[#5f4a3c]"
+              id="representative-phone-label"
+            >
+              대표 연락 전화번호
             </span>
             <input
-              id="admin-contact-phone"
-              name="adminContactPhone"
-              defaultValue={initialValues.adminContactPhone}
+              id="representative-contact-phone"
+              name="representativeContactPhone"
+              defaultValue={initialValues.representativeContactPhone}
               disabled={isSaving}
               maxLength={20}
-              aria-labelledby="admin-phone-label"
+              aria-labelledby="representative-phone-label"
+              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+            />
+          </label>
+          <label className="block text-sm">
+            <span
+              className="mb-2 block font-medium text-[#5f4a3c]"
+              id="sponsorship-phone-label"
+            >
+              장학금 결연 상담 전화번호
+            </span>
+            <input
+              id="sponsorship-contact-phone"
+              name="sponsorshipContactPhone"
+              defaultValue={initialValues.sponsorshipContactPhone}
+              disabled={isSaving}
+              maxLength={20}
+              aria-labelledby="sponsorship-phone-label"
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
             />
           </label>
@@ -200,75 +178,13 @@ export function AdminSettingsManager({ initialValues }: AdminSettingsManagerProp
             />
           </label>
         </div>
-      </article>
-
-      <article className="surface-card p-5">
-        <h3 className="font-semibold text-[#4f3d31]">운영 정책 설정</h3>
-        <div className="mt-4 space-y-3">
-          <label className="block text-sm">
-            <span className="mb-2 block font-medium text-[#5f4a3c]">
-              사이트 공개 여부
-            </span>
-            <select
-              name="sitePublicEnabled"
-              defaultValue={initialValues.sitePublicEnabled}
-              disabled={isSaving}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-            >
-              <option value="true">공개</option>
-              <option value="false">비공개</option>
-            </select>
-          </label>
-          <label className="block text-sm">
-            <span className="mb-2 block font-medium text-[#5f4a3c]">
-              후원 요청 가능 여부
-            </span>
-            <select
-              name="sponsorshipRequestEnabled"
-              defaultValue={initialValues.sponsorshipRequestEnabled}
-              disabled={isSaving}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-            >
-              <option value="true">가능</option>
-              <option value="false">중지</option>
-            </select>
-          </label>
-          <label className="block text-sm">
-            <span className="mb-2 block font-medium text-[#5f4a3c]">
-              기본 후원 금액 (원)
-            </span>
-            <input
-              type="number"
-              name="defaultSponsorshipAmount"
-              defaultValue={initialValues.defaultSponsorshipAmount}
-              disabled={isSaving}
-              min={1}
-              step={1}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-2 block font-medium text-[#5f4a3c]">
-              전체 목표 학생 수
-            </span>
-            <input
-              type="number"
-              name="targetStudentCount"
-              defaultValue={initialValues.targetStudentCount}
-              disabled={isSaving}
-              min={1}
-              step={1}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-            />
-          </label>
-        </div>
 
         <button
           type="submit"
           disabled={isSaving}
           className="btn-primary mt-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSaving ? "설정 저장 중..." : "설정 저장"}
+          {isSaving ? "설정 저장 중…" : "설정 저장"}
         </button>
       </article>
 
@@ -276,7 +192,7 @@ export function AdminSettingsManager({ initialValues }: AdminSettingsManagerProp
         <FeedbackToast
           type={feedback.type}
           message={feedback.message}
-          className="surface-card md:col-span-2"
+          className="surface-card"
         />
       ) : null}
     </form>

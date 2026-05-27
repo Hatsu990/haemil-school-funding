@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fef9f4;
-  --foreground: #2a1f18;
-  --brand: #e1783d;
-  --brand-strong: #ce642a;
-  --brand-soft: #f6e2d0;
-  --card: #fffdfb;
-  --muted: #7b6456;
-  --border: #e8d9cd;
-  --success: #2f8f56;
-  --warning: #d19529;
-  --danger: #b64c3d;
-  --shadow-soft: 0 8px 24px rgba(137, 93, 58, 0.08);
-  --shadow-strong: 0 14px 30px rgba(137, 93, 58, 0.16);
+  --background: #f7f3ea;
+  --foreground: #18211d;
+  --brand: #486f5b;
+  --brand-strong: #284635;
+  --brand-soft: #dfe8d8;
+  --accent: #c66f4a;
+  --accent-soft: #f1d6c4;
+  --card: #fffdf8;
+  --muted: #63706a;
+  --border: #ddd6c9;
+  --success: #386d4f;
+  --warning: #b8862f;
+  --danger: #a84a3f;
+  --shadow-soft: 0 18px 44px rgba(43, 54, 47, 0.08);
+  --shadow-strong: 0 24px 64px rgba(43, 54, 47, 0.16);
 }
 
 @theme inline {
@@ -25,12 +27,15 @@
 
 body {
   background:
-    radial-gradient(circle at top left, #fff1e5 0%, transparent 35%),
-    radial-gradient(circle at bottom right, #fceee1 0%, transparent 45%),
+    radial-gradient(circle at 8% 0%, rgba(198, 111, 74, 0.18) 0%, transparent 30%),
+    radial-gradient(circle at 85% 8%, rgba(72, 111, 91, 0.16) 0%, transparent 34%),
+    linear-gradient(180deg, #fbf8f1 0%, #f7f3ea 44%, #f4efe4 100%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-sans-kr), sans-serif;
   line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: rgba(72, 111, 91, 0.16);
 }
 
 a {
@@ -41,7 +46,8 @@ button,
 input,
 select,
 textarea {
-  @apply transition;
+  @apply transition-colors duration-200;
+  touch-action: manipulation;
 }
 
 *:focus-visible {
@@ -49,7 +55,7 @@ textarea {
 }
 
 ::selection {
-  background: #f3c9a6;
+  background: #dfe8d8;
 }
 
 .container-base {
@@ -57,15 +63,15 @@ textarea {
 }
 
 .container-home {
-  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 xl:max-w-[1420px] xl:px-8 2xl:max-w-[1560px];
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 xl:max-w-[1440px] xl:px-8 2xl:max-w-[1560px];
 }
 
 .surface-card {
-  @apply rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-soft)];
+  @apply rounded-[28px] border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-soft)];
 }
 
 .section-title {
-  @apply font-serif text-2xl font-bold leading-tight text-[#2c2018] sm:text-3xl;
+  @apply text-2xl font-bold leading-tight text-[#18211d] text-balance sm:text-3xl;
 }
 
 .subtle-text {
@@ -73,11 +79,11 @@ textarea {
 }
 
 .btn-primary {
-  @apply inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px] hover:bg-[var(--brand-strong)] hover:shadow-[var(--shadow-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
+  @apply inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--brand-strong)] px-5 py-3 text-sm font-bold text-white shadow-[0_14px_28px_rgba(40,70,53,0.18)] transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:bg-[var(--brand)] hover:shadow-[var(--shadow-strong)] active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
 }
 
 .btn-secondary {
-  @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[#5b4739] transition hover:translate-y-[-1px] hover:bg-[#fff6ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
+  @apply inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--border)] bg-[#fffdf8] px-5 py-3 text-sm font-bold text-[#24372c] transition-[background-color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#b9c7b6] hover:bg-[#eef4eb] active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)];
 }
 
 .status-dot {
@@ -85,7 +91,7 @@ textarea {
 }
 
 .hover-lift {
-  @apply transition hover:translate-y-[-2px] hover:shadow-[var(--shadow-strong)];
+  @apply transition-[box-shadow,transform] duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-strong)];
 }
 
 .data-table {
@@ -93,25 +99,178 @@ textarea {
 }
 
 .data-table th {
-  @apply whitespace-nowrap px-4 py-3 text-left text-xs font-semibold tracking-[0.02em] text-[#6d5545];
+  @apply whitespace-nowrap px-4 py-3 text-left text-xs font-semibold tracking-[0.02em] text-[#52645b];
 }
 
 .data-table td {
-  @apply px-4 py-3 align-top text-[#4e3b2f];
+  @apply px-4 py-3 align-top text-[#27342e];
 }
 
 .data-table tbody tr {
-  @apply border-t border-[var(--border)] transition hover:bg-[#fffaf4];
+  @apply border-t border-[var(--border)] transition-colors hover:bg-[#f4f7f1];
 }
 
 .skeleton {
-  @apply animate-pulse rounded-lg bg-[#f0e3d7];
+  @apply animate-pulse rounded-lg bg-[#e4dfd3];
 }
 
 .toast-success {
-  @apply rounded-xl border border-[#cde7d8] bg-[#f4fbf7] px-4 py-3 text-sm text-[#2e6b45];
+  @apply rounded-2xl border border-[#cde7d8] bg-[#f4fbf7] px-4 py-3 text-sm text-[#2e6b45];
 }
 
 .toast-error {
-  @apply rounded-xl border border-[#f0d4d4] bg-[#fff5f5] px-4 py-3 text-sm text-[#9d3f3f];
+  @apply rounded-2xl border border-[#f0d4d4] bg-[#fff5f5] px-4 py-3 text-sm text-[#9d3f3f];
+}
+
+.admin-panel {
+  min-height: 100dvh;
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.94) 0%, rgba(244, 240, 232, 0.98) 38%, #f0ece1 100%),
+    #f4f0e8;
+  color: #18211d;
+}
+
+.admin-topbar {
+  @apply mb-3 flex min-w-0 flex-wrap items-center justify-between gap-3 border bg-[#fffefa] px-4 py-3 shadow-[0_10px_24px_rgba(40,54,47,0.07)] sm:px-5;
+  border-color: #d8d2c5;
+  border-radius: 18px;
+}
+
+.admin-mobile-nav {
+  @apply mb-3 flex gap-2 overflow-x-auto border bg-[#fffefa] p-2 shadow-[0_8px_18px_rgba(40,54,47,0.06)];
+  border-color: #d8d2c5;
+  border-radius: 16px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-mobile-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-mobile-nav a {
+  @apply shrink-0 rounded-xl px-3 py-2 text-xs font-black text-[#3c4d43] transition-[background-color,color] duration-200;
+}
+
+.admin-mobile-nav a:hover {
+  @apply bg-[#f1ece2] text-[#18211d];
+}
+
+.admin-mobile-nav a.is-active {
+  @apply bg-[#385f4a] text-white shadow-[0_8px_18px_rgba(56,95,74,0.16)];
+}
+
+@media (min-width: 1024px) {
+  .admin-mobile-nav {
+    display: none;
+  }
+}
+
+.admin-panel .surface-card {
+  background: #fffefa;
+  border-color: #d8d2c5;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(43, 54, 47, 0.065);
+}
+
+.admin-panel .data-table th {
+  padding: 0.65rem 0.75rem;
+  background: #f3eee4;
+  color: #25342d;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.admin-panel .data-table td {
+  padding: 0.68rem 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.admin-panel .data-table tbody tr {
+  border-color: #e1dacd;
+}
+
+.admin-panel .data-table tbody tr:hover {
+  background: #f5f2eb;
+}
+
+.admin-panel input,
+.admin-panel select,
+.admin-panel textarea {
+  min-width: 0;
+  border-color: #d8d2c5;
+  border-radius: 0.65rem;
+  color: #18211d;
+}
+
+.admin-panel input::placeholder,
+.admin-panel textarea::placeholder {
+  color: #8b8175;
+}
+
+.admin-panel .rounded-2xl {
+  border-radius: 14px;
+}
+
+.admin-panel .rounded-xl {
+  border-radius: 10px;
+}
+
+.admin-panel .btn-primary,
+.admin-panel .btn-secondary {
+  min-height: 38px;
+  border-radius: 0.75rem;
+  padding-block: 0.55rem;
+  box-shadow: none;
+}
+
+@media (max-width: 639px) {
+  .admin-panel {
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+
+  .admin-topbar {
+    border-radius: 16px;
+    padding: 0.85rem;
+  }
+
+  .admin-panel .surface-card {
+    border-radius: 14px;
+  }
+
+  .admin-panel .btn-primary,
+  .admin-panel .btn-secondary {
+    min-height: 42px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .admin-panel input,
+  .admin-panel select,
+  .admin-panel textarea {
+    font-size: 16px;
+  }
+
+  .admin-panel .data-table {
+    font-size: 0.78rem;
+  }
+
+  .admin-panel .data-table th,
+  .admin-panel .data-table td {
+    padding: 0.65rem 0.7rem;
+  }
+}
+
+@keyframes sponsor-message-slide {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

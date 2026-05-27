@@ -4,7 +4,8 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS students (
   id TEXT PRIMARY KEY,
   nickname TEXT NOT NULL,
-  gender TEXT NOT NULL CHECK (gender IN ('남', '여', '미정')),
+  real_name TEXT,
+  gender TEXT NOT NULL CHECK (gender IN ('남', '여')),
   grade TEXT NOT NULL,
   description TEXT NOT NULL,
   profile_image_url TEXT,
@@ -58,6 +59,23 @@ CREATE TABLE IF NOT EXISTS settings (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS student_scholarship_records (
+  id TEXT PRIMARY KEY,
+  student_id TEXT NOT NULL UNIQUE,
+  scholarship_type TEXT NOT NULL
+    CHECK (scholarship_type IN ('전액장학금', '반액장학금', '부분장학금')),
+  student_name TEXT NOT NULL DEFAULT '',
+  student_phone TEXT NOT NULL DEFAULT '',
+  parent_name TEXT NOT NULL DEFAULT '',
+  parent_phone TEXT NOT NULL DEFAULT '',
+  bank_account TEXT NOT NULL DEFAULT '',
+  resident_registration_file_url TEXT,
+  bankbook_file_url TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (student_id) REFERENCES students(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_students_status
   ON students (sponsorship_status);
 
@@ -82,6 +100,12 @@ CREATE INDEX IF NOT EXISTS idx_sms_logs_created_at
 
 CREATE INDEX IF NOT EXISTS idx_settings_key
   ON settings (setting_key);
+
+CREATE INDEX IF NOT EXISTS idx_student_scholarship_records_student_id
+  ON student_scholarship_records (student_id);
+
+CREATE INDEX IF NOT EXISTS idx_student_scholarship_records_type
+  ON student_scholarship_records (scholarship_type);
 
 CREATE TRIGGER IF NOT EXISTS trg_students_updated_at
 AFTER UPDATE ON students
@@ -109,6 +133,16 @@ FOR EACH ROW
 WHEN NEW.updated_at = OLD.updated_at
 BEGIN
   UPDATE settings
+  SET updated_at = CURRENT_TIMESTAMP
+  WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_student_scholarship_records_updated_at
+AFTER UPDATE ON student_scholarship_records
+FOR EACH ROW
+WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE student_scholarship_records
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = NEW.id;
 END;

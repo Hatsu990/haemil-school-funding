@@ -14,7 +14,7 @@ import {
 } from "@/lib/repositories/students";
 import { StudentGender, StudentProfile, StudentSponsorshipStatus } from "@/types";
 
-const VALID_GENDERS = new Set<StudentGender>(["남", "여", "미정"]);
+const VALID_GENDERS = new Set<StudentGender>(["남", "여"]);
 const VALID_STATUSES = new Set<StudentSponsorshipStatus>([
   "available",
   "pending",
@@ -35,6 +35,7 @@ export interface DeleteStudentActionResult {
 export interface UpdateStudentProfileActionInput {
   id: string;
   nickname: string;
+  realName?: string;
   gender: string;
   grade: string;
   description: string;
@@ -109,6 +110,7 @@ export async function createStudentAction(
   formData: FormData,
 ): Promise<CreateStudentActionResult> {
   const nickname = String(formData.get("nickname") ?? "").trim();
+  const realName = String(formData.get("realName") ?? "").trim();
   const genderRaw = String(formData.get("gender") ?? "").trim();
   const grade = String(formData.get("grade") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -133,6 +135,7 @@ export async function createStudentAction(
   try {
     const student = await createStudent({
       nickname,
+      realName,
       gender: genderRaw,
       grade,
       description,
@@ -199,6 +202,7 @@ export async function updateStudentProfileAction(
 ): Promise<UpdateStudentProfileActionResult> {
   const id = input.id.trim();
   const nickname = input.nickname.trim();
+  const realName = input.realName?.trim() ?? "";
   const genderRaw = input.gender.trim();
   const grade = input.grade.trim();
   const description = input.description.trim();
@@ -223,6 +227,7 @@ export async function updateStudentProfileAction(
     const student = await updateStudentProfile({
       id,
       nickname,
+      realName,
       gender: genderRaw,
       grade,
       description,
@@ -291,7 +296,7 @@ export async function uploadStudentLetterImageAction(
   if (!isImageFile(fileEntry)) {
     return {
       ok: false,
-      message: "업로드할 손편지 이미지 파일을 선택해 주세요.",
+      message: "업로드할 꿈편지 이미지 파일을 선택해 주세요.",
     };
   }
 
@@ -305,7 +310,7 @@ export async function uploadStudentLetterImageAction(
   if (fileEntry.size > LETTER_IMAGE_MAX_SIZE_BYTES) {
     return {
       ok: false,
-      message: `손편지 이미지는 최대 ${LETTER_IMAGE_MAX_SIZE_MB}MB까지 업로드할 수 있습니다.`,
+      message: `꿈편지 이미지는 최대 ${LETTER_IMAGE_MAX_SIZE_MB}MB까지 업로드할 수 있습니다.`,
     };
   }
 
@@ -366,8 +371,8 @@ export async function uploadStudentLetterImageAction(
     return {
       ok: true,
       message: oldFileDeleted
-        ? "손편지 이미지가 저장되었습니다."
-        : "새 손편지는 저장되었지만 이전 이미지 정리에 실패했습니다. 운영 로그를 확인해 주세요.",
+        ? "꿈편지 이미지가 저장되었습니다."
+        : "새 꿈편지는 저장되었지만 이전 이미지 정리에 실패했습니다. 운영 로그를 확인해 주세요.",
       letterImageUrl: uploadedLetterImageUrl,
     };
   } catch (error) {
@@ -379,7 +384,7 @@ export async function uploadStudentLetterImageAction(
 
     return {
       ok: false,
-      message: "손편지 이미지 업로드에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "꿈편지 이미지 업로드에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 }
@@ -417,7 +422,7 @@ export async function deleteStudentLetterImageAction(
   if (!previousLetterImageUrl) {
     return {
       ok: true,
-      message: "삭제할 손편지 이미지가 없습니다.",
+      message: "삭제할 꿈편지 이미지가 없습니다.",
       letterImageUrl: null,
     };
   }
@@ -428,7 +433,7 @@ export async function deleteStudentLetterImageAction(
     console.error("[admin students action] failed to delete student letter image from DB", error);
     return {
       ok: false,
-      message: "손편지 이미지 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "꿈편지 이미지 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 
@@ -448,7 +453,7 @@ export async function deleteStudentLetterImageAction(
   return {
     ok: true,
     message: blobDeleted
-      ? "손편지 이미지가 삭제되었습니다."
+      ? "꿈편지 이미지가 삭제되었습니다."
       : "DB에서는 삭제되었지만 Blob 파일 정리에 실패했습니다. 운영 로그를 확인해 주세요.",
     letterImageUrl: null,
   };
