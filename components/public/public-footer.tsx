@@ -68,7 +68,7 @@ export async function PublicFooter() {
                 Haemill School
               </p>
               <h3 className="mt-1 text-xl leading-tight font-black text-white sm:text-2xl">
-                해밀학교와 함께하는 생활관비 결연
+                해밀학교와 함께하는 3년 장학금 결연
               </h3>
             </Link>
           </div>
@@ -92,7 +92,7 @@ export async function PublicFooter() {
       </div>
 
       <div className="relative z-10 border-t border-white/12 py-3 text-center text-xs text-[#b9c5bb]">
-        © 2026 해밀학교와 함께하는 생활관비 결연. All rights reserved.
+        © 2026 해밀학교와 함께하는 3년 장학금 결연. All rights reserved.
       </div>
     </footer>
   );

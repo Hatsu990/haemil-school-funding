@@ -10,17 +10,17 @@ import { StudentProfile } from "@/types";
 export const metadata: Metadata = {
   title: "학생 만나기",
   description:
-    "해밀학교 학생들의 공개 표시명, 학년, 결연 상태를 확인하고 생활관비 1:1 결연 후원을 신청할 수 있습니다.",
+    "해밀학교 학생들의 공개 표시명, 학년, 결연 상태를 확인하고 3년 장학금 1:1 결연 후원을 신청할 수 있습니다.",
   keywords: [
     "해밀학교 학생",
     "다문화학교 후원",
     "1:1 결연 신청",
-    "생활관비 지원",
+    "3년 장학금 결연",
   ],
   openGraph: {
     title: "학생 만나기 | 해밀학교 후원 프로젝트",
     description:
-      "다문화학교 학생들의 결연 상태를 확인하고 생활관비 후원에 참여해 주세요.",
+      "다문화학교 학생들의 결연 상태를 확인하고 3년 장학금 결연에 참여해 주세요.",
     url: "/students",
     type: "website",
   },
@@ -125,8 +125,8 @@ export default async function StudentsPage() {
           </p>
           <p className="mt-3">
             또한 해밀학교는 모든 결연 과정을 직접 확인하며 운영하고 있습니다.
-            결연이 확정되면 이후 3년 동안 학생의 생활관비와 안정적인 학교생활
-            지원에 사용됩니다.
+            결연이 확정되면 이후 3년 동안 학생의 학업과 안정적인 학교생활
+            지원을 위한 장학금으로 사용됩니다.
           </p>
         </div>
         <div className="relative min-h-[260px]">

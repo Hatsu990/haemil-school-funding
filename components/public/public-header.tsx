@@ -43,7 +43,7 @@ export function PublicHeader() {
               해밀학교
             </p>
             <p className="truncate text-xs font-semibold tracking-[0.01em] text-[#63706a] sm:text-sm">
-              생활관비 결연 후원
+              3년 장학금 결연 후원
             </p>
           </div>
         </Link>

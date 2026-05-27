@@ -15,7 +15,7 @@ const processSteps = [
   {
     title: "3년 결연이 확정되고 학생의 생활을 함께 응원합니다",
     description:
-      "확인 절차가 끝나면 해당 학생과의 3년 결연이 확정되며, 장학금은 학생들의 생활관비와 안정적인 학교생활 지원에 사용됩니다.",
+      "확인 절차가 끝나면 해당 학생과의 3년 결연이 확정되며, 장학금은 학생들의 학업과 안정적인 학교생활 지원에 사용됩니다.",
   },
   {
     title: "학교의 이야기와 아이들의 성장을 함께 나눕니다",
@@ -27,17 +27,17 @@ const processSteps = [
 export const metadata: Metadata = {
   title: "프로젝트 안내",
   description:
-    "해밀학교 생활관비 1:1 결연 구조와 후원 절차를 확인할 수 있는 프로젝트 안내 페이지입니다.",
+    "해밀학교 3년 장학금 1:1 결연 구조와 절차를 확인할 수 있는 프로젝트 안내 페이지입니다.",
   keywords: [
     "해밀학교 프로젝트",
-    "생활관비 후원 절차",
+    "3년 장학금 결연 절차",
     "1:1 결연 운영",
-    "교육 후원",
+    "장학금 결연",
   ],
   openGraph: {
     title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
     description:
-      "생활관비 교육 후원이 어떻게 운영되는지 단계별로 확인해 보세요.",
+      "3년 장학금 결연이 어떻게 운영되는지 단계별로 확인해 보세요.",
     url: "/project",
     type: "article",
   },
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "프로젝트 안내 | 해밀학교 후원 프로젝트",
     description:
-      "생활관비 후원 절차와 결연 원칙을 한눈에 확인할 수 있습니다.",
+      "3년 장학금 결연 절차와 결연 원칙을 한눈에 확인할 수 있습니다.",
   },
 };
 
@@ -64,10 +64,10 @@ export default function ProjectPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/88 via-[#24372c]/72 to-[#c66f4a]/42" />
         <div className="relative z-10 p-8 sm:p-10">
           <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
-            생활관비 후원이 필요한 이유와 운영 방식
+            3년 장학금 결연이 필요한 이유와 운영 방식
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-8 text-[#edf3ed]">
-            학생들이 배움을 포기하지 않도록 지키는 생활관비 결연. 후원자와
+            학생의 3년을 함께 응원하는 결연. 후원자와
             학생이 신뢰로 연결되는 과정을 투명하게 안내드립니다.
           </p>
         </div>
@@ -88,15 +88,13 @@ export default function ProjectPage() {
             <h2 className="text-2xl font-black text-[#18211d]">후원 필요성</h2>
             <div className="mt-4 space-y-4 text-sm font-semibold leading-8 text-[#1f2b25] sm:text-base">
               <p>
-                학생 대부분은 다문화·중도입국 가정의 아이들로, 낯선 환경 속에서도
-                학업을 이어가기 위해 해밀학교 기숙사에서 생활하고 있습니다.
-                하지만 학생 한 명이 한 달 동안 안정적으로 생활하기 위해서는 약
-                10만 원의 생활관비가 필요합니다.
+                아이들이 경제적인 걱정 없이 학업과 자신의 꿈을 이어가기
+                위해서는 지속적인 장학 지원이 꼭 필요합니다.
               </p>
               <p>
                 누군가에게는 크지 않은 금액일 수 있지만, 이 아이들에게는 “계속
                 학교에 다닐 수 있는가”를 결정하는 매우 중요한 비용입니다. 결연
-                후원은 단순한 생활비 지원이 아니라, 아이들이 생계 걱정 없이
+                결연은 단순한 장학 지원을 넘어, 아이들이 경제적인 걱정 없이
                 공부하고, 친구들과 어울리며, 자신의 미래를 포기하지 않도록
                 지켜주는 연결입니다.
               </p>
@@ -152,7 +150,7 @@ export default function ProjectPage() {
                   확인 후 3년 결연이 확정됩니다
                 </h3>
                 <p className="mt-2">
-                  학생들의 생활관비 지원은 관리자의 확인 절차를 거쳐 확정됩니다.
+                  학생들의 3년 장학금 결연은 관리자의 확인 절차를 거쳐 확정됩니다.
                   이를 통해 중복 결연이나 운영 혼선을 줄이고, 필요한 학생에게
                   안정적으로 3년 장학금 결연이 이어질 수 있도록 관리하고 있습니다.
                 </p>

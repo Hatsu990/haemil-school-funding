@@ -84,28 +84,28 @@ const TEST_DUMMY_SPONSOR_MESSAGES: SponsorMessageCarouselItem[] = [
 ];
 
 export const metadata: Metadata = {
-  title: "해밀학교 생활관비 1:1 결연 후원",
+  title: "해밀학교 3년 장학금 1:1 결연 후원",
   description:
-    "해밀학교 다문화학교 학생들의 생활관비를 위한 1:1 결연 교육 후원. 결연 현황과 후원 절차를 확인하고 참여할 수 있습니다.",
+    "해밀학교 다문화학교 학생들의 학업과 꿈을 위한 3년 장학금 1:1 결연. 결연 현황과 절차를 확인하고 참여할 수 있습니다.",
   keywords: [
     "해밀학교",
     "다문화학교",
-    "생활관비 후원",
+    "3년 학업 장학 결연",
     "1:1 결연",
-    "교육 후원",
+    "장학금 결연",
   ],
   openGraph: {
-    title: "해밀학교 생활관비 1:1 결연 후원",
+    title: "해밀학교 3년 장학금 1:1 결연 후원",
     description:
-      "다문화학교 학생들의 생활관비를 함께 지원하는 해밀학교 교육 후원 프로젝트",
+      "다문화학교 학생들의 학업과 성장을 함께 응원하는 해밀학교 3년 장학금 결연 프로젝트",
     url: "/",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "해밀학교 생활관비 1:1 결연 후원",
+    title: "해밀학교 3년 장학금 1:1 결연 후원",
     description:
-      "학생 1명당 후원자 1명 결연 원칙으로 운영되는 해밀학교 생활관비 후원 서비스",
+      "학생 1명당 후원자 1명 결연 원칙으로 운영되는 해밀학교 3년 장학금 결연 서비스",
   },
 };
 
@@ -179,10 +179,10 @@ export default async function HomePage() {
           <div>
             <h1 className="space-y-1 text-[2rem] font-black leading-[1.12] tracking-[-0.03em] text-[#18211d] sm:text-[2.45rem] xl:text-[3.15rem]">
               <span className="block">학생들이</span>
-              <span className="block whitespace-nowrap">생활의 걱정보다</span>
+              <span className="block whitespace-nowrap">학업과 꿈에</span>
               <span className="block">
-                꿈에 집중할 수
-                <span className="block sm:inline"> 있도록</span>
+                집중할 수 있도록
+                <span className="block sm:inline"> 함께해주세요</span>
               </span>
             </h1>
             <div className="mt-7 max-w-2xl space-y-4 text-base font-semibold leading-8 text-[#1f2b25]">
@@ -192,9 +192,9 @@ export default async function HomePage() {
                 기숙사에서 함께 생활하고 있습니다.
               </p>
               <p>
-                여러분의 결연 후원은 단순한 생활비 지원이 아니라, 아이들이
-                걱정 대신 꿈을 이야기하고 오늘보다 더 나은 내일을 준비할 수
-                있도록 지켜주는 따뜻한 응원입니다.
+                결연은 단순한 장학 지원을 넘어 아이들이 걱정 대신 꿈을
+                이야기하고 오늘보다 더 나은 내일을 준비할 수 있도록 지켜주는
+                따뜻한 응원입니다.
               </p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
