@@ -18,5 +18,5 @@ export function maskStudentRealName(realName: string | null | undefined): string
 }
 
 export function getPublicStudentName(student: StudentProfile): string {
-  return maskStudentRealName(student.realName) || student.nickname;
+  return maskStudentRealName(student.realName) || student.publicName;
 }

@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  deleteSponsorship,
   getSponsorshipById,
   isInvalidSponsorshipStatusError,
-  resetSponsorshipsAndStudentStatuses,
   updateSponsorshipStatus,
 } from "@/lib/repositories/sponsorships";
 import { sendSponsorshipConfirmedSms } from "@/lib/sms/service";
@@ -27,11 +27,10 @@ export interface UpdateSponsorshipStatusActionResult {
   status?: SponsorshipProgressStatus;
 }
 
-export interface ResetSponsorshipsActionResult {
+export interface DeleteSponsorshipActionResult {
   ok: boolean;
   message: string;
-  deletedSponsorshipCount?: number;
-  resetStudentCount?: number;
+  deletedId?: string;
 }
 
 function isValidStatus(value: string): value is SponsorshipProgressStatus {
@@ -117,9 +116,20 @@ export async function updateSponsorshipStatusAction(
   }
 }
 
-export async function resetSponsorshipsAction(): Promise<ResetSponsorshipsActionResult> {
+export async function deleteSponsorshipAction(
+  id: string,
+): Promise<DeleteSponsorshipActionResult> {
+  const sponsorshipId = String(id ?? "").trim();
+
+  if (!sponsorshipId) {
+    return {
+      ok: false,
+      message: "삭제할 결연 신청 ID가 누락되었습니다.",
+    };
+  }
+
   try {
-    const result = await resetSponsorshipsAndStudentStatuses();
+    const result = await deleteSponsorship(sponsorshipId);
 
     revalidatePath("/admin/sponsorships");
     revalidatePath("/admin/dashboard");
@@ -129,15 +139,18 @@ export async function resetSponsorshipsAction(): Promise<ResetSponsorshipsAction
 
     return {
       ok: true,
-      message: "결연 신청 목록을 초기화하고 학생 상태를 신청 가능으로 되돌렸습니다.",
-      deletedSponsorshipCount: result.deletedSponsorshipCount,
-      resetStudentCount: result.resetStudentCount,
+      message: "결연 신청이 삭제되었습니다.",
+      deletedId: result.deletedSponsorshipId,
     };
   } catch (error) {
-    console.error("[admin sponsorships action] failed to reset sponsorship list", error);
+    console.error(
+      "[admin sponsorships action] failed to delete sponsorship",
+      error,
+    );
+
     return {
       ok: false,
-      message: "결연 신청 목록 초기화에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "결연 신청 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 }

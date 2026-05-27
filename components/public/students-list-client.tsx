@@ -3,10 +3,15 @@
 import { useMemo, useState } from "react";
 import { StudentCard } from "@/components/public/student-card";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
-import { getStudentStatusSortWeight } from "@/lib/students/sort";
-import { StudentProfile } from "@/types";
+import { SCHOLARSHIP_TYPES, getScholarshipTypeLabel } from "@/lib/scholarships";
+import {
+  getScholarshipSortWeight,
+  getStudentStatusSortWeight,
+} from "@/lib/students/sort";
+import { ScholarshipType, StudentProfile } from "@/types";
 
 type StatusFilter = "all" | "available" | "pending" | "matched";
+type ScholarshipFilter = "all" | ScholarshipType;
 type SortKey =
   | "default"
   | "grade-asc"
@@ -48,6 +53,23 @@ function getMatchedFirstWeight(status: StudentProfile["sponsorshipStatus"]): num
   return 2;
 }
 
+function compareDefaultStudentOrder(
+  a: { student: StudentProfile; index: number },
+  b: { student: StudentProfile; index: number },
+): number {
+  const statusDiff =
+    getStudentStatusSortWeight(a.student.sponsorshipStatus) -
+    getStudentStatusSortWeight(b.student.sponsorshipStatus);
+  if (statusDiff !== 0) return statusDiff;
+
+  const scholarshipDiff =
+    getScholarshipSortWeight(a.student.scholarshipType) -
+    getScholarshipSortWeight(b.student.scholarshipType);
+  if (scholarshipDiff !== 0) return scholarshipDiff;
+
+  return a.index - b.index;
+}
+
 function getStatusLabel(status: StatusFilter): string {
   if (status === "available") return "요청 가능";
   if (status === "pending") return "입금 대기";
@@ -62,6 +84,8 @@ export function StudentsListClient({
   const [genderFilter, setGenderFilter] = useState<string>("전체");
   const [gradeFilter, setGradeFilter] = useState<string>("전체");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [scholarshipFilter, setScholarshipFilter] =
+    useState<ScholarshipFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("default");
 
   const uniqueGrades = useMemo(() => {
@@ -89,15 +113,19 @@ export function StudentsListClient({
         return false;
       }
 
+      if (
+        scholarshipFilter !== "all" &&
+        student.scholarshipType !== scholarshipFilter
+      ) {
+        return false;
+      }
+
       return true;
     });
 
     filtered.sort((a, b) => {
       if (sortKey === "default") {
-        const weightDiff =
-          getStudentStatusSortWeight(a.student.sponsorshipStatus) -
-          getStudentStatusSortWeight(b.student.sponsorshipStatus);
-        return weightDiff !== 0 ? weightDiff : a.index - b.index;
+        return compareDefaultStudentOrder(a, b);
       }
 
       if (sortKey === "grade-asc") {
@@ -126,7 +154,7 @@ export function StudentsListClient({
     });
 
     return filtered.map((entry) => entry.student);
-  }, [students, genderFilter, gradeFilter, statusFilter, sortKey]);
+  }, [students, genderFilter, gradeFilter, statusFilter, scholarshipFilter, sortKey]);
 
   const filteredSummary = useMemo(() => {
     const available = filteredAndSortedStudents.filter(
@@ -212,6 +240,33 @@ export function StudentsListClient({
                 <option value="matched-first">결연 완료 우선</option>
               </select>
             </label>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setScholarshipFilter("all")}
+              className={`rounded-full border px-4 py-2 text-sm font-black transition ${
+                scholarshipFilter === "all"
+                  ? "border-[#24372c] bg-[#24372c] text-white"
+                  : "border-[#d8d1c4] bg-[#fffdf8] text-[#314039] hover:border-[#486f5b]"
+              }`}
+            >
+              전체
+            </button>
+            {SCHOLARSHIP_TYPES.map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setScholarshipFilter(type)}
+                className={`rounded-full border px-4 py-2 text-sm font-black transition ${
+                  scholarshipFilter === type
+                    ? "border-[#24372c] bg-[#24372c] text-white"
+                    : "border-[#d8d1c4] bg-[#fffdf8] text-[#314039] hover:border-[#486f5b]"
+                }`}
+              >
+                {getScholarshipTypeLabel(type)}
+              </button>
+            ))}
           </div>
         </div>
       </section>

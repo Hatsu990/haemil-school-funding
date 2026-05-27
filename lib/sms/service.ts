@@ -11,7 +11,7 @@ interface SponsorshipContext {
   sponsorshipType: string;
   sponsorshipPeriod: string;
   scholarshipAmount: number | null;
-  studentNickname: string;
+  studentPublicName: string;
 }
 
 function normalizePhoneNumber(value: string): string {
@@ -73,7 +73,7 @@ async function loadSponsorshipContext(
     sponsorshipType: sponsorship.sponsorshipType,
     sponsorshipPeriod: sponsorship.sponsorshipPeriod,
     scholarshipAmount: scholarshipView?.scholarshipAmount ?? null,
-    studentNickname: student.nickname,
+    studentPublicName: student.publicName,
   };
 }
 
@@ -92,7 +92,7 @@ export async function sendSponsorshipReceivedSms(
   const context = await loadSponsorshipContext(sponsorshipId);
   return sendTemplateMessage("sponsorship_received", context.sponsorPhone, {
     name: context.sponsorName,
-    studentNickname: context.studentNickname,
+    studentPublicName: context.studentPublicName,
     amount: resolveAmountLabel(context.sponsorshipType, context.scholarshipAmount),
     period: context.sponsorshipPeriod,
   });
@@ -105,7 +105,7 @@ export async function sendAdminNewSponsorshipSms(
   const adminPhone = getAdminNotificationPhone();
   return sendTemplateMessage("admin_new_sponsorship", adminPhone, {
     name: context.sponsorName,
-    studentNickname: context.studentNickname,
+    studentPublicName: context.studentPublicName,
     sponsorshipType: context.sponsorshipType,
     period: context.sponsorshipPeriod,
     phone: normalizePhoneNumber(context.sponsorPhone),
@@ -118,7 +118,7 @@ export async function sendSponsorshipConfirmedSms(
   const context = await loadSponsorshipContext(sponsorshipId);
   return sendTemplateMessage("sponsorship_confirmed", context.sponsorPhone, {
     name: context.sponsorName,
-    studentNickname: context.studentNickname,
+    studentPublicName: context.studentPublicName,
   });
 }
 
@@ -129,7 +129,7 @@ export async function sendRecurringReminderSms(
   const contactPhone = getAdminNotificationPhone() || "관리자 연락처 미설정";
   return sendTemplateMessage("recurring_reminder", context.sponsorPhone, {
     name: context.sponsorName,
-    studentNickname: context.studentNickname,
+    studentPublicName: context.studentPublicName,
     amount: resolveAmountLabel(context.sponsorshipType, context.scholarshipAmount),
     contactPhone,
   });
@@ -151,8 +151,8 @@ export async function sendAdminDailyCallListSms(): Promise<SendSmsResult> {
       : pendingTargets
           .slice(0, 6)
           .map((item) => {
-            const nickname = studentById.get(item.studentId)?.nickname ?? item.studentId;
-            return `${nickname}/${item.sponsorName}`;
+            const publicName = studentById.get(item.studentId)?.publicName ?? item.studentId;
+            return `${publicName}/${item.sponsorName}`;
           })
           .join(", ");
 

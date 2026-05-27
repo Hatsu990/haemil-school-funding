@@ -1,8 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { getDbClient } from "@/lib/db/client";
+import { upsertStudentScholarshipRecord } from "@/lib/repositories/scholarships";
+import { SCHOLARSHIP_AMOUNT_BY_TYPE } from "@/lib/scholarships";
+import { maskStudentRealName } from "@/lib/students/display";
 import { resolveStudentProfileImageUrl } from "@/lib/students/profile-images";
 import {
   CreateStudentInput,
+  ScholarshipType,
   StudentGender,
   StudentProfile,
   StudentRow,
@@ -14,7 +18,10 @@ import {
 const STUDENT_NOT_FOUND_ERROR_PREFIX = "[students repository] Student not found:";
 const STUDENT_DELETE_BLOCKED_ERROR_PREFIX =
   "[students repository] Student delete blocked by sponsorship:";
+const DEFAULT_CREATED_STUDENT_SCHOLARSHIP_TYPE: ScholarshipType =
+  "\uBD80\uBD84\uC7A5\uD559\uAE08";
 let studentSchemaReady: Promise<void> | null = null;
+let studentColumnNamesReady: Promise<Set<string>> | null = null;
 
 function makeStudentId(): string {
   return `st-${randomUUID()}`;
@@ -23,7 +30,7 @@ function makeStudentId(): string {
 function mapStudentRow(row: StudentRow): StudentProfile {
   return {
     id: row.id,
-    nickname: row.nickname,
+    publicName: row.public_name,
     realName: row.real_name,
     gender: row.gender,
     grade: row.grade,
@@ -45,10 +52,33 @@ async function ensureStudentSchema(): Promise<void> {
       if (!columnNames.has("real_name")) {
         await db.execute("ALTER TABLE students ADD COLUMN real_name TEXT");
       }
+      if (!columnNames.has("public_name")) {
+        await db.execute("ALTER TABLE students ADD COLUMN public_name TEXT");
+        const legacyPublicNameColumn = "nick" + "name";
+        if (columnNames.has(legacyPublicNameColumn)) {
+          await db.execute(
+            `UPDATE students SET public_name = ${legacyPublicNameColumn} WHERE public_name IS NULL OR public_name = ''`,
+          );
+        }
+      }
     })();
   }
 
   return studentSchemaReady;
+}
+
+async function getStudentColumnNames(): Promise<Set<string>> {
+  await ensureStudentSchema();
+
+  if (!studentColumnNamesReady) {
+    studentColumnNamesReady = (async () => {
+      const db = await getDbClient();
+      const columns = await db.execute<{ name: string }>("PRAGMA table_info(students)");
+      return new Set(columns.rows.map((row) => row.name));
+    })();
+  }
+
+  return studentColumnNamesReady;
 }
 
 export async function getStudents(): Promise<StudentProfile[]> {
@@ -58,7 +88,7 @@ export async function getStudents(): Promise<StudentProfile[]> {
     `
       SELECT
         id,
-        nickname,
+        public_name,
         real_name,
         gender,
         grade,
@@ -83,7 +113,7 @@ export async function getStudentById(id: string): Promise<StudentProfile | null>
     `
       SELECT
         id,
-        nickname,
+        public_name,
         real_name,
         gender,
         grade,
@@ -131,8 +161,8 @@ export async function updateStudentProfile(
 ): Promise<StudentProfile> {
   const db = await getDbClient();
   const studentId = input.id.trim();
-  const nickname = input.nickname.trim();
-  const realName = input.realName?.trim() || null;
+  const realName = input.realName.trim();
+  const publicName = maskStudentRealName(realName);
   const grade = input.grade.trim();
   const description = input.description.trim();
   const gender = input.gender as StudentGender;
@@ -141,7 +171,7 @@ export async function updateStudentProfile(
     `
       UPDATE students
       SET
-        nickname = ?,
+        public_name = ?,
         real_name = ?,
         gender = ?,
         grade = ?,
@@ -149,7 +179,7 @@ export async function updateStudentProfile(
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `,
-    [nickname, realName, gender, grade, description, studentId],
+    [publicName, realName, gender, grade, description, studentId],
   );
 
   if (result.rowsAffected === 0) {
@@ -205,38 +235,75 @@ export async function updateStudentStatusByInput(
 export async function createStudent(data: CreateStudentInput): Promise<StudentProfile> {
   await ensureStudentSchema();
   const db = await getDbClient();
+  const columnNames = await getStudentColumnNames();
+  const hasLegacyNicknameColumn = columnNames.has("nickname");
   const studentId = makeStudentId();
-  const sponsorshipStatus = data.sponsorshipStatus ?? "available";
+  const realName = data.realName.trim();
+  const publicName = maskStudentRealName(realName);
   const profileImageUrl = resolveStudentProfileImageUrl(studentId, data.gender);
+
+  const columns = [
+    "id",
+    "public_name",
+    "real_name",
+    ...(hasLegacyNicknameColumn ? ["nickname"] : []),
+    "gender",
+    "grade",
+    "description",
+    "profile_image_url",
+    "letter_image_url",
+    "sponsorship_status",
+    "created_at",
+    "updated_at",
+  ];
+  const placeholders = [
+    "?",
+    "?",
+    "?",
+    ...(hasLegacyNicknameColumn ? ["?"] : []),
+    "?",
+    "?",
+    "?",
+    "?",
+    "NULL",
+    "?",
+    "CURRENT_TIMESTAMP",
+    "CURRENT_TIMESTAMP",
+  ];
+  const args = [
+    studentId,
+    publicName,
+    realName,
+    ...(hasLegacyNicknameColumn ? [publicName] : []),
+    data.gender,
+    data.grade.trim(),
+    data.description.trim(),
+    profileImageUrl,
+    "available",
+  ];
 
   await db.execute(
     `
-      INSERT INTO students (
-        id,
-        nickname,
-        real_name,
-        gender,
-        grade,
-        description,
-        profile_image_url,
-        letter_image_url,
-        sponsorship_status,
-        created_at,
-        updated_at
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      INSERT INTO students (${columns.join(", ")})
+      VALUES (${placeholders.join(", ")})
     `,
-    [
-      studentId,
-      data.nickname.trim(),
-      data.realName?.trim() || null,
-      data.gender,
-      data.grade.trim(),
-      data.description.trim(),
-      profileImageUrl,
-      sponsorshipStatus,
-    ],
+    args,
   );
+
+  try {
+    await upsertStudentScholarshipRecord({
+      studentId,
+      scholarshipType: DEFAULT_CREATED_STUDENT_SCHOLARSHIP_TYPE,
+      studentName: realName,
+      studentPhone: "",
+      parentName: "",
+      parentPhone: "",
+      bankAccount: "",
+    });
+  } catch (error) {
+    await db.execute("DELETE FROM students WHERE id = ?", [studentId]);
+    throw error;
+  }
 
   const created = await getStudentById(studentId);
   if (!created) {
@@ -245,7 +312,12 @@ export async function createStudent(data: CreateStudentInput): Promise<StudentPr
     );
   }
 
-  return created;
+  return {
+    ...created,
+    scholarshipType: DEFAULT_CREATED_STUDENT_SCHOLARSHIP_TYPE,
+    scholarshipAmount:
+      SCHOLARSHIP_AMOUNT_BY_TYPE[DEFAULT_CREATED_STUDENT_SCHOLARSHIP_TYPE],
+  };
 }
 
 export async function deleteStudent(id: string): Promise<void> {

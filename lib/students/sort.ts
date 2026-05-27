@@ -1,4 +1,5 @@
-import { StudentProfile, StudentSponsorshipStatus } from "@/types";
+import { SCHOLARSHIP_TYPES } from "@/lib/scholarships";
+import { ScholarshipType, StudentProfile, StudentSponsorshipStatus } from "@/types";
 
 const STATUS_ORDER: Record<StudentSponsorshipStatus, number> = {
   available: 0,
@@ -12,6 +13,14 @@ export function getStudentStatusSortWeight(
   return STATUS_ORDER[status];
 }
 
+export function getScholarshipSortWeight(
+  type: ScholarshipType | undefined,
+): number {
+  if (!type) return SCHOLARSHIP_TYPES.length;
+  const index = SCHOLARSHIP_TYPES.indexOf(type);
+  return index === -1 ? SCHOLARSHIP_TYPES.length : index;
+}
+
 export function sortStudentsByRequestPriority(
   students: StudentProfile[],
 ): StudentProfile[] {
@@ -21,7 +30,12 @@ export function sortStudentsByRequestPriority(
       const weightDiff =
         getStudentStatusSortWeight(a.student.sponsorshipStatus) -
         getStudentStatusSortWeight(b.student.sponsorshipStatus);
-      return weightDiff !== 0 ? weightDiff : a.index - b.index;
+      if (weightDiff !== 0) return weightDiff;
+
+      const scholarshipDiff =
+        getScholarshipSortWeight(a.student.scholarshipType) -
+        getScholarshipSortWeight(b.student.scholarshipType);
+      return scholarshipDiff !== 0 ? scholarshipDiff : a.index - b.index;
     })
     .map((entry) => entry.student);
 }

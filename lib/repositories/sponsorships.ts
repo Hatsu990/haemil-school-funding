@@ -65,6 +65,20 @@ function toStudentStatusFromSponsorshipStatus(
   return "pending";
 }
 
+function resolveStudentStatusFromRemainingSponsorships(
+  statuses: SponsorshipProgressStatus[],
+): StudentSponsorshipStatus {
+  if (statuses.some((status) => status === "입금완료")) {
+    return "matched";
+  }
+
+  if (statuses.some((status) => status === "입금대기")) {
+    return "pending";
+  }
+
+  return "available";
+}
+
 function buildStudentBlockedError(status: StudentSponsorshipStatus): Error {
   return new Error(`${STUDENT_BLOCKED_ERROR_PREFIX}${status}`);
 }
@@ -330,6 +344,91 @@ export async function updateSponsorshipStatusByInput(
   input: UpdateSponsorshipStatusInput,
 ): Promise<void> {
   return updateSponsorshipStatus(input.id, input.status);
+}
+
+export interface DeleteSponsorshipResult {
+  deletedSponsorshipId: string;
+  studentId: string;
+  studentStatus: StudentSponsorshipStatus;
+}
+
+export async function deleteSponsorship(
+  id: string,
+): Promise<DeleteSponsorshipResult> {
+  const sponsorshipId = id.trim();
+  const db = await getDbClient();
+
+  return db.transaction(async (tx) => {
+    const currentSponsorshipResult = await tx.execute<{
+      id: string;
+      student_id: string;
+      status: SponsorshipProgressStatus;
+    }>(
+      `
+        SELECT id, student_id, status
+        FROM sponsorships
+        WHERE id = ?
+        LIMIT 1
+      `,
+      [sponsorshipId],
+    );
+
+    if (currentSponsorshipResult.rows.length === 0) {
+      throw new Error(
+        `[sponsorships repository] Sponsorship not found: ${sponsorshipId}`,
+      );
+    }
+
+    const current = currentSponsorshipResult.rows[0];
+
+    const deleteResult = await tx.execute(
+      `
+        DELETE FROM sponsorships
+        WHERE id = ?
+      `,
+      [sponsorshipId],
+    );
+
+    if (deleteResult.rowsAffected === 0) {
+      throw new Error(
+        `[sponsorships repository] Sponsorship not found: ${sponsorshipId}`,
+      );
+    }
+
+    const remainingResult = await tx.execute<{
+      status: SponsorshipProgressStatus;
+    }>(
+      `
+        SELECT status
+        FROM sponsorships
+        WHERE student_id = ?
+      `,
+      [current.student_id],
+    );
+
+    const nextStudentStatus = resolveStudentStatusFromRemainingSponsorships(
+      remainingResult.rows.map((row) => row.status),
+    );
+
+    const updateStudentResult = await tx.execute(
+      `
+        UPDATE students
+        SET sponsorship_status = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `,
+      [nextStudentStatus, current.student_id],
+    );
+
+    if (updateStudentResult.rowsAffected === 0) {
+      throw buildStudentNotFoundError(current.student_id);
+    }
+
+    return {
+      deletedSponsorshipId: sponsorshipId,
+      studentId: current.student_id,
+      studentStatus: nextStudentStatus,
+    };
+  });
 }
 
 export interface ResetSponsorshipsResult {

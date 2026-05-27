@@ -37,7 +37,7 @@ export async function PublicFooter() {
   return (
     <footer className="relative mt-20 overflow-hidden border-t border-[#d9d2c5] bg-[#18211d] text-white">
       <Image
-        src="/images/haemil/school-campus-1.jpg"
+        src="/images/haemill/school-campus-1.jpg"
         alt=""
         fill
         aria-hidden
@@ -55,7 +55,7 @@ export async function PublicFooter() {
               aria-label="해밀학교 홈"
             >
               <Image
-                src="/images/haemil/haemil-school-logo.png"
+                src="/images/haemill/haemill-school-logo.png"
                 alt="해밀학교 로고"
                 fill
                 className="object-contain drop-shadow-[0_12px_22px_rgba(0,0,0,0.28)]"
@@ -65,7 +65,7 @@ export async function PublicFooter() {
 
             <Link href="/" className="block">
               <p className="text-[0.68rem] leading-none font-bold uppercase tracking-[0.16em] text-[#c7d4c6]">
-                Haemil School
+                Haemill School
               </p>
               <h3 className="mt-1 text-xl leading-tight font-black text-white sm:text-2xl">
                 해밀학교와 함께하는 생활관비 결연

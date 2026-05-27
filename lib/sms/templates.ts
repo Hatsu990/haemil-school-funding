@@ -34,10 +34,10 @@ const SMS_TEMPLATES: Record<SmsTemplateName, SmsTemplateDefinition> = {
   },
   admin_new_sponsorship: {
     title: "관리자 새 후원 신청 알림",
-    body: "[해밀학교] 새 후원 신청: 후원자 {{name}}, 학생 {{studentNickname}}, 방식 {{sponsorshipType}}, 기간 {{period}}, 연락처 {{phone}}",
+    body: "[해밀학교] 새 후원 신청: 후원자 {{name}}, 학생 {{studentPublicName}}, 방식 {{sponsorshipType}}, 기간 {{period}}, 연락처 {{phone}}",
     manualFields: [
       { name: "name", label: "후원자 이름", placeholder: "후원자 이름" },
-      { name: "studentNickname", label: "학생 이름", placeholder: "학생 이름" },
+      { name: "studentPublicName", label: "학생 이름", placeholder: "학생 이름" },
       { name: "sponsorshipType", label: "결연 방식", placeholder: "3년 결연" },
       { name: "period", label: "기간", placeholder: "3년" },
       { name: "templatePhone", label: "연락처", placeholder: "01012345678" },
@@ -45,18 +45,18 @@ const SMS_TEMPLATES: Record<SmsTemplateName, SmsTemplateDefinition> = {
   },
   sponsorship_confirmed: {
     title: "입금 완료 및 결연 완료 안내",
-    body: "{{name}}님, {{studentNickname}} 학생 후원금 입금이 확인되어 결연이 완료되었습니다. 함께해 주셔서 감사합니다.",
+    body: "{{name}}님, {{studentPublicName}} 학생 후원금 입금이 확인되어 결연이 완료되었습니다. 함께해 주셔서 감사합니다.",
     manualFields: [
       { name: "name", label: "후원자 이름", placeholder: "후원자 이름" },
-      { name: "studentNickname", label: "학생 이름", placeholder: "학생 이름" },
+      { name: "studentPublicName", label: "학생 이름", placeholder: "학생 이름" },
     ],
   },
   recurring_reminder: {
     title: "3년 결연 안내",
-    body: "{{name}}님, {{studentNickname}} 학생 3년 결연 안내입니다. 이번 장학금은 {{amount}}입니다. 문의 {{contactPhone}}",
+    body: "{{name}}님, {{studentPublicName}} 학생 3년 결연 안내입니다. 이번 장학금은 {{amount}}입니다. 문의 {{contactPhone}}",
     manualFields: [
       { name: "name", label: "후원자 이름", placeholder: "후원자 이름" },
-      { name: "studentNickname", label: "학생 이름", placeholder: "학생 이름" },
+      { name: "studentPublicName", label: "학생 이름", placeholder: "학생 이름" },
       { name: "amount", label: "금액", placeholder: "월 100,000원" },
       { name: "contactPhone", label: "문의 연락처", placeholder: "01012345678" },
     ],

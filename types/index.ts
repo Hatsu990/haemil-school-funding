@@ -27,11 +27,13 @@ export type ScholarshipType =
 
 export interface StudentProfile {
   id: string;
-  nickname: string;
+  publicName: string;
   realName?: string | null;
   gender: StudentGender;
   grade: string;
   description: string;
+  scholarshipType?: ScholarshipType;
+  scholarshipAmount?: number;
   profileImageUrl?: string | null;
   letterImageUrl?: string | null;
   sponsorshipStatus: StudentSponsorshipStatus;
@@ -86,7 +88,7 @@ export interface Setting {
 
 export interface StudentRow {
   id: string;
-  nickname: string;
+  public_name: string;
   real_name: string | null;
   gender: StudentGender;
   grade: string;
@@ -181,18 +183,15 @@ export interface UpdateStudentStatusInput {
 }
 
 export interface CreateStudentInput {
-  nickname: string;
-  realName?: string | null;
+  realName: string;
   gender: StudentGender;
   grade: string;
   description: string;
-  sponsorshipStatus?: StudentSponsorshipStatus;
 }
 
 export interface UpdateStudentProfileInput {
   id: string;
-  nickname: string;
-  realName?: string | null;
+  realName: string;
   gender: StudentGender;
   grade: string;
   description: string;

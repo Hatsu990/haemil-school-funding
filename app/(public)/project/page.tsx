@@ -54,7 +54,7 @@ export default function ProjectPage() {
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
       <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
         <Image
-          src="/images/haemil/people-activity-6.jpg"
+          src="/images/haemill/people-activity-6.jpg"
           alt="해밀학교 전경"
           fill
           priority
@@ -76,7 +76,7 @@ export default function ProjectPage() {
       <section className="grid gap-6 md:grid-cols-2">
         <article className="surface-card relative overflow-hidden p-7 sm:p-8">
           <Image
-            src="/images/haemil/school-campus-1.jpg"
+            src="/images/haemill/school-campus-1.jpg"
             alt=""
             aria-hidden
             fill
@@ -112,7 +112,7 @@ export default function ProjectPage() {
 
         <article className="surface-card relative overflow-hidden p-7 sm:p-8">
           <Image
-            src="/images/haemil/people-activity-4.jpg"
+            src="/images/haemill/people-activity-4.jpg"
             alt=""
             aria-hidden
             fill
@@ -209,21 +209,17 @@ export default function ProjectPage() {
                   >
                     <svg
                       width="38"
-                      height="41"
-                      viewBox="0 0 38 41"
+                      height="44"
+                      viewBox="0 0 38 44"
                       className="drop-shadow-[0_2px_3px_rgba(121,84,53,0.18)]"
                     >
-                      <rect
-                        x="16"
-                        y="2"
-                        width="6"
-                        height="27"
-                        rx="3"
-                        fill="#486f5b"
-                      />
                       <path
-                        d="M5.8 20.6C7.1 19.5 9 19.7 10 21L19 32.2L28 21C29 19.7 30.9 19.5 32.2 20.6C33.5 21.7 33.7 23.6 32.6 24.9L21.4 38.8C20.2 40.3 17.8 40.3 16.6 38.8L5.4 24.9C4.3 23.6 4.5 21.7 5.8 20.6Z"
-                        fill="#486f5b"
+                        d="M19 5V36M7 24L19 36L31 24"
+                        fill="none"
+                        stroke="#486f5b"
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </li>

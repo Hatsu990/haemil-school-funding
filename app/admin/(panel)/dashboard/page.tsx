@@ -7,6 +7,7 @@ import { getGalleryItems } from "@/lib/repositories/gallery";
 import { getSmsLogs } from "@/lib/repositories/sms";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
 import { getStudents } from "@/lib/repositories/students";
+import { getPublicStudentName } from "@/lib/students/display";
 import {
   formatDateTimeKorean,
   getSponsorshipStatusClass,
@@ -36,7 +37,8 @@ function getStudentName(
   studentById: Map<string, StudentProfile>,
   studentId: string,
 ): string {
-  return studentById.get(studentId)?.nickname ?? "학생 정보 없음";
+  const student = studentById.get(studentId);
+  return student ? getPublicStudentName(student) : "학생 정보 없음";
 }
 
 export default async function AdminDashboardPage() {

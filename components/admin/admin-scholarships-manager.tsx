@@ -8,6 +8,7 @@ import {
 } from "@/app/admin/(panel)/scholarships/actions";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
 import { FeedbackToast } from "@/components/ui/feedback-toast";
+import { maskStudentRealName } from "@/lib/students/display";
 import {
   formatScholarshipRatio,
   getScholarshipTypeLabel,
@@ -95,7 +96,7 @@ export function AdminScholarshipsManager({
 
         const text = [
           student.id,
-          student.nickname,
+          maskStudentRealName(student.realName) || student.publicName,
           student.realName ?? "",
           student.grade,
           record?.studentName ?? "",
@@ -113,8 +114,8 @@ export function AdminScholarshipsManager({
           SCHOLARSHIP_SORT_ORDER[b.scholarshipType];
         if (typeOrder !== 0) return typeOrder;
 
-        const aName = a.student.realName?.trim() || a.student.nickname;
-        const bName = b.student.realName?.trim() || b.student.nickname;
+        const aName = a.student.realName?.trim() || a.student.publicName;
+        const bName = b.student.realName?.trim() || b.student.publicName;
         return aName.localeCompare(bName, "ko-KR");
       });
   }, [initialViews, keyword, scholarshipFilter]);
@@ -317,7 +318,7 @@ export function AdminScholarshipsManager({
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="실명, 닉네임, 학년, 보호자명 검색…"
+            placeholder="실명, 공개 표시명, 학년, 보호자명 검색…"
             aria-label="장학금 지급관리 검색"
             className="min-w-[220px] flex-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
           />
@@ -384,10 +385,10 @@ export function AdminScholarshipsManager({
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="text-lg font-bold text-[#2f241d]">
-                      {student.realName?.trim() || student.nickname}
+                      {student.realName?.trim() || student.publicName}
                     </h3>
                     <p className="mt-1 text-sm subtle-text">
-                      공개명/닉네임: {student.nickname} · {student.grade} · ID: {student.id}
+                      공개 표시명: {maskStudentRealName(student.realName) || student.publicName} · {student.grade}
                     </p>
                   </div>
                   <span className="rounded-full bg-[#eef4eb] px-3 py-1 text-xs font-bold text-[#486f5b]">

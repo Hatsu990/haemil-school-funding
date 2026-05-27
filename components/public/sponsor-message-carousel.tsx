@@ -13,7 +13,7 @@ interface SponsorMessageCarouselProps {
 }
 
 const VISIBLE_MESSAGE_COUNT = 4;
-const ROTATION_INTERVAL_MS = 14000;
+const ROTATION_INTERVAL_MS = 12000;
 
 function getVisibleMessages(
   messages: SponsorMessageCarouselItem[],
@@ -63,7 +63,7 @@ export function SponsorMessageCarousel({
     <div
       key={startIndex}
       aria-live="polite"
-      className="mx-auto grid w-full max-w-6xl gap-4 motion-safe:animate-[sponsor-message-slide_1600ms_cubic-bezier(0.16,1,0.3,1)] sm:grid-cols-2 lg:grid-cols-4"
+      className="mx-auto grid w-full max-w-6xl gap-4 motion-safe:animate-[sponsor-message-slide_4000ms_cubic-bezier(0.22,1,0.36,1)] sm:grid-cols-2 lg:grid-cols-4"
     >
       {visibleMessages.map((item) => (
         <blockquote

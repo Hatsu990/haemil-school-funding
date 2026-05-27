@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  resetSponsorshipsAction,
+  deleteSponsorshipAction,
   updateSponsorshipStatusAction,
 } from "@/app/admin/(panel)/sponsorships/actions";
 import { CopyButton } from "@/components/ui/copy-button";
@@ -16,6 +16,7 @@ import {
   getStudentStatusClass,
   getStudentStatusLabel,
 } from "@/lib/utils";
+import { maskStudentRealName } from "@/lib/students/display";
 import {
   SponsorshipProgressStatus,
   SponsorshipRecord,
@@ -81,10 +82,10 @@ function getStudentDisplayName(student?: StudentProfile): string {
 
   const realName = student.realName?.trim();
   if (!realName) {
-    return student.nickname;
+    return student.publicName;
   }
 
-  return `${student.nickname} (${realName})`;
+  return `${maskStudentRealName(realName)} (${realName})`;
 }
 
 function toTelHref(phone: string): string {
@@ -100,7 +101,7 @@ export function AdminSponsorshipsManager({
   const [items, setItems] = useState<SponsorshipRecord[]>(initialSponsorships);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [isResetting, setIsResetting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [keyword, setKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("전체");
   const [openedMessageId, setOpenedMessageId] = useState<string | null>(null);
@@ -151,7 +152,7 @@ export function AdminSponsorshipsManager({
         item.sponsorName,
         item.sponsorPhone,
         item.sponsorEmail,
-        student?.nickname ?? "",
+        student?.publicName ?? "",
         student?.realName ?? "",
       ].map((value) => normalize(value));
 
@@ -169,7 +170,8 @@ export function AdminSponsorshipsManager({
     : null;
 
   const isUpdating = updatingId !== null;
-  const isMutating = isUpdating || isResetting;
+  const isDeleting = deletingId !== null;
+  const isMutating = isUpdating || isDeleting;
 
   const handleApplyStatus = async (id: string) => {
     if (isMutating) {
@@ -245,23 +247,29 @@ export function AdminSponsorshipsManager({
     }
   };
 
-  const handleResetSponsorships = async () => {
+  const handleDeleteSponsorship = async (id: string) => {
     if (isMutating) {
       return;
     }
 
-    const shouldReset = window.confirm(
-      "결연 신청 목록을 초기화하시겠습니까?\n기존 신청 데이터는 삭제되고, 모든 학생 상태가 신청 가능으로 변경됩니다.",
+    const targetItem = items.find((item) => item.id === id);
+    if (!targetItem) {
+      return;
+    }
+
+    const shouldDelete = window.confirm(
+      `${targetItem.sponsorName} 결연 신청을 삭제하시겠습니까?\n삭제 후에는 목록에서 사라집니다.`,
     );
-    if (!shouldReset) {
+    if (!shouldDelete) {
       return;
     }
 
     setFeedback(null);
-    setIsResetting(true);
+    setDeletingId(id);
 
     try {
-      const result = await resetSponsorshipsAction();
+      const result = await deleteSponsorshipAction(id);
+
       if (!result.ok) {
         setFeedback({
           type: "error",
@@ -270,48 +278,48 @@ export function AdminSponsorshipsManager({
         return;
       }
 
-      setItems([]);
-      setDraftStatusById({});
-      setOpenedMessageId(null);
-      const deletedCount = result.deletedSponsorshipCount ?? 0;
-      const resetStudentCount = result.resetStudentCount ?? 0;
+      setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      setDraftStatusById((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+      if (openedMessageId === id) {
+        setOpenedMessageId(null);
+      }
+
       setFeedback({
         type: "success",
-        message: `${result.message} (신청 ${deletedCount}건 삭제, 학생 ${resetStudentCount}명 초기화)`,
+        message: result.message,
       });
       router.refresh();
     } catch (error) {
-      console.error("[admin sponsorships manager] failed to reset sponsorship list", error);
+      console.error(
+        "[admin sponsorships manager] failed to delete sponsorship",
+        error,
+      );
       setFeedback({
         type: "error",
-        message: "결연 신청 목록 초기화 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+        message: "결연 신청 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
       });
     } finally {
-      setIsResetting(false);
+      setDeletingId(null);
     }
   };
 
   return (
     <div className="space-y-4 pb-6">
-      <section className="surface-card p-5">
+      <section className="surface-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 검색/필터</h2>
-          <button
-            type="button"
-            onClick={handleResetSponsorships}
-            disabled={isMutating}
-            className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isResetting ? "초기화 중…" : "결연 신청 목록 초기화"}
-          </button>
         </div>
-        <div className="mt-4 grid gap-2 md:grid-cols-[1.6fr_1fr_auto_auto]">
+        <div className="mt-3 grid gap-2 md:grid-cols-[1.6fr_0.8fr_auto_auto]">
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
             aria-label="결연 신청 검색"
             className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
-            placeholder="이름 / 전화번호 / 이메일 / 학생 닉네임 검색…"
+            placeholder="이름 / 전화번호 / 이메일 / 학생 검색…"
           />
           <select
             value={statusFilter}
@@ -347,7 +355,7 @@ export function AdminSponsorshipsManager({
       </section>
 
       <section className="surface-card overflow-hidden">
-        <header className="border-b border-[var(--border)] px-5 py-3">
+        <header className="border-b border-[var(--border)] px-4 py-2.5">
           <h2 className="text-lg font-bold text-[#2f241d]">결연 신청 목록</h2>
         </header>
         {filteredItems.length === 0 ? (
@@ -435,7 +443,7 @@ export function AdminSponsorshipsManager({
                     </div>
                   </dl>
 
-                  <div className="mt-4 grid grid-cols-[1fr_auto] gap-2">
+                  <div className="mt-4 grid grid-cols-[1fr_auto_auto] gap-2">
                     <select
                       value={draftStatus}
                       onChange={(event) =>
@@ -464,6 +472,15 @@ export function AdminSponsorshipsManager({
                     >
                       {updatingId === item.id ? "저장 중…" : "적용"}
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSponsorship(item.id)}
+                      disabled={isMutating}
+                      className="rounded-xl border border-[#ead3cf] bg-[#fff7f5] px-3 py-2 text-xs font-black text-[#a84a3f] transition hover:border-[#d9aaa2] hover:bg-[#fff0ed] disabled:cursor-not-allowed disabled:opacity-60"
+                      aria-label={`${item.sponsorName} 결연 신청 삭제`}
+                    >
+                      {deletingId === item.id ? "삭제 중" : "삭제"}
+                    </button>
                   </div>
                 </li>
               );
@@ -471,14 +488,14 @@ export function AdminSponsorshipsManager({
           </ul>
 
           <div className="hidden overflow-x-auto md:block">
-            <table className="data-table min-w-[1420px]">
+            <table className="data-table min-w-[1320px] text-[0.78rem]">
               <thead>
                 <tr>
                   <th>신청일</th>
                   <th>후원자 이름</th>
                   <th>전화번호</th>
                   <th>이메일</th>
-                  <th>학생 닉네임</th>
+                  <th>학생</th>
                   <th>후원 방식</th>
                   <th>후원 기간</th>
                   <th>후원자 공개 여부</th>
@@ -536,7 +553,7 @@ export function AdminSponsorshipsManager({
                         {item.receiptRequested ? "희망" : "미희망"}
                       </td>
                       <td>
-                        <div className="max-w-[220px] space-y-2">
+                        <div className="max-w-[180px] space-y-1.5">
                           <p className="text-[#4f3b30]">{getMessagePreview(message)}</p>
                           <button
                             type="button"
@@ -555,7 +572,7 @@ export function AdminSponsorshipsManager({
                         />
                       </td>
                       <td>
-                        <div className="flex min-w-[180px] items-center gap-2">
+                        <div className="flex min-w-[230px] items-center gap-1.5">
                           <select
                             value={draftStatus}
                             onChange={(event) =>
@@ -567,7 +584,7 @@ export function AdminSponsorshipsManager({
                             }
                             disabled={isMutating}
                             aria-label={`${item.sponsorName} 상태 변경 선택`}
-                            className="w-full rounded-lg border border-[var(--border)] bg-white px-2 py-2 text-xs"
+                            className="min-w-[108px] flex-1 rounded-lg border border-[var(--border)] bg-white px-2 py-1.5 text-xs"
                           >
                             {STATUS_UPDATE_OPTIONS.map((status) => (
                               <option key={status} value={status}>
@@ -579,10 +596,19 @@ export function AdminSponsorshipsManager({
                             type="button"
                             onClick={() => handleApplyStatus(item.id)}
                             disabled={!canApply}
-                            className="btn-secondary px-3 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-60"
+                            className="btn-secondary px-2.5 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-60"
                             aria-label={`${item.sponsorName} 상태 저장`}
                           >
                             {updatingId === item.id ? "저장 중…" : "적용"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSponsorship(item.id)}
+                            disabled={isMutating}
+                            className="rounded-lg border border-[#ead3cf] bg-[#fff7f5] px-2.5 py-1.5 text-xs font-black text-[#a84a3f] transition hover:border-[#d9aaa2] hover:bg-[#fff0ed] disabled:cursor-not-allowed disabled:opacity-60"
+                            aria-label={`${item.sponsorName} 결연 신청 삭제`}
+                          >
+                            {deletingId === item.id ? "삭제 중" : "삭제"}
                           </button>
                         </div>
                       </td>

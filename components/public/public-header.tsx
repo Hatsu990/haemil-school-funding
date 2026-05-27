@@ -28,7 +28,7 @@ export function PublicHeader() {
         <Link href="/" className="flex min-w-0 items-center gap-3 sm:gap-4">
           <div className="relative h-[76px] w-[76px] shrink-0 sm:h-[92px] sm:w-[92px]">
             <Image
-              src="/images/haemil/haemil-school-logo.png"
+              src="/images/haemill/haemill-school-logo.png"
               alt="해밀학교 로고"
               fill
               className="object-contain drop-shadow-[0_10px_18px_rgba(43,54,47,0.18)]"
@@ -37,7 +37,7 @@ export function PublicHeader() {
           </div>
           <div className="min-w-0 space-y-0.5">
             <p className="text-[0.63rem] font-bold uppercase tracking-[0.18em] text-[#728276] sm:text-[0.7rem]">
-              Haemil School
+              Haemill School
             </p>
             <p className="truncate text-[1.45rem] leading-none font-black tracking-[-0.02em] text-[#18211d] sm:text-[1.75rem]">
               해밀학교

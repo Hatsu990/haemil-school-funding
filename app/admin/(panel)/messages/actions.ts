@@ -44,7 +44,7 @@ export async function sendManualTemplateSmsAction(
 
   const variables = {
     name: extractFormString(formData, "name"),
-    studentNickname: extractFormString(formData, "studentNickname"),
+    studentPublicName: extractFormString(formData, "studentPublicName"),
     amount: extractFormString(formData, "amount"),
     period: extractFormString(formData, "period"),
     sponsorshipType: extractFormString(formData, "sponsorshipType"),

@@ -93,7 +93,7 @@ export default async function GalleryPage() {
     <div className="container-base pb-16 pt-10 sm:pt-12">
       <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
         <Image
-          src="/images/haemil/people-activity-5.jpg"
+          src="/images/haemill/people-activity-5.jpg"
           alt="해밀학교 활동 현장"
           fill
           priority

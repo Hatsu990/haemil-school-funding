@@ -1,9 +1,9 @@
-﻿-- Haemil School Funding - Turso(SQLite) schema
+-- Haemill School Funding - Turso(SQLite) schema
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS students (
   id TEXT PRIMARY KEY,
-  nickname TEXT NOT NULL,
+  public_name TEXT NOT NULL,
   real_name TEXT,
   gender TEXT NOT NULL CHECK (gender IN ('남', '여')),
   grade TEXT NOT NULL,

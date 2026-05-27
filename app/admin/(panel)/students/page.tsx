@@ -1,5 +1,6 @@
 import { AdminStudentsManager } from "@/components/admin/admin-students-manager";
 import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
+import { buildScholarshipViews } from "@/lib/repositories/scholarships";
 import { getStudents } from "@/lib/repositories/students";
 import { withStudentUiFallbackList } from "@/lib/students/ui";
 import { StudentProfile } from "@/types";
@@ -12,7 +13,14 @@ export default async function AdminStudentsPage() {
 
   try {
     const loadedStudents = await getStudents();
-    students = withStudentUiFallbackList(loadedStudents);
+    const scholarshipViews = await buildScholarshipViews(
+      withStudentUiFallbackList(loadedStudents),
+    );
+    students = scholarshipViews.map((view) => ({
+      ...view.student,
+      scholarshipType: view.scholarshipType,
+      scholarshipAmount: view.scholarshipAmount,
+    }));
   } catch (error) {
     logDbLoadError("admin students page", error);
     dbErrorMessage = buildDbErrorMessage(

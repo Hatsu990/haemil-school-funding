@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { StudentsListClient } from "@/components/public/students-list-client";
 import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
+import { buildScholarshipViews } from "@/lib/repositories/scholarships";
 import { getStudents } from "@/lib/repositories/students";
 import { withStudentUiFallbackList } from "@/lib/students/ui";
 import { StudentProfile } from "@/types";
@@ -9,7 +10,7 @@ import { StudentProfile } from "@/types";
 export const metadata: Metadata = {
   title: "학생 만나기",
   description:
-    "해밀학교 학생들의 닉네임, 학년, 결연 상태를 확인하고 생활관비 1:1 결연 후원을 신청할 수 있습니다.",
+    "해밀학교 학생들의 공개 표시명, 학년, 결연 상태를 확인하고 생활관비 1:1 결연 후원을 신청할 수 있습니다.",
   keywords: [
     "해밀학교 학생",
     "다문화학교 후원",
@@ -39,7 +40,14 @@ export default async function StudentsPage() {
 
   try {
     const loadedStudents = await getStudents();
-    students = withStudentUiFallbackList(loadedStudents);
+    const scholarshipViews = await buildScholarshipViews(
+      withStudentUiFallbackList(loadedStudents),
+    );
+    students = scholarshipViews.map((view) => ({
+      ...view.student,
+      scholarshipType: view.scholarshipType,
+      scholarshipAmount: view.scholarshipAmount,
+    }));
   } catch (error) {
     logDbLoadError("students page", error);
     dbErrorMessage = buildDbErrorMessage(
@@ -61,7 +69,7 @@ export default async function StudentsPage() {
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
       <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
         <Image
-          src="/images/haemil/school-campus-3.jpg"
+          src="/images/haemill/school-campus-3.jpg"
           alt="해밀학교 기숙사와 학교 분위기"
           fill
           priority
@@ -123,7 +131,7 @@ export default async function StudentsPage() {
         </div>
         <div className="relative min-h-[260px]">
           <Image
-            src="/images/haemil/people-activity-1.jpg"
+            src="/images/haemill/people-activity-1.jpg"
             alt="해밀학교 학생 공동체 활동"
             fill
             className="object-cover object-[center_22%] sm:object-center"

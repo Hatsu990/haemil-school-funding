@@ -8,18 +8,12 @@ import {
   getStudentById,
   isStudentDeleteBlockedError,
   isStudentNotFoundError,
-  resetAllStudentStatusesToAvailable,
   updateStudentLetterImageUrl,
   updateStudentProfile,
 } from "@/lib/repositories/students";
-import { StudentGender, StudentProfile, StudentSponsorshipStatus } from "@/types";
+import { StudentGender, StudentProfile } from "@/types";
 
 const VALID_GENDERS = new Set<StudentGender>(["남", "여"]);
-const VALID_STATUSES = new Set<StudentSponsorshipStatus>([
-  "available",
-  "pending",
-  "matched",
-]);
 
 export interface CreateStudentActionResult {
   ok: boolean;
@@ -34,8 +28,7 @@ export interface DeleteStudentActionResult {
 
 export interface UpdateStudentProfileActionInput {
   id: string;
-  nickname: string;
-  realName?: string;
+  realName: string;
   gender: string;
   grade: string;
   description: string;
@@ -45,12 +38,6 @@ export interface UpdateStudentProfileActionResult {
   ok: boolean;
   message: string;
   student?: StudentProfile;
-}
-
-export interface ResetStudentStatusesActionResult {
-  ok: boolean;
-  message: string;
-  updatedCount?: number;
 }
 
 export interface SaveStudentLetterImageActionResult {
@@ -64,10 +51,6 @@ const LETTER_IMAGE_MAX_SIZE_BYTES = LETTER_IMAGE_MAX_SIZE_MB * 1024 * 1024;
 
 function isValidGender(value: string): value is StudentGender {
   return VALID_GENDERS.has(value as StudentGender);
-}
-
-function isValidStatus(value: string): value is StudentSponsorshipStatus {
-  return VALID_STATUSES.has(value as StudentSponsorshipStatus);
 }
 
 function normalizeFileName(name: string): string {
@@ -109,15 +92,13 @@ function isImageFile(entry: FormDataEntryValue | null): entry is File {
 export async function createStudentAction(
   formData: FormData,
 ): Promise<CreateStudentActionResult> {
-  const nickname = String(formData.get("nickname") ?? "").trim();
   const realName = String(formData.get("realName") ?? "").trim();
   const genderRaw = String(formData.get("gender") ?? "").trim();
   const grade = String(formData.get("grade") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
-  const statusRaw = String(formData.get("sponsorshipStatus") ?? "").trim();
 
-  if (!nickname) {
-    return { ok: false, message: "학생 닉네임을 입력해 주세요." };
+  if (!realName) {
+    return { ok: false, message: "학생 실명을 입력해 주세요." };
   }
   if (!isValidGender(genderRaw)) {
     return { ok: false, message: "학생 성별을 선택해 주세요." };
@@ -128,18 +109,12 @@ export async function createStudentAction(
   if (!description) {
     return { ok: false, message: "소개 문구를 입력해 주세요." };
   }
-  if (!isValidStatus(statusRaw)) {
-    return { ok: false, message: "초기 결연 상태가 올바르지 않습니다." };
-  }
-
   try {
     const student = await createStudent({
-      nickname,
       realName,
       gender: genderRaw,
       grade,
       description,
-      sponsorshipStatus: statusRaw,
     });
 
     revalidatePath("/admin/students");
@@ -201,8 +176,7 @@ export async function updateStudentProfileAction(
   input: UpdateStudentProfileActionInput,
 ): Promise<UpdateStudentProfileActionResult> {
   const id = input.id.trim();
-  const nickname = input.nickname.trim();
-  const realName = input.realName?.trim() ?? "";
+  const realName = input.realName.trim();
   const genderRaw = input.gender.trim();
   const grade = input.grade.trim();
   const description = input.description.trim();
@@ -210,8 +184,8 @@ export async function updateStudentProfileAction(
   if (!id) {
     return { ok: false, message: "수정할 학생 ID가 누락되었습니다." };
   }
-  if (!nickname) {
-    return { ok: false, message: "학생 닉네임을 입력해 주세요." };
+  if (!realName) {
+    return { ok: false, message: "학생 실명을 입력해 주세요." };
   }
   if (!isValidGender(genderRaw)) {
     return { ok: false, message: "학생 성별을 선택해 주세요." };
@@ -226,7 +200,6 @@ export async function updateStudentProfileAction(
   try {
     const student = await updateStudentProfile({
       id,
-      nickname,
       realName,
       gender: genderRaw,
       grade,
@@ -255,27 +228,6 @@ export async function updateStudentProfileAction(
     return {
       ok: false,
       message: "학생 정보 수정에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-    };
-  }
-}
-
-export async function resetAllStudentsToAvailableAction(): Promise<ResetStudentStatusesActionResult> {
-  try {
-    const updatedCount = await resetAllStudentStatusesToAvailable();
-    revalidatePath("/admin/students");
-    revalidatePath("/admin/dashboard");
-    revalidatePath("/students");
-    revalidatePath("/");
-    return {
-      ok: true,
-      message: "전체 학생 상태를 신청 가능으로 초기화했습니다.",
-      updatedCount,
-    };
-  } catch (error) {
-    console.error("[admin students action] failed to reset student statuses", error);
-    return {
-      ok: false,
-      message: "학생 상태 초기화에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     };
   }
 }

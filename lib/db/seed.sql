@@ -1,4 +1,4 @@
-﻿-- Development seed data for Haemil School Funding
+-- Development seed data for Haemill School Funding
 PRAGMA foreign_keys = ON;
 
 BEGIN TRANSACTION;
@@ -6,171 +6,79 @@ BEGIN TRANSACTION;
 DELETE FROM sms_logs;
 DELETE FROM gallery_items;
 DELETE FROM sponsorships;
+DELETE FROM student_scholarship_records;
 DELETE FROM students;
 DELETE FROM settings;
 
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-001', '맑은 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-002', '맑은 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-003', '맑은 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-004', '맑은 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-005', '맑은 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-006', '맑은 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-007', '따뜻한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-008', '따뜻한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-009', '따뜻한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-010', '따뜻한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-011', '따뜻한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-012', '따뜻한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-013', '단단한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-014', '단단한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-015', '단단한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-016', '단단한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-017', '단단한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-018', '단단한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-019', '고운 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-020', '고운 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-021', '고운 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-022', '고운 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-023', '고운 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-024', '고운 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-025', '빛나는 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-026', '빛나는 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-027', '빛나는 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-028', '빛나는 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-029', '빛나는 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-030', '빛나는 무지개', '여', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-031', '산뜻한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-032', '산뜻한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-033', '산뜻한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-034', '산뜻한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-035', '산뜻한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-036', '산뜻한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-037', '포근한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-038', '포근한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-039', '포근한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-040', '포근한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-041', '포근한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-042', '포근한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-043', '든든한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-044', '든든한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-045', '든든한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-046', '든든한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-047', '든든한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-048', '든든한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-049', '환한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-050', '환한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-051', '환한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-052', '환한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-053', '환한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-054', '환한 무지개', '남', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-055', '은은한 별빛', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-056', '은은한 꽃길', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-057', '은은한 바다', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-058', '은은한 숲길', '남', '고1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고1)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-059', '은은한 하늘', '여', '고2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고2)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO students (id, nickname, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at)
-VALUES ('st-060', '은은한 무지개', '여', '고3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (고3)', NULL, NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+-- Students
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-001', '김*연', '김서연', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/female/1.png', NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-002', '김*준', '김민준', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/7.png', NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-003', '이**우', '이하지우', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/3.png', NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-004', '이*준', '이서준', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/9.png', NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-005', '박*은', '박하은', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/5.png', NULL, 'matched', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-006', '박*윤', '박도윤', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/11.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-007', '최*아', '최지아', '여', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/female/7.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-008', '최*우', '최시우', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/13.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-009', '정*아', '정수아', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/9.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-010', '정*호', '정지호', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/15.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-011', '한*은', '한예은', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/11.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-012', '한*원', '한주원', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/17.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-014', '윤*준', '윤하준', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/19.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-015', '장*원', '장채원', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/15.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-016', '장*찬', '장유찬', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/21.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-017', '임*은', '임다은', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/17.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-018', '임*우', '임현우', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/23.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-020', '강*우', '강건우', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/25.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-021', '조*린', '조하린', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/21.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-022', '조*호', '조준호', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/27.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-023', '송*서', '송민서', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/23.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-024', '송*우', '송정우', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/29.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-026', '오*윤', '오태윤', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/31.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-027', '신*민', '신지민', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/27.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-028', '신*현', '신승현', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/33.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-029', '권*린', '권아린', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/29.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-030', '류*은', '류가은', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/30.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-032', '권*환', '권지환', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/6.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-033', '백*채', '백은채', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/33.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-034', '류*우', '류연우', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/8.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-035', '안*연', '안나연', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/35.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-036', '문*훈', '문지훈', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/10.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-038', '백*진', '백우진', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/12.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-039', '남*린', '남채린', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/3.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-040', '안*호', '안수호', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/14.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-041', '노*진', '노유진', '여', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/female/5.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-042', '서*민', '서태민', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/16.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-044', '남*호', '남은호', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/18.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-045', '차*안', '차지안', '여', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/female/9.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-046', '노*서', '노준서', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/20.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-048', '고*민', '고현민', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/22.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-050', '차*현', '차도현', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/24.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-052', '진*우', '진진우', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/26.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-054', '배*온', '배시온', '남', '중3', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중3)', '/students/profiles/male/28.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-056', '하*람', '하하람', '남', '중2', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중2)', '/students/profiles/male/30.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-058', '구*윤', '구성윤', '남', '중1', '해밀학교 학생으로 배움과 생활을 균형 있게 이어가며 성장하고 있습니다. (중1)', '/students/profiles/male/32.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO students (id, public_name, real_name, gender, grade, description, profile_image_url, letter_image_url, sponsorship_status, created_at, updated_at) VALUES ('st-1c7e4f05-0f0b-4c8e-8891-8a259960ee6b', '유*호', '유윤호', '남', '중3', '안녕하세요', '/students/profiles/male/11.png', NULL, 'available', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Student profile image mapping (Profile1: 남, Profile2: 여)
-UPDATE students
-SET profile_image_url = CASE
-  WHEN gender = '남' THEN '/students/profiles/male/' || printf('%d.png', ((CAST(substr(id, 4) AS INTEGER) - 1) % 31) + 6)
-  WHEN gender = '여' THEN '/students/profiles/female/' || printf('%d.png', ((CAST(substr(id, 4) AS INTEGER) - 1) % 36) + 1)
-  ELSE '/students/profiles/female/' || printf('%d.png', ((CAST(substr(id, 4) AS INTEGER) - 1) % 36) + 1)
-END;
+-- Sponsorship samples
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-0f94812c-d0c6-4152-9ec0-8fbe20f27777', 'st-003', '김길동', '01044444444', 'asdf@gmail.com', '일시후원', '1회', 0, NULL, 1, '취소', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-1e026b65-798b-4d49-94c1-5e2539b86c88', 'st-004', '김길동', '01044444444', 'asdf@gmail.com', '정기후원', '3년', 1, '응아잇어응아잇', 1, '입금완료', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-5566e8d0-94d9-42ca-bcf2-9e47acef4c65', 'st-001', '김길동', '010-1120-1234', 'asdf@gmail.com', '정기후원', '1개월', 1, '응원합네딩', 1, '입금대기', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-a0b4adab-c227-4300-9d27-84b789fde99e', 'st-002', '감심잠', '01044444444', 'asdf@gmail.com', '정기후원', '1개월', 0, '음원함니댐', 0, '입금대기', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-ba0b6d0a-1cc2-4c72-ac9f-c90946bc1e3d', 'st-003', '줭복신', '01022223333', 'asdf@gmail.com', '정기후원', '3년', 1, 'wtesrseat test', 1, '입금대기', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-fbad3bde-e2dd-4331-ad08-5b1c181491ec', 'st-005', '김정남', '010-33334444', 'asdf@gmail.com', '정기후원', '3년', 0, 'wwasdfrrrghg test', 0, '입금완료', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Sponsorship sample rows
-INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES
-('sp-dev-001','st-038','김후원','010-1200-3301','donor1@example.com','정기후원','12개월',1,'학생의 생활과 배움을 꾸준히 응원합니다.',1,'입금대기',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('sp-dev-002','st-039','이응원','010-1200-3302','donor2@example.com','일시후원','1회',1,'필요한 시기에 도움이 되길 바랍니다.',0,'입금대기',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('sp-dev-003','st-045','박나눔','010-1200-3303','donor3@example.com','정기후원','6개월',0,'건강하게 학교생활 이어가길 바랍니다.',1,'입금대기',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('sp-dev-004','st-052','최동행','010-1200-3304','donor4@example.com','정기후원','12개월',1,'꾸준히 성장할 수 있도록 함께하겠습니다.',1,'입금완료',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('sp-dev-005','st-054','정마음','010-1200-3305','donor5@example.com','일시후원','1회',1,'응원하는 마음을 전합니다.',0,'입금완료',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('sp-dev-006','st-056','윤다정','010-1200-3306','donor6@example.com','정기후원','3개월',1,'학업과 생활 모두 응원합니다.',0,'입금완료',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
-INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-dev-007','st-018','한별','010-1200-3307','donor7@example.com','정기후원','6개월',0,'다시 좋은 인연으로 이어지길 바랍니다.',0,'취소',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
-INSERT INTO sponsorships (id, student_id, sponsor_name, sponsor_phone, sponsor_email, sponsorship_type, sponsorship_period, sponsor_public, sponsor_message, receipt_requested, status, created_at, updated_at) VALUES ('sp-dev-008','st-021','오햇살','010-1200-3308','donor8@example.com','일시후원','1회',1,'상황이 정리되면 다시 후원하겠습니다.',0,'취소',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
-
--- Gallery sample rows
-INSERT INTO gallery_items (id, title, type, file_url, created_at) VALUES
-('ga-dev-001','기숙사 일과 스케치','image','https://example.com/gallery/placeholder-1.jpg',CURRENT_TIMESTAMP),
-('ga-dev-002','교내 활동 기록','image','https://example.com/gallery/placeholder-2.jpg',CURRENT_TIMESTAMP),
-('ga-dev-003','방과 후 수업 장면','video','https://example.com/gallery/placeholder-3.mp4',CURRENT_TIMESTAMP),
-('ga-dev-004','학생 작품 전시','image','https://example.com/gallery/placeholder-4.jpg',CURRENT_TIMESTAMP);
+-- Scholarship records
+INSERT INTO student_scholarship_records (id, student_id, scholarship_type, student_name, student_phone, parent_name, parent_phone, bank_account, resident_registration_file_url, bankbook_file_url, created_at, updated_at) VALUES ('sch-ca5e6311-7fe7-4aa1-b334-0e213ec41cb6', 'st-058', '전액장학금', '구성윤', '', '', '', '', NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Settings defaults
-INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES
-('set-dev-001','admin_contact_phone','010-0000-0000',CURRENT_TIMESTAMP),
-('set-dev-002','sms_receiver_phone','010-1111-2222',CURRENT_TIMESTAMP),
-('set-dev-003','auto_sms_send_time','09:00',CURRENT_TIMESTAMP),
-('set-dev-004','site_notice','개발용 시드 데이터입니다.',CURRENT_TIMESTAMP),
-('set-dev-005','sms_sender_phone_display','010-0000-0000',CURRENT_TIMESTAMP),
-('set-dev-006','site_public_enabled','true',CURRENT_TIMESTAMP),
-('set-dev-007','sponsorship_request_enabled','true',CURRENT_TIMESTAMP),
-('set-dev-008','default_sponsorship_amount','100000',CURRENT_TIMESTAMP),
-('set-dev-009','target_student_count','60',CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-dev-001', 'admin_contact_phone', '010-9423-8761', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-dev-003', 'auto_sms_send_time', '09:00', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-be440d92-c1bb-4981-b856-c8a3ec2c8624', 'representative_contact_phone', '033-830-8761', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-dev-004', 'site_notice', '개발용 시드 데이터입니다.', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-dev-002', 'sms_receiver_phone', '010-1111-2222', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-dev-005', 'sms_sender_phone_display', '010-9423-8761', CURRENT_TIMESTAMP);
+INSERT INTO settings (id, setting_key, setting_value, updated_at) VALUES ('set-07ae13dc-6614-497a-ac5d-3a35aad60a67', 'sponsorship_contact_phone', '010-9423-8761', CURRENT_TIMESTAMP);
 
--- SMS log sample rows
-INSERT INTO sms_logs (id, phone, template_name, status, response_message, created_at) VALUES
-('sms-dev-001','010-1200-3301','후원신청_접수','성공','개발용 샘플 발송 기록',CURRENT_TIMESTAMP),
-('sms-dev-002','010-1200-3302','관리자_알림','대기',NULL,CURRENT_TIMESTAMP);
+-- Gallery and SMS logs intentionally start empty in development seed.
 
 COMMIT;

@@ -14,6 +14,12 @@ import { EmptyStateCard } from "@/components/ui/empty-state-card";
 import { FeedbackToast } from "@/components/ui/feedback-toast";
 import { StudentProfileImage } from "@/components/ui/student-profile-image";
 import { StatusPill } from "@/components/ui/status-pill";
+import { getScholarshipTypeWithAmountLabel } from "@/lib/scholarships";
+import { maskStudentRealName } from "@/lib/students/display";
+import {
+  getScholarshipSortWeight,
+  getStudentStatusSortWeight,
+} from "@/lib/students/sort";
 import { withStudentUiFallback } from "@/lib/students/ui";
 import { getStudentStatusClass, getStudentStatusLabel } from "@/lib/utils";
 import { StudentProfile } from "@/types";
@@ -29,7 +35,6 @@ interface FeedbackState {
 
 interface StudentEditFormState {
   id: string;
-  nickname: string;
   realName: string;
   gender: string;
   grade: string;
@@ -42,6 +47,23 @@ function normalizeKeyword(value: string): string {
 
 function hasLetterImage(letterImageUrl: string | null | undefined): boolean {
   return Boolean(letterImageUrl && letterImageUrl.trim().length > 0);
+}
+
+function compareStudentDisplayOrder(
+  a: { student: StudentProfile; index: number },
+  b: { student: StudentProfile; index: number },
+): number {
+  const statusDiff =
+    getStudentStatusSortWeight(a.student.sponsorshipStatus) -
+    getStudentStatusSortWeight(b.student.sponsorshipStatus);
+  if (statusDiff !== 0) return statusDiff;
+
+  const scholarshipDiff =
+    getScholarshipSortWeight(a.student.scholarshipType) -
+    getScholarshipSortWeight(b.student.scholarshipType);
+  if (scholarshipDiff !== 0) return scholarshipDiff;
+
+  return a.index - b.index;
 }
 
 export function AdminStudentsManager({
@@ -74,24 +96,28 @@ export function AdminStudentsManager({
 
   const filteredStudents = useMemo(() => {
     const normalizedKeyword = normalizeKeyword(keyword);
-    if (!normalizedKeyword) {
-      return students;
-    }
+    return students
+      .map((student, index) => ({ student, index }))
+      .filter(({ student }) => {
+        if (!normalizedKeyword) return true;
+        const scholarshipLabel = student.scholarshipType
+          ? getScholarshipTypeWithAmountLabel(student.scholarshipType)
+          : "";
+        const searchable = [
+          maskStudentRealName(student.realName) || student.publicName,
+          student.realName ?? "",
+          student.gender,
+          student.grade,
+          student.description,
+          scholarshipLabel,
+        ]
+          .join(" ")
+          .toLowerCase();
 
-    return students.filter((student) => {
-      const searchable = [
-        student.id,
-        student.nickname,
-        student.realName ?? "",
-        student.gender,
-        student.grade,
-        student.description,
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return searchable.includes(normalizedKeyword);
-    });
+        return searchable.includes(normalizedKeyword);
+      })
+      .sort(compareStudentDisplayOrder)
+      .map((entry) => entry.student);
   }, [keyword, students]);
 
   const updateStudentItem = (
@@ -135,19 +161,19 @@ export function AdminStudentsManager({
       formRef.current?.reset();
       setFeedback({
         type: "success",
-        message: `${result.message} (ID: ${nextStudent.id})`,
+        message: result.message,
       });
       router.refresh();
     });
   };
 
-  const handleDeleteStudent = async (id: string, nickname: string) => {
+  const handleDeleteStudent = async (id: string, studentName: string) => {
     if (isMutating) {
       return;
     }
 
     const shouldDelete = window.confirm(
-      `${nickname} 학생(ID: ${id})을(를) 삭제하시겠습니까?`,
+      `${studentName} 학생을 삭제하시겠습니까?`,
     );
     if (!shouldDelete) {
       return;
@@ -190,7 +216,6 @@ export function AdminStudentsManager({
     setFeedback(null);
     setEditingStudent({
       id: student.id,
-      nickname: student.nickname,
       realName: student.realName ?? "",
       gender: student.gender,
       grade: student.grade,
@@ -336,23 +361,11 @@ export function AdminStudentsManager({
         >
           <label className="text-sm">
             <span className="mb-1 block font-semibold text-[#5f4a3c]">
-              학생 닉네임 *
-            </span>
-            <input
-              name="nickname"
-              required
-              maxLength={40}
-              disabled={isMutating}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-              placeholder="예: 맑은 별빛…"
-            />
-          </label>
-          <label className="text-sm">
-            <span className="mb-1 block font-semibold text-[#5f4a3c]">
-              학생 실명
+              학생 실명 *
             </span>
             <input
               name="realName"
+              required
               maxLength={40}
               disabled={isMutating}
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
@@ -363,12 +376,12 @@ export function AdminStudentsManager({
             <span className="mb-1 block font-semibold text-[#5f4a3c]">성별 *</span>
             <select
               name="gender"
-              defaultValue="여"
+              defaultValue="남"
               disabled={isMutating}
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
             >
-              <option value="여">여</option>
               <option value="남">남</option>
+              <option value="여">여</option>
             </select>
           </label>
           <label className="text-sm">
@@ -381,21 +394,6 @@ export function AdminStudentsManager({
               className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
               placeholder="예: 중2…"
             />
-          </label>
-          <label className="text-sm">
-            <span className="mb-1 block font-semibold text-[#5f4a3c]">
-              초기 결연 상태 *
-            </span>
-            <select
-              name="sponsorshipStatus"
-              defaultValue="available"
-              disabled={isMutating}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-            >
-              <option value="available">신청가능</option>
-              <option value="pending">입금대기</option>
-              <option value="matched">결연완료</option>
-            </select>
           </label>
           <label className="text-sm md:col-span-2">
             <span className="mb-1 block font-semibold text-[#5f4a3c]">
@@ -431,7 +429,7 @@ export function AdminStudentsManager({
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="실명, 닉네임, 학년, ID 검색…"
+            placeholder="실명, 공개 표시명, 학년 검색…"
             aria-label="학생 검색"
             className="min-w-[220px] flex-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm"
           />
@@ -459,19 +457,24 @@ export function AdminStudentsManager({
           filteredStudents.map((student) => {
             const letterExists = hasLetterImage(student.letterImageUrl);
             const profileTheme = student.profileTheme ?? "from-[#f3e3d6] to-[#fff4ea]";
+            const realName = student.realName?.trim() || "미등록";
+            const publicName = maskStudentRealName(student.realName) || student.publicName;
+            const scholarshipLabel = student.scholarshipType
+              ? getScholarshipTypeWithAmountLabel(student.scholarshipType)
+              : null;
             return (
               <article key={student.id} className="surface-card overflow-hidden">
                   <div className={`bg-gradient-to-r p-3 ${profileTheme}`}>
                   <StudentProfileImage
                     src={student.profileImageUrl}
-                    alt={`${student.nickname} 학생 프로필 이미지`}
+                    alt={`${publicName} 학생 프로필 이미지`}
                     className="w-20"
                   />
                 </div>
                 <div className="space-y-3 p-4">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-lg font-bold text-[#2f241d]">
-                      {student.nickname}
+                      {realName}
                     </h3>
                     <StatusPill
                       label={getStudentStatusLabel(student.sponsorshipStatus)}
@@ -482,13 +485,16 @@ export function AdminStudentsManager({
                     {student.gender} · {student.grade}
                   </p>
                   <p className="text-sm font-semibold text-[#1f2b25]">
-                    실명: {student.realName?.trim() || "미등록"}
+                    공개 표시명: {publicName}
                   </p>
+                  {scholarshipLabel ? (
+                    <p className="inline-flex rounded-full border border-[#486f5b]/18 bg-[#eef4eb] px-3 py-1 text-xs font-black text-[#24372c]">
+                      {scholarshipLabel}
+                    </p>
+                  ) : null}
                   <p className="text-sm leading-6 text-[#1f2b25]">
                     {student.description}
                   </p>
-                  <p className="text-xs text-[#7a5b49]">ID: {student.id}</p>
-
                   <div className="rounded-xl border border-[var(--border)] bg-[#fffaf4] p-3">
                     <p className="text-xs font-semibold text-[#6d5545]">꿈편지 이미지</p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-[120px_1fr]">
@@ -496,7 +502,7 @@ export function AdminStudentsManager({
                         {letterExists ? (
                           <Image
                             src={student.letterImageUrl as string}
-                            alt={`${student.nickname} 꿈편지 이미지`}
+                            alt={`${publicName} 꿈편지 이미지`}
                             fill
                             unoptimized
                             className="object-cover object-center"
@@ -577,7 +583,7 @@ export function AdminStudentsManager({
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDeleteStudent(student.id, student.nickname)}
+                      onClick={() => handleDeleteStudent(student.id, realName)}
                       disabled={isMutating}
                       className="rounded-lg border border-[#e5c6c0] bg-[#fff4f2] px-3 py-2 text-xs font-semibold text-[#974542] disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -605,7 +611,7 @@ export function AdminStudentsManager({
           >
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-bold text-[#2f241d]">
-                학생 정보 수정 ({editingStudent.id})
+                학생 정보 수정
               </h3>
               <button
                 type="button"
@@ -623,31 +629,10 @@ export function AdminStudentsManager({
             >
               <label className="text-sm">
                 <span className="mb-1 block font-semibold text-[#5f4a3c]">
-                  학생 닉네임 *
+                  학생 실명 *
                 </span>
                 <input
                   required
-                  maxLength={40}
-                  disabled={isUpdatingProfile}
-                  value={editingStudent.nickname}
-                  onChange={(event) =>
-                    setEditingStudent((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            nickname: event.target.value,
-                          }
-                        : prev,
-                    )
-                  }
-                  className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-                />
-              </label>
-              <label className="text-sm">
-                <span className="mb-1 block font-semibold text-[#5f4a3c]">
-                  학생 실명
-                </span>
-                <input
                   maxLength={40}
                   disabled={isUpdatingProfile}
                   value={editingStudent.realName}
@@ -683,8 +668,8 @@ export function AdminStudentsManager({
                   }
                   className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2"
                 >
-                  <option value="여">여</option>
                   <option value="남">남</option>
+                  <option value="여">여</option>
                 </select>
               </label>
 

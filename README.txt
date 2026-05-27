@@ -2,7 +2,7 @@
 해밀학교 후원 프로젝트
 
 프로젝트 전용 Skill 시스템 적용 완료
-- 위치: .agents/skills/haemil-school/SKILL.md
+- 위치: .agents/skills/haemill-school/SKILL.md
 - 기준 문서: PROJECT_SPEC.txt
 - 앞으로 모든 Codex 작업은 PROJECT_SPEC.txt + SKILL.md를 함께 참조
 
@@ -10,7 +10,7 @@
 Turso DB 초기화 방법
 --------------------------------------------------
 
-1) 프로젝트 루트(`haemil-school-funding/.env.local`)에 아래 값이 있어야 합니다.
+1) 프로젝트 루트(`haemill-school-funding/.env.local`)에 아래 값이 있어야 합니다.
 - `TURSO_DATABASE_URL`
 - `TURSO_AUTH_TOKEN`
 
@@ -135,7 +135,7 @@ Blob 정리 정책:
 
 자산 경로 정리:
 - 원본: `Image/People4.jpg`, `Image/People5.jpg`, `Image/People6.jpg`, `Image/Scool3.jpg`
-- 반영: `public/images/haemil/people-activity-4.jpg`, `people-activity-5.jpg`, `people-activity-6.jpg`, `school-campus-3.jpg`
+- 반영: `public/images/haemill/people-activity-4.jpg`, `people-activity-5.jpg`, `people-activity-6.jpg`, `school-campus-3.jpg`
 
 페이지별 이미지 톤:
 - 홈(`/`)
@@ -286,10 +286,10 @@ https://ubmk-70.vercel.app/
 비공개
 
 학생 이름:
-닉네임 사용
+공개 표시명 사용
 
 공개 정보:
-- 닉네임
+- 공개 표시명
 - 성별
 - 학년
 - 소개 문구
@@ -550,11 +550,11 @@ Vercel Blob:
 --------------------------------------------------
 - /admin/sponsorships 페이지를 클라이언트 상태 기반 관리 화면으로 보강
 - mock 후원 신청 목록 테이블에 필수 표시 항목 반영
-  - 신청일 / 후원자 이름 / 전화번호 / 이메일 / 학생 닉네임
+  - 신청일 / 후원자 이름 / 전화번호 / 이메일 / 학생 공개 표시명
   - 후원 방식 / 후원 기간 / 후원자 공개 여부
   - 기부금 영수증 희망 여부 / 응원 메시지 / 상태
 - 검색 기능 구현
-  - 이름 / 전화번호 / 이메일 / 학생 닉네임 기준 통합 검색
+  - 이름 / 전화번호 / 이메일 / 학생 공개 표시명 기준 통합 검색
 - 상태 필터 구현
   - 전체 / 입금대기 / 입금완료 / 취소
 - 상태 변경 UI 구현
@@ -635,7 +635,7 @@ Vercel Blob:
 --------------------------------------------------
 작업 로그 (2026-05-13 - 관리자 학생 추가/삭제 기능)
 --------------------------------------------------
-- /admin/students 페이지에 학생 추가 폼 구현 (닉네임/성별/학년/소개/초기 상태)
+- /admin/students 페이지에 학생 추가 폼 구현 (공개 표시명/성별/학년/소개/초기 상태)
 - 학생 추가 시 createStudentAction -> createStudent(repository) -> Turso DB INSERT 연결
 - /admin/students 카드에 학생 삭제 버튼 구현
 - 학생 삭제 시 deleteStudentAction -> deleteStudent(repository) -> Turso DB DELETE 연결
@@ -714,10 +714,10 @@ Vercel Blob:
 - 결연 진행률 섹션 추가
   - matched 학생 수 / 전체 학생 수 기준 퍼센트 계산 및 표시
 - 최근 후원 신청 목록(최대 10건) 구현
-  - 후원자 이름, 학생 닉네임, 상태, 신청일 표시
+  - 후원자 이름, 학생 공개 표시명, 상태, 신청일 표시
 - 오늘 연락할 후원자 목록 구현
   - 입금대기 신청 기준
-  - 후원자 이름, 전화번호, 학생 닉네임, 신청일 표시
+  - 후원자 이름, 전화번호, 학생 공개 표시명, 신청일 표시
 - 빈 상태/DB 오류 안내 처리
   - DB 로딩 실패 시 안내 메시지 노출
   - 최근 신청/연락 대상이 없을 때 빈 상태 문구 노출
@@ -850,13 +850,13 @@ Vercel Blob:
   - 운영 초기화 목적 안내 문구 반영
 - 관리자 문자 템플릿 수동 발송 구현
   - `/admin/messages`에 템플릿별 수동 발송 폼 추가
-  - 전화번호 + 템플릿 변수(name/studentNickname/amount 포함) 입력 지원
+  - 전화번호 + 템플릿 변수(name/studentPublicName/amount 포함) 입력 지원
   - 서버 액션에서 템플릿 렌더 후 `sendSms()` 호출
   - 발송 결과 `sms_logs` 기록 유지
   - Solapi 환경변수 누락 시 개발 모드 fallback 안내 문구 강화
-- 결연 신청 목록 초기화 기능 추가
-  - `/admin/sponsorships`에 "결연 신청 목록 초기화" 버튼 추가
-  - confirm 후 `sponsorships` 전체 삭제 + 학생 상태 전체 `available` 초기화
+- 위험한 전체 초기화 기능 제거
+  - `/admin/sponsorships`의 전체 초기화 버튼 제거
+  - 운영 화면에서 전체 삭제/초기화 동작이 노출되지 않도록 정리
   - `sms_logs`, `gallery_items`, `settings`는 유지
 - 손편지 없는 학생 UI 처리
   - `letter_image_url`이 비어 있으면 "손편지 없음" 표시

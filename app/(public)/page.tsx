@@ -9,6 +9,7 @@ import {
 import { StudentCard } from "@/components/public/student-card";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
 import { buildDbErrorMessage, logDbLoadError } from "@/lib/db/debug";
+import { buildScholarshipViews } from "@/lib/repositories/scholarships";
 import { getSponsorships } from "@/lib/repositories/sponsorships";
 import { getStudents } from "@/lib/repositories/students";
 import { withStudentUiFallbackList } from "@/lib/students/ui";
@@ -18,11 +19,11 @@ import { SponsorshipRecord, StudentProfile } from "@/types";
 
 const activityHighlights = [
   {
-    imageSrc: "/images/haemil/people-activity-5.jpg",
+    imageSrc: "/images/haemill/people-activity-5.jpg",
     text: "함께 생활하며 배움과 관계를 동시에 키워가는 기숙사 교육",
   },
   {
-    imageSrc: "/images/haemil/people-activity-6.jpg",
+    imageSrc: "/images/haemill/people-activity-6.jpg",
     text: "서로의 문화를 존중하며 미래를 준비하는 공동체 활동",
   },
 ] as const;
@@ -133,7 +134,14 @@ export default async function HomePage() {
       getSponsorships(),
     ]);
 
-    students = withStudentUiFallbackList(loadedStudents);
+    const scholarshipViews = await buildScholarshipViews(
+      withStudentUiFallbackList(loadedStudents),
+    );
+    students = scholarshipViews.map((view) => ({
+      ...view.student,
+      scholarshipType: view.scholarshipType,
+      scholarshipAmount: view.scholarshipAmount,
+    }));
     sponsorships = loadedSponsorships;
   } catch (error) {
     logDbLoadError("home page", error);
@@ -226,7 +234,7 @@ export default async function HomePage() {
         <aside className="grid min-h-[620px] gap-4 md:grid-cols-[1fr_0.72fr] lg:grid-cols-[1fr_0.68fr]">
           <div className="relative min-h-[420px] overflow-hidden rounded-[34px] bg-[#18211d] shadow-[0_28px_76px_rgba(43,54,47,0.22)]">
             <Image
-              src="/images/haemil/people-activity-4.jpg"
+              src="/images/haemill/people-activity-4.jpg"
               alt="해밀학교 전경"
               fill
               priority
@@ -237,7 +245,7 @@ export default async function HomePage() {
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
               <div className="max-w-md rounded-[26px] border border-white/16 bg-[#18211d]/62 p-5 text-white shadow-[0_18px_50px_rgba(0,0,0,0.22)] backdrop-blur-md">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#dfe8d8]">
-                  Haemil School
+                  Haemill School
                 </p>
                 <p className="mt-3 text-lg font-bold leading-7">
                   해밀학교의 하루는 교실과 기숙사, 그리고 서로를 돌보는 시간으로
@@ -280,7 +288,7 @@ export default async function HomePage() {
 
             <div className="relative min-h-[220px] overflow-hidden rounded-[34px] border border-[#d8d1c4] bg-[#f1d6c4]">
               <Image
-                src="/images/haemil/school-campus-3.jpg"
+                src="/images/haemill/school-campus-3.jpg"
                 alt=""
                 aria-hidden
                 fill
@@ -329,7 +337,7 @@ export default async function HomePage() {
       <section className="container-home mt-16 xl:mt-20">
         <article className="relative overflow-hidden rounded-[36px] border border-[#d8d1c4] bg-[#18211d] px-6 py-12 text-center shadow-[var(--shadow-strong)] sm:px-8 sm:py-14 lg:px-10 lg:py-16">
           <Image
-            src="/images/haemil/school-campus-1.jpg"
+            src="/images/haemill/school-campus-1.jpg"
             alt=""
             aria-hidden
             fill
@@ -357,7 +365,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_12%,rgba(198,111,74,0.16),transparent_34%),radial-gradient(circle_at_84%_18%,rgba(72,111,91,0.16),transparent_32%)]" />
           <div className="relative z-10">
             <h2 className="max-w-3xl text-3xl font-black leading-tight tracking-[-0.03em] text-balance md:text-4xl">
-              한 번의 후원이 학생의 한 학기를 지탱합니다
+              한 번의 결연이 학생의 3년을 함께 지켜줍니다
             </h2>
           </div>
           <Link

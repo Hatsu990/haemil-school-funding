@@ -9,6 +9,7 @@ import {
   getSponsorshipBlockedReason,
   isSponsorshipRequestable,
 } from "@/lib/sponsorship/policy";
+import { getScholarshipTypeWithAmountLabel } from "@/lib/scholarships";
 import { getPublicStudentName } from "@/lib/students/display";
 import { withStudentUiFallback } from "@/lib/students/ui";
 import { getStudentStatusClass, getStudentStatusLabel } from "@/lib/utils";
@@ -26,6 +27,9 @@ export function StudentCard({ student }: StudentCardProps) {
     ? "학생 1명당 후원자 1명 결연 원칙으로 운영됩니다."
     : getSponsorshipBlockedReason(studentUi.sponsorshipStatus);
   const profileTheme = studentUi.profileTheme ?? "from-[#dfe8d8] to-[#fffdf8]";
+  const scholarshipLabel = studentUi.scholarshipType
+    ? getScholarshipTypeWithAmountLabel(studentUi.scholarshipType)
+    : null;
   const letterImageUrl = useMemo(
     () => studentUi.letterImageUrl?.trim() ?? "",
     [studentUi.letterImageUrl],
@@ -65,6 +69,11 @@ export function StudentCard({ student }: StudentCardProps) {
               className={getStudentStatusClass(studentUi.sponsorshipStatus)}
             />
           </div>
+          {scholarshipLabel ? (
+            <div className="mt-4 inline-flex rounded-full border border-[#486f5b]/18 bg-[#fffdf8]/78 px-3 py-1.5 text-xs font-black text-[#24372c] shadow-sm">
+              {scholarshipLabel}
+            </div>
+          ) : null}
         </div>
 
         <div className="space-y-4 p-5 sm:p-6">

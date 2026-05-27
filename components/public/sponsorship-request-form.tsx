@@ -55,6 +55,9 @@ export function SponsorshipRequestForm({
   const errorKey = errorMessages.join("|");
   const showErrorDialog = errorMessages.length > 0 && errorKey !== dismissedErrorKey;
   const amountLabel = new Intl.NumberFormat("ko-KR").format(scholarshipAmount);
+  const totalAmountLabel = new Intl.NumberFormat("ko-KR").format(
+    scholarshipAmount * 36,
+  );
 
   return (
     <>
@@ -156,9 +159,14 @@ export function SponsorshipRequestForm({
             </p>
             <p className="mt-1 subtle-text">{scholarshipTypeLabel} 대상 학생</p>
           </div>
-          <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#7a5d4a]">
-            3년 결연
-          </span>
+          <div className="text-right">
+            <p className="text-sm font-black text-[#18211d]">
+              총 {totalAmountLabel}원
+            </p>
+            <span className="mt-1 inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#7a5d4a]">
+              3년 결연
+            </span>
+          </div>
         </div>
         <FieldError message={state.fieldErrors.sponsorshipType} />
       </section>

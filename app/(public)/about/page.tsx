@@ -9,7 +9,7 @@ const valueCards = [
       "언어와 문화의 차이를 이해하고 존중하는 다양한 활동과 프로그램을 통해, 학생들이 서로의 다양성을 배우고 포용하는 마음을 키워가고 있습니다.",
       "모두가 존중받고, 누구나 소중한 존재로 인정받는 학교. 해밀학교는 아이들이 함께 꿈꾸고 함께 성장하는 마을과 같은 교육 공동체를 만들어가고 있습니다.",
     ],
-    imageSrc: "/images/haemil/people-activity-2.jpg",
+    imageSrc: "/images/haemill/people-activity-2.jpg",
     imageAlt: "학생 활동 모습",
   },
   {
@@ -19,7 +19,7 @@ const valueCards = [
       "해밀학교는 안전하고 따뜻한 생활 환경을 제공하고, 전문 선생님들의 세심한 생활지도와 학습지도를 연계하여 아이들이 건강하게 자라고 배움이 끊이지 않도록 돕고 있습니다.",
       "기숙사 생활은 단순한 숙식 공간이 아닌, 아이들이 서로를 이해하고 배려하며 자립심과 책임감을 키워가는 성장의 터전이 되고 있습니다.",
     ],
-    imageSrc: "/images/haemil/school-campus-2.png",
+    imageSrc: "/images/haemill/school-campus-2.png",
     imageAlt: "해밀학교 학교 시설",
   },
   {
@@ -29,7 +29,7 @@ const valueCards = [
       "진로 탐색과 체험 활동, 멘토링, 프로젝트 수업 등을 통해 아이들이 자신의 가능성을 믿고 미래를 주도적으로 설계할 수 있도록 함께 고민하고 응원합니다.",
       "작은 관심과 경험이 아이들의 인생을 바꿀 수 있다는 믿음으로, 해밀학교는 학생 한 명 한 명의 꿈을 소중히 키워가고 있습니다.",
     ],
-    imageSrc: "/images/haemil/people-activity-5.jpg",
+    imageSrc: "/images/haemill/people-activity-5.jpg",
     imageAlt: "학생 체험 활동",
   },
   {
@@ -40,7 +40,7 @@ const valueCards = [
       "생활관비 후원은 아이들이 이러한 일상을 안정적으로 이어갈 수 있도록 지켜주는 소중한 힘입니다.",
       "후원자님의 따뜻한 마음 덕분에 아이들은 오늘도 안전한 환경에서 배우고 성장할 수 있습니다.",
     ],
-    imageSrc: "/images/haemil/people-activity-6.jpg",
+    imageSrc: "/images/haemill/people-activity-6.jpg",
     imageAlt: "학생 생활 장면",
   },
   {
@@ -51,7 +51,7 @@ const valueCards = [
       "여러분의 작은 관심이 한 아이의 오늘을 바꾸고, 더 나아가 밝은 미래를 만들어갑니다.",
       "해밀학교와 함께 아이들의 꿈을 지켜주세요.",
     ],
-    imageSrc: "/images/haemil/school-campus-3.jpg",
+    imageSrc: "/images/haemill/school-campus-3.jpg",
     imageAlt: "해밀학교 전경",
   },
 ] as const;
@@ -86,7 +86,7 @@ export default function AboutPage() {
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-20 pt-10 sm:px-6 sm:pt-12">
       <header className="relative overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)]">
         <Image
-          src="/images/haemil/school-campus-1.jpg"
+          src="/images/haemill/school-campus-1.jpg"
           alt="해밀학교 전경"
           fill
           priority

@@ -136,7 +136,7 @@ ADMIN_PASSWORD=ubmk2026!
 비공개
 
 공개 정보:
-- 닉네임
+- 공개 표시명
 - 성별
 - 학년
 - 소개 문구
@@ -316,7 +316,7 @@ Solapi
 
 필드:
 - id
-- nickname
+- public_name
 - gender
 - grade
 - description
