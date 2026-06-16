@@ -84,21 +84,21 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-20 pt-10 sm:px-6 sm:pt-12">
-      <header className="relative overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)]">
+      <header className="relative overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_22px_58px_rgba(32,41,38,0.1)]">
         <Image
           src="/images/haemill/school-campus-1.jpg"
           alt="해밀학교 전경"
           fill
           priority
-          className="object-cover object-[center_28%] sm:object-center"
+          className="object-cover object-[center_28%] opacity-70 sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#18211d]/88 via-[#24372c]/72 to-[#c66f4a]/40" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#fffdf8_0%,rgba(255,253,248,0.96)_46%,rgba(255,253,248,0.28)_100%)]" />
         <div className="relative z-10 p-8 sm:p-10">
-          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
+          <h1 className="text-balance font-serif text-3xl font-black leading-tight text-[#18211d] [word-break:keep-all] sm:text-5xl">
             해밀학교는 함께 살아가는 힘을 가르칩니다
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-[#edf3ed]">
+          <p className="mt-4 max-w-3xl text-base font-semibold leading-8 text-[#314039]">
             해밀학교는 강원특별자치도 홍천군에 위치한 다문화 대안학교입니다.
             학생들이 안전한 기숙사 환경에서 학업과 생활을 함께 성장시킬 수
             있도록 교육하고 있습니다.
@@ -122,7 +122,7 @@ export default function AboutPage() {
           {valueCards.map((card, index) => (
             <article
               key={card.title}
-              className={`surface-card overflow-hidden rounded-[34px] p-8 shadow-[0_22px_58px_rgba(43,54,47,0.1)] sm:p-10 lg:p-11 ${
+              className={`overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-8 shadow-[0_18px_44px_rgba(32,41,38,0.08)] sm:p-10 lg:p-11 ${
                 index < 3 ? "md:col-span-2" : ""
               }`}
             >
@@ -138,7 +138,7 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <div className="relative mt-7 min-h-[220px] overflow-hidden rounded-[26px] border border-[var(--border)] lg:mt-0">
+                <div className="relative mt-7 min-h-[220px] overflow-hidden rounded-lg border border-[#d8d3c8] lg:mt-0">
                   <Image
                     src={card.imageSrc}
                     alt={card.imageAlt}

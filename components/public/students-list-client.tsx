@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { StudentCard } from "@/components/public/student-card";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
-import { SCHOLARSHIP_TYPES, getScholarshipTypeLabel } from "@/lib/scholarships";
+import {
+  SCHOLARSHIP_TYPES,
+  getScholarshipSupportTierLabel,
+} from "@/lib/scholarships";
 import {
   getScholarshipSortWeight,
   getStudentStatusSortWeight,
@@ -22,6 +26,32 @@ type SortKey =
 interface StudentsListClientProps {
   students: StudentProfile[];
   dbErrorMessage: string | null;
+}
+
+const SCHOLARSHIP_QUERY_MAP: Record<string, ScholarshipType> = {
+  full: "전액장학금",
+  half: "반액장학금",
+  partial: "부분장학금",
+  "100000": "전액장학금",
+  "50000": "반액장학금",
+  "30000": "부분장학금",
+  전액장학금: "전액장학금",
+  반액장학금: "반액장학금",
+  부분장학금: "부분장학금",
+};
+
+const STATUS_QUERY_VALUES: StatusFilter[] = ["all", "available", "pending", "matched"];
+
+function resolveScholarshipQuery(value: string | null): ScholarshipFilter {
+  if (!value) return "all";
+  return SCHOLARSHIP_QUERY_MAP[value] ?? "all";
+}
+
+function resolveStatusQuery(value: string | null): StatusFilter {
+  if (!value) return "all";
+  return STATUS_QUERY_VALUES.includes(value as StatusFilter)
+    ? (value as StatusFilter)
+    : "all";
 }
 
 function getGradeOrder(grade: string): number {
@@ -71,7 +101,7 @@ function compareDefaultStudentOrder(
 }
 
 function getStatusLabel(status: StatusFilter): string {
-  if (status === "available") return "요청 가능";
+  if (status === "available") return "신청 가능";
   if (status === "pending") return "입금 대기";
   if (status === "matched") return "결연 완료";
   return "전체";
@@ -81,11 +111,16 @@ export function StudentsListClient({
   students,
   dbErrorMessage,
 }: StudentsListClientProps) {
+  const searchParams = useSearchParams();
   const [genderFilter, setGenderFilter] = useState<string>("전체");
   const [gradeFilter, setGradeFilter] = useState<string>("전체");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(() =>
+    resolveStatusQuery(searchParams.get("status")),
+  );
   const [scholarshipFilter, setScholarshipFilter] =
-    useState<ScholarshipFilter>("all");
+    useState<ScholarshipFilter>(() =>
+      resolveScholarshipQuery(searchParams.get("scholarship")),
+    );
   const [sortKey, setSortKey] = useState<SortKey>("default");
 
   const uniqueGrades = useMemo(() => {
@@ -176,10 +211,7 @@ export function StudentsListClient({
 
   return (
     <>
-      <section className="surface-card relative mb-6 overflow-hidden p-5 md:p-6">
-        <div className="absolute -left-12 -top-12 h-36 w-36 rounded-full bg-[#dfe8d8]/70 blur-2xl" />
-        <div className="absolute -right-14 -bottom-14 h-44 w-44 rounded-full bg-[#f1d6c4]/60 blur-3xl" />
-
+      <section className="relative mb-6 overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-5 shadow-[0_18px_44px_rgba(32,41,38,0.08)] md:p-6">
         <div className="relative z-10">
           <div className="grid gap-4 md:grid-cols-4">
             <label className="text-sm">
@@ -220,7 +252,7 @@ export function StudentsListClient({
                 className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2.5 text-[#18211d]"
               >
                 <option value="all">전체</option>
-                <option value="available">요청 가능</option>
+                <option value="available">신청 가능</option>
                 <option value="pending">입금 대기</option>
                 <option value="matched">결연 완료</option>
               </select>
@@ -264,7 +296,7 @@ export function StudentsListClient({
                     : "border-[#d8d1c4] bg-[#fffdf8] text-[#314039] hover:border-[#486f5b]"
                 }`}
               >
-                {getScholarshipTypeLabel(type)}
+                {getScholarshipSupportTierLabel(type)}
               </button>
             ))}
           </div>
@@ -277,7 +309,7 @@ export function StudentsListClient({
           {getStatusLabel(statusFilter)}
         </div>
         <div className="rounded-2xl border border-[var(--border)] bg-[#eef4eb] px-4 py-3 text-sm font-bold text-[#24372c]">
-          요청 가능 {filteredSummary.available}명
+          신청 가능 {filteredSummary.available}명
         </div>
         <div className="rounded-2xl border border-[var(--border)] bg-[#f7f3ea] px-4 py-3 text-sm font-bold text-[#24372c]">
           입금 대기 {filteredSummary.pending}명
@@ -287,13 +319,10 @@ export function StudentsListClient({
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[32px] border border-[#d8d1c4] bg-gradient-to-b from-[#fffdf8] to-[#f7f3ea] p-4 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="absolute -left-10 top-0 h-36 w-36 rounded-full bg-[#dfe8d8]/70 blur-2xl" />
-        <div className="absolute -right-10 bottom-0 h-44 w-44 rounded-full bg-[#f1d6c4]/55 blur-3xl" />
-
+      <section className="relative overflow-hidden rounded-lg border border-[#d8d3c8] bg-gradient-to-b from-[#fffdf8] to-[#f7f3ea] p-4 shadow-[0_18px_44px_rgba(32,41,38,0.08)] sm:p-6">
         <div className="relative z-10">
           {dbErrorMessage ? (
-            <article className="surface-card p-6 text-sm font-semibold leading-7 text-[#1f2b25]">
+            <article className="rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-6 text-sm font-semibold leading-7 text-[#1f2b25]">
               <p className="font-bold text-[#c66f4a]">데이터 연결 안내</p>
               <p className="mt-2">{dbErrorMessage}</p>
             </article>

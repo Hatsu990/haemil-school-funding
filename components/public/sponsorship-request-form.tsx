@@ -26,7 +26,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
+      className="btn-primary w-full py-3 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "제출 중…" : "3년 결연 신청서 제출"}
     </button>
@@ -55,9 +55,6 @@ export function SponsorshipRequestForm({
   const errorKey = errorMessages.join("|");
   const showErrorDialog = errorMessages.length > 0 && errorKey !== dismissedErrorKey;
   const amountLabel = new Intl.NumberFormat("ko-KR").format(scholarshipAmount);
-  const totalAmountLabel = new Intl.NumberFormat("ko-KR").format(
-    scholarshipAmount * 36,
-  );
 
   return (
     <>
@@ -99,7 +96,16 @@ export function SponsorshipRequestForm({
         </div>
       ) : null}
 
-      <form action={formAction} className="space-y-5">
+      <form action={formAction} className="min-w-0 space-y-5">
+        <div className="border-b border-[#d8d3c8] pb-5">
+          <h2 className="font-serif text-3xl font-black leading-tight text-[#18211d]">
+            결연 신청 정보
+          </h2>
+          <p className="mt-3 text-sm font-semibold leading-7 text-[#63706a]">
+            작성해주신 정보는 결연 안내 연락과 후원 확인을 위해서만 사용됩니다.
+          </p>
+        </div>
+
       <input type="hidden" name="studentId" value={student.id} />
       <input type="hidden" name="sponsorshipType" value="정기후원" />
       <input
@@ -108,8 +114,8 @@ export function SponsorshipRequestForm({
         value={THREE_YEAR_SPONSORSHIP_PERIOD}
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm">
+      <div className="grid min-w-0 gap-4 md:grid-cols-2">
+        <label className="min-w-0 text-sm">
           <span className="mb-2 block font-bold text-[#24372c]">
             후원자 이름 *
           </span>
@@ -117,13 +123,13 @@ export function SponsorshipRequestForm({
             name="sponsorName"
             defaultValue={values.sponsorName}
             required
-            className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2 text-[#18211d]"
+            className="w-full rounded-lg border border-[#d8d3c8] bg-white px-3 py-2.5 text-[#18211d] outline-none transition focus:border-[#486f5b] focus:ring-2 focus:ring-[#486f5b]/15"
             placeholder="홍길동"
           />
           <FieldError message={state.fieldErrors.sponsorName} />
         </label>
 
-        <label className="text-sm">
+        <label className="min-w-0 text-sm">
           <span className="mb-2 block font-bold text-[#24372c]">
             휴대폰 번호 *
           </span>
@@ -131,7 +137,7 @@ export function SponsorshipRequestForm({
             name="sponsorPhone"
             defaultValue={values.sponsorPhone}
             required
-            className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2 text-[#18211d]"
+            className="w-full rounded-lg border border-[#d8d3c8] bg-white px-3 py-2.5 text-[#18211d] outline-none transition focus:border-[#486f5b] focus:ring-2 focus:ring-[#486f5b]/15"
             placeholder="010-1234-5678"
           />
           <FieldError message={state.fieldErrors.sponsorPhone} />
@@ -145,25 +151,22 @@ export function SponsorshipRequestForm({
           type="email"
           defaultValue={values.sponsorEmail}
           required
-          className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2 text-[#18211d]"
+          className="w-full rounded-lg border border-[#d8d3c8] bg-white px-3 py-2.5 text-[#18211d] outline-none transition focus:border-[#486f5b] focus:ring-2 focus:ring-[#486f5b]/15"
           placeholder="sponsor@example.com"
         />
         <FieldError message={state.fieldErrors.sponsorEmail} />
       </label>
 
-      <section className="rounded-2xl border border-[#d8c9b8] bg-[#f7f3ea] p-4 text-sm">
+      <section className="rounded-lg border border-[#d8d3c8] bg-[#f7f3ea] p-5 text-sm">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-lg font-black text-[#18211d]">
-              월 {amountLabel}원 X 36회
+              월 {amountLabel}원
             </p>
             <p className="mt-1 subtle-text">{scholarshipTypeLabel} 대상 학생</p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-black text-[#18211d]">
-              총 {totalAmountLabel}원
-            </p>
-            <span className="mt-1 inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#7a5d4a]">
+            <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#7a5d4a]">
               3년 결연
             </span>
           </div>
@@ -171,12 +174,12 @@ export function SponsorshipRequestForm({
         <FieldError message={state.fieldErrors.sponsorshipType} />
       </section>
 
-      <fieldset className="rounded-2xl border border-[var(--border)] bg-[#f7f3ea] p-4 text-sm">
+      <fieldset className="rounded-lg border border-[#d8d3c8] bg-[#f7f3ea] p-5 text-sm">
         <legend className="px-1 text-sm font-bold text-[#24372c]">
           후원자 공개 여부
         </legend>
-        <div className="mt-2 flex flex-wrap gap-4">
-          <label className="inline-flex items-center gap-2">
+        <div className="mt-3 flex flex-wrap gap-3">
+          <label className="inline-flex items-center gap-2 rounded-full border border-[#d8d3c8] bg-white px-4 py-2">
             <input
               type="radio"
               name="sponsorPublic"
@@ -185,7 +188,7 @@ export function SponsorshipRequestForm({
             />
             <span>공개</span>
           </label>
-          <label className="inline-flex items-center gap-2">
+          <label className="inline-flex items-center gap-2 rounded-full border border-[#d8d3c8] bg-white px-4 py-2">
             <input
               type="radio"
               name="sponsorPublic"
@@ -205,12 +208,12 @@ export function SponsorshipRequestForm({
           name="sponsorMessage"
           defaultValue={values.sponsorMessage}
           rows={4}
-          className="w-full rounded-2xl border border-[var(--border)] bg-[#fffdf8] px-3 py-2 text-[#18211d]"
+          className="w-full rounded-lg border border-[#d8d3c8] bg-white px-3 py-2.5 text-[#18211d] outline-none transition focus:border-[#486f5b] focus:ring-2 focus:ring-[#486f5b]/15"
           placeholder="학생에게 전하고 싶은 응원 메시지를 남겨주세요."
         />
       </label>
 
-      <label className="flex items-start gap-2 text-sm text-[#314039]">
+      <label className="flex items-start gap-2 rounded-lg border border-[#d8d3c8] bg-white px-4 py-3 text-sm font-semibold text-[#314039]">
         <input
           type="checkbox"
           name="receiptRequested"
@@ -220,7 +223,7 @@ export function SponsorshipRequestForm({
         <span>기부금 영수증 발급을 희망합니다.</span>
       </label>
 
-      <label className="flex items-start gap-2 text-sm text-[#314039]">
+      <label className="flex items-start gap-2 rounded-lg border border-[#d8d3c8] bg-white px-4 py-3 text-sm font-semibold text-[#314039]">
         <input
           type="checkbox"
           name="privacyConsent"

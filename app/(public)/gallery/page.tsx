@@ -34,7 +34,7 @@ export const dynamic = "force-dynamic";
 
 function GalleryCard({ item }: { item: GalleryItem }) {
   return (
-    <article className="surface-card hover-lift overflow-hidden">
+    <article className="hover-lift overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_18px_44px_rgba(32,41,38,0.08)]">
       <div className="relative aspect-video bg-[#f7f3ea]">
         {item.fileUrl ? (
           item.type === "video" ? (
@@ -91,21 +91,21 @@ export default async function GalleryPage() {
 
   return (
     <div className="container-base pb-16 pt-10 sm:pt-12">
-      <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
+      <header className="relative mb-8 overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_22px_58px_rgba(32,41,38,0.1)] sm:mb-10">
         <Image
           src="/images/haemill/people-activity-5.jpg"
           alt="해밀학교 활동 현장"
           fill
           priority
-          className="object-cover object-[center_28%] sm:object-center"
+          className="object-cover object-[center_28%] opacity-70 sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/86 via-[#24372c]/70 to-[#c66f4a]/42" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#fffdf8_0%,rgba(255,253,248,0.96)_46%,rgba(255,253,248,0.28)_100%)]" />
         <div className="relative z-10 px-7 py-11 sm:px-9 sm:py-14">
-          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
+          <h1 className="text-balance font-serif text-3xl font-black leading-tight text-[#18211d] [word-break:keep-all] sm:text-5xl">
             학교 활동 기록
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-[#edf3ed] sm:text-base sm:leading-8">
+          <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#314039] sm:text-base sm:leading-8">
             교실과 기숙사, 다양한 활동 현장에서 이어지는 해밀학교의 하루를
             사진과 영상으로 전합니다.
           </p>
@@ -114,7 +114,7 @@ export default async function GalleryPage() {
       </header>
 
       {dbErrorMessage ? (
-        <section className="surface-card p-6 text-sm leading-7 text-[#314039]">
+        <section className="rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-6 text-sm leading-7 text-[#314039] shadow-[0_18px_44px_rgba(32,41,38,0.08)]">
           <p className="font-bold text-[#c66f4a]">데이터 연결 안내</p>
           <p className="mt-2">{dbErrorMessage}</p>
         </section>

@@ -64,10 +64,7 @@ export async function PublicFooter() {
             </Link>
 
             <Link href="/" className="block">
-              <p className="text-[0.68rem] leading-none font-bold uppercase tracking-[0.16em] text-[#c7d4c6]">
-                Haemill School
-              </p>
-              <h3 className="mt-1 text-xl leading-tight font-black text-white sm:text-2xl">
+              <h3 className="text-xl leading-tight font-black text-white sm:text-2xl">
                 해밀학교와 함께하는 3년 장학금 결연
               </h3>
             </Link>

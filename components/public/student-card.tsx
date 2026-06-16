@@ -9,7 +9,7 @@ import {
   getSponsorshipBlockedReason,
   isSponsorshipRequestable,
 } from "@/lib/sponsorship/policy";
-import { getScholarshipTypeWithAmountLabel } from "@/lib/scholarships";
+import { getScholarshipSupportTierWithAmountLabel } from "@/lib/scholarships";
 import { getPublicStudentName } from "@/lib/students/display";
 import { withStudentUiFallback } from "@/lib/students/ui";
 import { getStudentStatusClass, getStudentStatusLabel } from "@/lib/utils";
@@ -26,9 +26,8 @@ export function StudentCard({ student }: StudentCardProps) {
   const blockedReason = requestable
     ? "학생 1명당 후원자 1명 결연 원칙으로 운영됩니다."
     : getSponsorshipBlockedReason(studentUi.sponsorshipStatus);
-  const profileTheme = studentUi.profileTheme ?? "from-[#dfe8d8] to-[#fffdf8]";
   const scholarshipLabel = studentUi.scholarshipType
-    ? getScholarshipTypeWithAmountLabel(studentUi.scholarshipType)
+    ? getScholarshipSupportTierWithAmountLabel(studentUi.scholarshipType)
     : null;
   const letterImageUrl = useMemo(
     () => studentUi.letterImageUrl?.trim() ?? "",
@@ -46,14 +45,14 @@ export function StudentCard({ student }: StudentCardProps) {
 
   return (
     <>
-      <article className="surface-card overflow-hidden rounded-[28px] border-[#d8d1c4] shadow-[0_18px_42px_rgba(43,54,47,0.1)]">
-        <div className={`bg-gradient-to-br p-5 ${profileTheme}`}>
+      <article className="overflow-hidden rounded-lg border border-[#d8d1c4] bg-[#fffdf8] shadow-[0_18px_42px_rgba(43,54,47,0.09)]">
+        <div className="border-b border-[#e4dccc] bg-[#f5efe3] p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <StudentProfileImage
                 src={studentUi.profileImageUrl}
                 alt={`${publicStudentName} 학생 프로필 이미지`}
-                className="w-24 shrink-0 border-white/70 shadow-lg"
+                className="w-24 shrink-0 rounded-lg border-white/80 shadow-[0_14px_28px_rgba(43,54,47,0.12)]"
               />
               <div className="min-w-0">
                 <h3 className="truncate text-xl font-black text-[#18211d]">
@@ -70,7 +69,7 @@ export function StudentCard({ student }: StudentCardProps) {
             />
           </div>
           {scholarshipLabel ? (
-            <div className="mt-4 inline-flex rounded-full border border-[#486f5b]/18 bg-[#fffdf8]/78 px-3 py-1.5 text-xs font-black text-[#24372c] shadow-sm">
+            <div className="mt-4 inline-flex rounded-full border border-[#486f5b]/18 bg-[#fffdf8] px-3 py-1.5 text-xs font-black text-[#24372c] shadow-sm">
               {scholarshipLabel}
             </div>
           ) : null}

@@ -52,21 +52,21 @@ export const metadata: Metadata = {
 export default function ProjectPage() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
-      <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
+      <header className="relative mb-8 overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_22px_58px_rgba(32,41,38,0.1)] sm:mb-10">
         <Image
           src="/images/haemill/people-activity-6.jpg"
           alt="해밀학교 전경"
           fill
           priority
-          className="object-cover object-[center_26%] sm:object-center"
+          className="object-cover object-[center_26%] opacity-70 sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/88 via-[#24372c]/72 to-[#c66f4a]/42" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#fffdf8_0%,rgba(255,253,248,0.96)_46%,rgba(255,253,248,0.28)_100%)]" />
         <div className="relative z-10 p-8 sm:p-10">
-          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
+          <h1 className="text-balance font-serif text-3xl font-black leading-tight text-[#18211d] [word-break:keep-all] sm:text-5xl">
             3년 장학금 결연이 필요한 이유와 운영 방식
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-[#edf3ed]">
+          <p className="mt-4 max-w-3xl text-base font-semibold leading-8 text-[#314039]">
             학생의 3년을 함께 응원하는 결연. 후원자와
             학생이 신뢰로 연결되는 과정을 투명하게 안내드립니다.
           </p>
@@ -74,7 +74,7 @@ export default function ProjectPage() {
       </header>
 
       <section className="grid gap-6 md:grid-cols-2">
-        <article className="surface-card relative overflow-hidden p-7 sm:p-8">
+        <article className="relative overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-7 shadow-[0_18px_44px_rgba(32,41,38,0.08)] sm:p-8">
           <Image
             src="/images/haemill/school-campus-1.jpg"
             alt=""
@@ -108,7 +108,7 @@ export default function ProjectPage() {
           </div>
         </article>
 
-        <article className="surface-card relative overflow-hidden p-7 sm:p-8">
+        <article className="relative overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-7 shadow-[0_18px_44px_rgba(32,41,38,0.08)] sm:p-8">
           <Image
             src="/images/haemill/people-activity-4.jpg"
             alt=""
@@ -178,7 +178,7 @@ export default function ProjectPage() {
       </section>
 
       <section className="mt-8">
-        <article className="surface-card overflow-hidden p-6 sm:p-7">
+        <article className="overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-6 shadow-[0_18px_44px_rgba(32,41,38,0.08)] sm:p-7">
           <h2 className="text-xl font-black text-[#18211d] sm:text-2xl">후원 절차</h2>
           <ol className="mt-4 grid gap-0">
             {processSteps.flatMap((step, index) => {
@@ -187,7 +187,7 @@ export default function ProjectPage() {
               return [
                 <li
                   key={`step-${step.title}`}
-                  className="rounded-[26px] border border-[var(--border)] bg-[#fffdf8] p-5 shadow-[0_14px_34px_rgba(43,54,47,0.06)]"
+                  className="rounded-lg border border-[#d8d3c8] bg-[#fffdf8] p-5 shadow-[0_14px_34px_rgba(43,54,47,0.06)]"
                 >
                   <p className="text-xs font-black tracking-[0.12em] text-[#486f5b]">
                     STEP {index + 1}

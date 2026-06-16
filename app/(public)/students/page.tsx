@@ -67,50 +67,50 @@ export default async function StudentsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12">
-      <header className="relative mb-8 overflow-hidden rounded-[34px] border border-[#d8d1c4] shadow-[0_24px_64px_rgba(43,54,47,0.18)] sm:mb-10">
+      <header className="relative mb-8 overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_22px_58px_rgba(32,41,38,0.1)] sm:mb-10">
         <Image
           src="/images/haemill/school-campus-3.jpg"
           alt="해밀학교 기숙사와 학교 분위기"
           fill
           priority
-          className="object-cover object-[center_28%] sm:object-center"
+          className="object-cover object-[center_28%] opacity-70 sm:object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#18211d]/88 via-[#24372c]/74 to-[#c66f4a]/42" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#fffdf8_0%,rgba(255,253,248,0.96)_46%,rgba(255,253,248,0.28)_100%)]" />
         <div className="relative z-10 p-7 sm:p-9 lg:p-11">
-          <h1 className="text-3xl font-black leading-tight tracking-[-0.02em] text-[#fffdf8] text-balance sm:text-5xl">
+          <h1 className="text-balance font-serif text-3xl font-black leading-tight text-[#18211d] [word-break:keep-all] sm:text-5xl">
             결연을 기다리는 학생들
           </h1>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-[#edf3ed] sm:text-base sm:leading-8">
+          <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-[#314039] sm:text-base sm:leading-8">
             학생 한 명 한 명의 이야기를 확인하고, 마음이 닿는 학생과 3년
             결연으로 연결될 수 있습니다. 해밀학교는 후원자가 신뢰할 수 있는
             절차를 통해 결연을 운영합니다.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl border border-white/18 bg-white/12 px-4 py-3 backdrop-blur-sm">
-              <p className="text-xs font-bold tracking-[0.08em] text-[#dfe8d8]">
+            <div className="rounded-lg border border-[#d8d3c8] bg-white/80 px-4 py-3">
+              <p className="text-xs font-black tracking-[0.08em] text-[#486f5b]">
                 요청 가능
               </p>
-              <p className="mt-1 text-2xl font-bold text-white">{availableCount}명</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d]">{availableCount}명</p>
             </div>
-            <div className="rounded-3xl border border-white/18 bg-white/12 px-4 py-3 backdrop-blur-sm">
-              <p className="text-xs font-bold tracking-[0.08em] text-[#dfe8d8]">
+            <div className="rounded-lg border border-[#d8d3c8] bg-white/80 px-4 py-3">
+              <p className="text-xs font-black tracking-[0.08em] text-[#9a6941]">
                 입금 대기
               </p>
-              <p className="mt-1 text-2xl font-bold text-white">{pendingCount}명</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d]">{pendingCount}명</p>
             </div>
-            <div className="rounded-3xl border border-white/18 bg-white/12 px-4 py-3 backdrop-blur-sm">
-              <p className="text-xs font-bold tracking-[0.08em] text-[#dfe8d8]">
+            <div className="rounded-lg border border-[#d8d3c8] bg-white/80 px-4 py-3">
+              <p className="text-xs font-black tracking-[0.08em] text-[#385366]">
                 결연 완료
               </p>
-              <p className="mt-1 text-2xl font-bold text-white">{matchedCount}명</p>
+              <p className="mt-1 text-2xl font-black text-[#18211d]">{matchedCount}명</p>
             </div>
           </div>
         </div>
       </header>
 
-      <section className="surface-card mb-7 overflow-hidden md:grid md:grid-cols-[1.15fr_0.85fr]">
+      <section className="mb-7 overflow-hidden rounded-lg border border-[#d8d3c8] bg-[#fffdf8] shadow-[0_18px_44px_rgba(32,41,38,0.08)] md:grid md:grid-cols-[1.15fr_0.85fr]">
         <div className="p-6 text-sm font-semibold leading-7 text-[#1f2b25] sm:p-7 sm:text-base sm:leading-8">
           <h2 className="text-xl font-black text-[#18211d]">후원 운영 안내</h2>
           <p className="mt-3">
@@ -129,7 +129,7 @@ export default async function StudentsPage() {
             지원을 위한 장학금으로 사용됩니다.
           </p>
         </div>
-        <div className="relative min-h-[260px]">
+        <div className="relative min-h-[260px] border-t border-[#d8d3c8] md:border-l md:border-t-0">
           <Image
             src="/images/haemill/people-activity-1.jpg"
             alt="해밀학교 학생 공동체 활동"

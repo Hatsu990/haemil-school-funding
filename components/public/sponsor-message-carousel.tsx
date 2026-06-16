@@ -53,7 +53,7 @@ export function SponsorMessageCarousel({
 
   if (messages.length === 0) {
     return (
-      <p className="rounded-[24px] border border-[var(--border)] bg-[#f7f3ea] px-5 py-4 text-sm text-[#63706a]">
+      <p className="rounded-lg border border-[#d8d3c8] bg-[#f7f3ea] px-5 py-4 text-sm text-[#63706a]">
         현재 공개된 응원 메시지가 없습니다.
       </p>
     );
@@ -65,15 +65,15 @@ export function SponsorMessageCarousel({
       aria-live="polite"
       className="mx-auto grid w-full max-w-6xl gap-4 motion-safe:animate-[sponsor-message-slide_4000ms_cubic-bezier(0.22,1,0.36,1)] sm:grid-cols-2 lg:grid-cols-4"
     >
-      {visibleMessages.map((item) => (
+      {visibleMessages.map((item, index) => (
         <blockquote
           key={`${startIndex}-${item.id}`}
-          className="relative min-h-40 rounded-[26px] border border-white/22 bg-[#fffdf8]/92 p-5 text-left shadow-[0_20px_48px_rgba(0,0,0,0.18)] backdrop-blur-md"
+          className={[
+            "relative min-h-40 overflow-hidden rounded-lg border border-[#d8d3c8]/70 bg-[#fffdf8]/92 p-5 text-left shadow-[0_20px_48px_rgba(0,0,0,0.18)] backdrop-blur-md",
+            index > 2 ? "hidden lg:block" : "",
+          ].join(" ")}
         >
-          <span
-            aria-hidden
-            className="absolute -bottom-2 left-1/2 h-5 w-5 -translate-x-1/2 rotate-45 border-b border-r border-white/22 bg-[#fffdf8]/92"
-          />
+          <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[#d7a33f]" />
           <p className="relative text-sm font-semibold leading-7 text-[#314039] text-pretty">
             {item.message}
           </p>

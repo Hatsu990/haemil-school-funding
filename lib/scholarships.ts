@@ -31,6 +31,21 @@ export function getScholarshipTypeWithAmountLabel(type: ScholarshipType): string
   return `${getScholarshipTypeLabel(type)} (월 ${amount}원)`;
 }
 
+export function getScholarshipSupportTierLabel(type: ScholarshipType): string {
+  if (type === "전액장학금") return "10 열매후원";
+  if (type === "반액장학금") return "5 성장후원";
+  return "3 새싹후원";
+}
+
+export function getScholarshipSupportTierWithAmountLabel(
+  type: ScholarshipType,
+): string {
+  const amount = new Intl.NumberFormat("ko-KR").format(
+    SCHOLARSHIP_AMOUNT_BY_TYPE[type],
+  );
+  return `${getScholarshipSupportTierLabel(type)} (월 ${amount}원)`;
+}
+
 export function resolveScholarshipTypeByDistribution(
   index: number,
   totalCount: number,

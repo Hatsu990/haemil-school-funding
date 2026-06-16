@@ -13,6 +13,10 @@
 # testing
 /coverage
 
+# local backups and working references
+/backups/
+/Image/
+
 # next.js
 /.next/
 /out/
@@ -29,6 +33,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.codex-*.log
+.codex-run/
+.omx/
+.playwright-mcp/
+test-results/
+/*.png
+/*.pdf
+TODAY_WORK_*.txt
 
 # env files (can opt-in for committing if needed)
 .env*
